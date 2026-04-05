@@ -1,0 +1,24 @@
+[remap]
+
+importer="wav"
+type="AudioStreamWAV"
+uid="uid://bjr0x4xwshhv8"
+path="res://.godot/imported/coin3.wav-3f7807bc1b86f2b6be4b16b5bf3a11e3.sample"
+
+[deps]
+
+source_file="res://art/Music/rpg_sound_pack/RPG Sound Pack/inventory/coin3.wav"
+dest_files=["res://.godot/imported/coin3.wav-3f7807bc1b86f2b6be4b16b5bf3a11e3.sample"]
+
+[params]
+
+force/8_bit=false
+force/mono=false
+force/max_rate=false
+force/max_rate_hz=44100
+edit/trim=false
+edit/normalize=false
+edit/loop_mode=0
+edit/loop_begin=0
+edit/loop_end=-1
+compress/mode=2
