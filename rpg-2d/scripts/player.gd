@@ -29,9 +29,8 @@ func _physics_process(_delta):
 	update_animation()
 	move_and_slide()
 
-# ============================================================
+
 # RICHTUNGS-INPUT (Letzte Taste gewinnt)
-# ============================================================
 func handle_direction_input():
 	# Taste neu gedrückt? -> Ans Ende der Liste
 	if Input.is_action_just_pressed("up"):
@@ -67,9 +66,8 @@ func add_direction(dir: String):
 func remove_direction(dir: String):
 	pressed_directions.erase(dir)
 
-# ============================================================
+
 # ATTACK-INPUT
-# ============================================================
 func handle_attack_input():
 	# Nur bei NEUEM Klick, nicht bei gehaltenem
 	if Input.is_action_just_pressed("attack"):
@@ -97,9 +95,7 @@ func get_attack_animation_name(dir_name: String) -> String:
 		_:
 			return "attack_" + dir_name
 
-# ============================================================
 # BEWEGUNG BERECHNEN
-# ============================================================
 func handle_movement():
 	# Richtung zu Vector umwandeln
 	var input_dir := direction_string_to_vector(active_direction)
@@ -138,9 +134,8 @@ func direction_string_to_vector(dir: String) -> Vector2:
 		_:
 			return Vector2.ZERO
 
-# ============================================================
+
 # ANIMATION
-# ============================================================
 func update_animation():
 	# Während Attack: Animation läuft schon, nicht unterbrechen!
 	if is_attacking:
@@ -178,9 +173,7 @@ func get_direction_name() -> String:
 	else:
 		return "down"
 
-# ============================================================
 # SIGNAL CALLBACKS
-# ============================================================
 func _on_animation_finished():
 	# Nur Attack-Animationen beenden den Attack-State
 	if "attack" in anim.animation:

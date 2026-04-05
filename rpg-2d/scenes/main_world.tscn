@@ -1,12 +1,14 @@
 [gd_scene format=4 uid="uid://ce2m7bujxchji"]
 
 [ext_resource type="Texture2D" uid="uid://bnxnvadcjr2lm" path="res://art/Wood/mystic_woods_free_2.2/sprites/tilesets/grass.png" id="1_wjoj8"]
-[ext_resource type="Texture2D" uid="uid://b0hexw8wi1edm" path="res://art/Wood/mystic_woods_free_2.2/sprites/objects/objects.png" id="2_bdp8l"]
 [ext_resource type="Texture2D" uid="uid://dh1hcjlxoe83d" path="res://art/Wood/mystic_woods_free_2.2/sprites/tilesets/plains.png" id="3_jj0au"]
 [ext_resource type="PackedScene" uid="uid://dnuayd7wjni33" path="res://scenes/player.tscn" id="4_bdp8l"]
 
+[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_wjoj8"]
+load_path = "res://.godot/imported/objects.png-5ab4ada1e3edafb7db4fdcb01d7e8a6e.ctex"
+
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_jj0au"]
-texture = ExtResource("2_bdp8l")
+texture = SubResource("CompressedTexture2D_wjoj8")
 0:0/0 = 0
 0:0/0/physics_layer_0/polygon_0/points = PackedVector2Array(1.2590103, 4.856186, 1.0791531, 2.6978817, 6.4749146, 1.7985878, -5.3957615, 1.6187286, -4.856186, 1.6187286, -1.978447, 2.6978817, -1.0791531, 4.6763268)
 0:1/0 = 0

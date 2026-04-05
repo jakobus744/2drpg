@@ -1282,7 +1282,7 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_3k3j0")
 }],
-"loop": true,
+"loop": false,
 "name": &"idle_down.2",
 "speed": 5.0
 }, {
@@ -1374,7 +1374,7 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_ealyq")
 }],
-"loop": true,
+"loop": false,
 "name": &"idle_right.2",
 "speed": 5.0
 }, {
@@ -1391,8 +1391,8 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_reqs7")
 }],
-"loop": true,
-"name": &"idle_up",
+"loop": false,
+"name": &"idle_up.1",
 "speed": 3.0
 }, {
 "frames": [{
@@ -1824,7 +1824,7 @@ script = ExtResource("1_ur7pv")
 y_sort_enabled = true
 position = Vector2(0, 2)
 sprite_frames = SubResource("SpriteFrames_sh265")
-animation = &"attack_down"
+animation = &"idle_up.1"
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=933356697]
 z_index = 1
