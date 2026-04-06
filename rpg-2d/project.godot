@@ -18,6 +18,10 @@ config/features=PackedStringArray("4.6", "Forward Plus")
 
 window/stretch/scale=4.0
 
+[dotnet]
+
+project/assembly_name="RPG 2d"
+
 [input]
 
 up={
