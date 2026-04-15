@@ -1,0 +1,7 @@
+[gd_scene format=4 uid="uid://snowbiome00001"]
+
+[node name="SnowBiome" type="Node2D"]
+
+[node name="Objects" type="Node2D" parent="."]
+
+[node name="Mobs" type="Node2D" parent="."]

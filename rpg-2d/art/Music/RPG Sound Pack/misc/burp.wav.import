@@ -1,0 +1,24 @@
+[remap]
+
+importer="wav"
+type="AudioStreamWAV"
+uid="uid://behy8q8kqpg8r"
+path="res://.godot/imported/burp.wav-74d0fa596d2ba5af2abeddabb9751730.sample"
+
+[deps]
+
+source_file="res://art/Music/RPG Sound Pack/misc/burp.wav"
+dest_files=["res://.godot/imported/burp.wav-74d0fa596d2ba5af2abeddabb9751730.sample"]
+
+[params]
+
+force/8_bit=false
+force/mono=false
+force/max_rate=false
+force/max_rate_hz=44100
+edit/trim=false
+edit/normalize=false
+edit/loop_mode=0
+edit/loop_begin=0
+edit/loop_end=-1
+compress/mode=2

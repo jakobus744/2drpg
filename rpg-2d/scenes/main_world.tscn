@@ -3,6 +3,7 @@
 [ext_resource type="Texture2D" uid="uid://bnxnvadcjr2lm" path="res://art/Wood/mystic_woods_free_2.2/sprites/tilesets/grass.png" id="1_wjoj8"]
 [ext_resource type="Texture2D" uid="uid://dh1hcjlxoe83d" path="res://art/Wood/mystic_woods_free_2.2/sprites/tilesets/plains.png" id="3_jj0au"]
 [ext_resource type="PackedScene" uid="uid://dnuayd7wjni33" path="res://scenes/player.tscn" id="4_bdp8l"]
+[ext_resource type="Texture2D" uid="uid://h84rcj1l5sa6" path="res://Forest.png" id="4_jj0au"]
 
 [sub_resource type="CompressedTexture2D" id="CompressedTexture2D_wjoj8"]
 load_path = "res://.godot/imported/objects.png-5ab4ada1e3edafb7db4fdcb01d7e8a6e.ctex"
@@ -109,11 +110,17 @@ texture = ExtResource("3_jj0au")
 0:3/0 = 0
 0:3/0/y_sort_origin = -6
 
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_5irk3"]
+texture = ExtResource("4_jj0au")
+34:49/size_in_atlas = Vector2i(3, 3)
+34:49/0 = 0
+
 [sub_resource type="TileSet" id="TileSet_5irk3"]
 physics_layer_0/collision_layer = 1
 sources/0 = SubResource("TileSetAtlasSource_jj0au")
 sources/1 = SubResource("TileSetAtlasSource_wy0bs")
 sources/2 = SubResource("TileSetAtlasSource_emumq")
+sources/4 = SubResource("TileSetAtlasSource_5irk3")
 
 [node name="Main_World" type="Node2D" unique_id=149295726]
 y_sort_enabled = true
@@ -126,6 +133,7 @@ y_sort_enabled = true
 position = Vector2(-1, -2)
 tile_set = SubResource("TileSet_5irk3")
 format = 2
+layer_0/tile_data = PackedInt32Array(23, 131075, 2, 65559, 131075, 3, 131095, 131075, 4, 196631, 131075, 5, 262167, 131075, 6, 24, 196611, 2, 65560, 196611, 3, 131096, 196611, 4, 196632, 196611, 5, 262168, 196611, 6, 25, 262147, 2, 65561, 262147, 3, 131097, 262147, 4, 196633, 262147, 5, 262169, 262147, 6, 26, 327683, 2, 65562, 327683, 3, 131098, 327683, 4, 196634, 327683, 5, 262170, 327683, 6)
 
 [node name="ground" type="TileMapLayer" parent="TileMap" unique_id=284479787]
 y_sort_enabled = true
