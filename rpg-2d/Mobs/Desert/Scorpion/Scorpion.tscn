@@ -1,7 +1,0 @@
-[gd_scene format=3 uid="uid://cnm1gqiswh1ny"]
-
-[node name="Scorpion" type="CharacterBody2D" unique_id=513387367]
-
-[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=252496777]
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1054132241]

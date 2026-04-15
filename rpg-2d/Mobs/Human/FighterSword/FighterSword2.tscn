@@ -1,7 +1,7 @@
-[gd_scene format=4 uid="uid://mob_fightersword_v1"]
+[gd_scene format=4 uid="uid://mob_fightersword_v2"]
 
-[ext_resource type="Texture2D" path="res://Assets/Charakter/Fighter/Fighter_sword1_with_shadow.png" id="tex_walk"]
-[ext_resource type="Script" path="res://Mobs/Human/FighterSword/FighterSword.cs" id="scr_FighterSword"]
+[ext_resource type="Texture2D" path="res://Assets/Charakter/Fighter/Fighter_sword2_with_shadow.png" id="tex_walk"]
+[ext_resource type="Script" path="res://Mobs/Human/FighterSword/FighterSword2.cs" id="scr_FighterSword2"]
 
 [sub_resource type="AtlasTexture" id="AT_walk_down_0"]
 atlas = ExtResource("tex_walk")
@@ -99,19 +99,19 @@ region = Rect2(256, 192, 64, 64)
 atlas = ExtResource("tex_walk")
 region = Rect2(320, 192, 64, 64)
 
-[sub_resource type="SpriteFrames" id="SF_FighterSword"]
+[sub_resource type="SpriteFrames" id="SF_FighterSword2"]
 animations = [{"frames": [{"duration": 1.0, "texture": SubResource("AT_walk_down_0")}, {"duration": 1.0, "texture": SubResource("AT_walk_down_1")}, {"duration": 1.0, "texture": SubResource("AT_walk_down_2")}, {"duration": 1.0, "texture": SubResource("AT_walk_down_3")}, {"duration": 1.0, "texture": SubResource("AT_walk_down_4")}, {"duration": 1.0, "texture": SubResource("AT_walk_down_5")}], "loop": true, "name": &"walk_down", "speed": 8}, {"frames": [{"duration": 1.0, "texture": SubResource("AT_walk_up_0")}, {"duration": 1.0, "texture": SubResource("AT_walk_up_1")}, {"duration": 1.0, "texture": SubResource("AT_walk_up_2")}, {"duration": 1.0, "texture": SubResource("AT_walk_up_3")}, {"duration": 1.0, "texture": SubResource("AT_walk_up_4")}, {"duration": 1.0, "texture": SubResource("AT_walk_up_5")}], "loop": true, "name": &"walk_up", "speed": 8}, {"frames": [{"duration": 1.0, "texture": SubResource("AT_walk_left_0")}, {"duration": 1.0, "texture": SubResource("AT_walk_left_1")}, {"duration": 1.0, "texture": SubResource("AT_walk_left_2")}, {"duration": 1.0, "texture": SubResource("AT_walk_left_3")}, {"duration": 1.0, "texture": SubResource("AT_walk_left_4")}, {"duration": 1.0, "texture": SubResource("AT_walk_left_5")}], "loop": true, "name": &"walk_left", "speed": 8}, {"frames": [{"duration": 1.0, "texture": SubResource("AT_walk_right_0")}, {"duration": 1.0, "texture": SubResource("AT_walk_right_1")}, {"duration": 1.0, "texture": SubResource("AT_walk_right_2")}, {"duration": 1.0, "texture": SubResource("AT_walk_right_3")}, {"duration": 1.0, "texture": SubResource("AT_walk_right_4")}, {"duration": 1.0, "texture": SubResource("AT_walk_right_5")}], "loop": true, "name": &"walk_right", "speed": 8}]
 
-[sub_resource type="CapsuleShape2D" id="Cap_FighterSword"]
+[sub_resource type="CapsuleShape2D" id="Cap_FighterSword2"]
 radius = 10
 height = 20
 
-[node name="FighterSword" type="CharacterBody2D"]
-script = ExtResource("scr_FighterSword")
+[node name="FighterSword2" type="CharacterBody2D"]
+script = ExtResource("scr_FighterSword2")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
-sprite_frames = SubResource("SF_FighterSword")
+sprite_frames = SubResource("SF_FighterSword2")
 animation = &"idle_down"
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
-shape = SubResource("Cap_FighterSword")
+shape = SubResource("Cap_FighterSword2")

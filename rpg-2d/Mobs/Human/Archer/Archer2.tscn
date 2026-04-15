@@ -1,7 +1,7 @@
-[gd_scene format=4 uid="uid://mob_archer_v1"]
+[gd_scene format=4 uid="uid://mob_archer_v2"]
 
-[ext_resource type="Texture2D" path="res://Assets/Charakter/Fighter/Archer1_with_shadow.png" id="tex_idle"]
-[ext_resource type="Script" path="res://Mobs/Human/Archer/Archer.cs" id="scr_Archer"]
+[ext_resource type="Texture2D" path="res://Assets/Charakter/Fighter/Archer2_with_shadow.png" id="tex_idle"]
+[ext_resource type="Script" path="res://Mobs/Human/Archer/Archer2.cs" id="scr_Archer2"]
 
 [sub_resource type="AtlasTexture" id="AT_idle_down_0"]
 atlas = ExtResource("tex_idle")
@@ -27,19 +27,19 @@ region = Rect2(128, 0, 32, 32)
 atlas = ExtResource("tex_idle")
 region = Rect2(160, 0, 32, 32)
 
-[sub_resource type="SpriteFrames" id="SF_Archer"]
+[sub_resource type="SpriteFrames" id="SF_Archer2"]
 animations = [{"frames": [{"duration": 1.0, "texture": SubResource("AT_idle_down_0")}, {"duration": 1.0, "texture": SubResource("AT_idle_down_1")}, {"duration": 1.0, "texture": SubResource("AT_idle_down_2")}, {"duration": 1.0, "texture": SubResource("AT_idle_down_3")}, {"duration": 1.0, "texture": SubResource("AT_idle_down_4")}, {"duration": 1.0, "texture": SubResource("AT_idle_down_5")}], "loop": true, "name": &"idle_down", "speed": 8}]
 
-[sub_resource type="CapsuleShape2D" id="Cap_Archer"]
+[sub_resource type="CapsuleShape2D" id="Cap_Archer2"]
 radius = 8
 height = 16
 
-[node name="Archer" type="CharacterBody2D"]
-script = ExtResource("scr_Archer")
+[node name="Archer2" type="CharacterBody2D"]
+script = ExtResource("scr_Archer2")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
-sprite_frames = SubResource("SF_Archer")
+sprite_frames = SubResource("SF_Archer2")
 animation = &"idle_down"
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
-shape = SubResource("Cap_Archer")
+shape = SubResource("Cap_Archer2")
