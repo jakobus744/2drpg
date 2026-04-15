@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://bglkij23psb3l"
-path="res://.godot/imported/Swordsman_lvl2_Idle_with_shadow.png-c8e557f0f831e2256134e05f092468f4.ctex"
+uid="uid://bh43qk070k0j4"
+path="res://.godot/imported/endesga-32-32x.png-7be9dffaa3f163e2073874895ce99c86.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://art/PNG/Swordsman_lvl2/With_shadow/Swordsman_lvl2_Idle_with_shadow.png"
-dest_files=["res://.godot/imported/Swordsman_lvl2_Idle_with_shadow.png-c8e557f0f831e2256134e05f092468f4.ctex"]
+source_file="res://Assets/Farben/endesga-32-32x.png"
+dest_files=["res://.godot/imported/endesga-32-32x.png-7be9dffaa3f163e2073874895ce99c86.ctex"]
 
 [params]
 
