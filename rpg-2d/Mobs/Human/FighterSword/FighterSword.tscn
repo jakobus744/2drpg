@@ -1,0 +1,10 @@
+[gd_scene format=4 uid="uid://mob_fighter001"]
+
+[ext_resource type="Texture2D" uid="uid://fighter1_spr" path="res://Assets/Charakter/Fighter/Fighter_sword1_with_shadow.png" id="1_fighter"]
+
+[node name="FighterSword" type="CharacterBody2D"]
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+texture = ExtResource("1_fighter")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]

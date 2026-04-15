@@ -1,0 +1,24 @@
+[gd_scene format=4 uid="uid://mob_slime__001"]
+
+[ext_resource type="Texture2D" uid="uid://slime1_idle" path="res://Assets/monster/slime/slime/Slime1_Idle_with_shadow.png" id="1_idle"]
+[ext_resource type="Texture2D" uid="uid://slime1_walk" path="res://Assets/monster/slime/slime/Slime1_Walk_with_shadow.png" id="2_walk"]
+[ext_resource type="Texture2D" uid="uid://slime1_atk" path="res://Assets/monster/slime/slime/Slime1_Attack_with_shadow.png" id="3_atk"]
+[ext_resource type="Texture2D" uid="uid://slime1_hurt" path="res://Assets/monster/slime/slime/Slime1_Hurt_with_shadow.png" id="4_hurt"]
+[ext_resource type="Texture2D" uid="uid://slime1_dth" path="res://Assets/monster/slime/slime/Slime1_Death_with_shadow.png" id="5_death"]
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_slime"]
+animations = [{"frames": [{"duration": 1.0, "texture": ExtResource("1_idle")}], "loop": true, "name": &"idle", "speed": 6.0}, {"frames": [{"duration": 1.0, "texture": ExtResource("2_walk")}], "loop": true, "name": &"walk", "speed": 8.0}, {"frames": [{"duration": 1.0, "texture": ExtResource("3_atk")}], "loop": false, "name": &"attack", "speed": 8.0}, {"frames": [{"duration": 1.0, "texture": ExtResource("4_hurt")}], "loop": false, "name": &"hurt", "speed": 8.0}, {"frames": [{"duration": 1.0, "texture": ExtResource("5_death")}], "loop": false, "name": &"death", "speed": 6.0}]
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_slime"]
+radius = 8.0
+height = 18.0
+
+[node name="Slime" type="CharacterBody2D"]
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+sprite_frames = SubResource("SpriteFrames_slime")
+animation = &"idle"
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(0, 2)
+shape = SubResource("CapsuleShape2D_slime")

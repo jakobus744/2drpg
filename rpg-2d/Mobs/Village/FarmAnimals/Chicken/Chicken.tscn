@@ -1,0 +1,19 @@
+[gd_scene format=4 uid="uid://mob_chkn__01"]
+
+[ext_resource type="Texture2D" uid="uid://mob_chkn__01_t" path="res://Assets/Mobs/farm-animal/Chicken_animation.png" id="1_tex"]
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_mob_chkn__01"]
+animations = [{"frames": [{"duration": 1.0, "texture": ExtResource("1_tex")}], "loop": true, "name": &"idle", "speed": 5.0}]
+
+[sub_resource type="CapsuleShape2D" id="Capsule_mob_chkn__01"]
+radius = 8.0
+height = 16.0
+
+[node name="Chicken" type="CharacterBody2D"]
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+sprite_frames = SubResource("SpriteFrames_mob_chkn__01")
+animation = &"idle"
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("Capsule_mob_chkn__01")

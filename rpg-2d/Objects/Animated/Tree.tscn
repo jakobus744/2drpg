@@ -1,7 +1,0 @@
-[gd_scene format=4 uid="uid://treeobject001"]
-
-[node name="Tree" type="Node2D"]
-
-[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="."]

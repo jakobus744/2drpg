@@ -1,0 +1,7 @@
+[gd_scene format=4 uid="uid://zone_skelpo_001"]
+
+[node name="SkeletonPoisonZone" type="Node2D"]
+
+[node name="Objects" type="Node2D" parent="."]
+
+[node name="Mobs" type="Node2D" parent="."]

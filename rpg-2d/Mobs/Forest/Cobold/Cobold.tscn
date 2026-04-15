@@ -1,0 +1,10 @@
+[gd_scene format=4 uid="uid://mob_cobold_001"]
+
+[ext_resource type="Texture2D" uid="uid://cobold_floor" path="res://Assets/Charakter/NPC/Cobold_on_floor.png" id="1_cobold"]
+
+[node name="Cobold" type="CharacterBody2D"]
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+texture = ExtResource("1_cobold")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
