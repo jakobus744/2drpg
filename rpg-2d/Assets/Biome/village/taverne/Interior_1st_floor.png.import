@@ -2,12 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://bdecca1sq8vuo"
-valid=false
+uid="uid://dx6y4y0b5ks60"
+path="res://.godot/imported/Interior_1st_floor.png-6db486f4d99a61517073baba9a8bf47c.ctex"
+metadata={
+"vram_texture": false
+}
 
 [deps]
 
 source_file="res://Assets/Biome/village/taverne/Interior_1st_floor.png"
+dest_files=["res://.godot/imported/Interior_1st_floor.png-6db486f4d99a61517073baba9a8bf47c.ctex"]
 
 [params]
 

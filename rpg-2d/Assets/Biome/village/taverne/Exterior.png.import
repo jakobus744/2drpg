@@ -2,12 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://ckdj7yrar81i6"
-valid=false
+uid="uid://cj23kdkeku3t"
+path="res://.godot/imported/Exterior.png-6f0e9298a37e36dae58a6ea48e7adbba.ctex"
+metadata={
+"vram_texture": false
+}
 
 [deps]
 
 source_file="res://Assets/Biome/village/taverne/Exterior.png"
+dest_files=["res://.godot/imported/Exterior.png-6f0e9298a37e36dae58a6ea48e7adbba.ctex"]
 
 [params]
 

@@ -1,7 +1,37 @@
-[gd_scene format=4 uid="uid://zone_winter_001"]
+[gd_scene format=3 uid="uid://cr4oxicg8yqq3"]
 
-[node name="WinterZone" type="Node2D"]
+[ext_resource type="Texture2D" path="res://Assets/Biome/2.Winter/Winter.png" id="1_dojuu"]
+[ext_resource type="Texture2D" uid="uid://gyp0s48m562q" path="res://Assets/Biome/2.Winter/Objects.png" id="2_pd5wf"]
 
-[node name="Objects" type="Node2D" parent="."]
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_dggq8"]
+texture = ExtResource("1_dojuu")
+1:1/size_in_atlas = Vector2i(6, 6)
+1:1/0 = 0
+8:2/0 = 0
+7:2/0 = 0
+6:0/0 = 0
+7:1/0 = 0
+8:1/0 = 0
+1:10/size_in_atlas = Vector2i(3, 5)
+1:10/0 = 0
+32:57/size_in_atlas = Vector2i(2, 3)
+32:57/0 = 0
 
-[node name="Mobs" type="Node2D" parent="."]
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_pij5x"]
+texture = ExtResource("2_pd5wf")
+margins = Vector2i(2, 0)
+7:21/size_in_atlas = Vector2i(7, 7)
+7:21/0 = 0
+
+[sub_resource type="TileSet" id="TileSet_5ui1l"]
+sources/0 = SubResource("TileSetAtlasSource_dggq8")
+sources/2 = SubResource("TileSetAtlasSource_pij5x")
+
+[node name="WinterZone" type="Node2D" unique_id=223116447]
+
+[node name="TileMap" type="TileMap" parent="." unique_id=1023975367]
+tile_set = SubResource("TileSet_5ui1l")
+format = 2
+
+[node name="TileMapLayer" type="TileMapLayer" parent="TileMap" unique_id=1587137678]
+tile_set = SubResource("TileSet_5ui1l")
