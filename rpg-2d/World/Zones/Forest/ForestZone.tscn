@@ -8,7 +8,7 @@
 [ext_resource type="Texture2D" uid="uid://btb8eepqd7by4" path="res://Assets/Biome/1.Forest/Assets_source.png" id="6_es11n"]
 [ext_resource type="Texture2D" uid="uid://diydebf7rya48" path="res://Assets/Biome/1.Forest/Water_coasts.png" id="7_ygit2"]
 [ext_resource type="Texture2D" uid="uid://dr863wljkr0ev" path="res://Assets/Biome/1.Forest/Objects.png" id="8_mrrdy"]
-[ext_resource type="PackedScene" uid="uid://c0hbfrly58rl3" path="res://World/Zones/Forest/animation/trees/tree_big_normal.tscn" id="9_c4tf3"]
+[ext_resource type="PackedScene" uid="uid://c0hbfrly58rl3" path="res://World/Zones/Forest/animation/trees/big_normal_tree.tscn" id="9_c4tf3"]
 [ext_resource type="PackedScene" uid="uid://dqq73kctlgwtr" path="res://World/Zones/Forest/animation/WaterLilies.tscn" id="10_es11n"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_v5eci"]
@@ -391,22 +391,28 @@ position = Vector2(-22, 21)
 tile_map_data = PackedByteArray("AACo/xAABQAFAAoAAACp/xAABQAGAAoAAACq/xAABQAGAAoAAACr/xAABQAGAAoAAACn/xAABQAFAAoAAACr/w8ABQAFAA0AAACq/w8ABQAFAA0AAACo/w8ABQAFAA0AAACp/w8ABQAFAA0AAACn/w8ABQAFAA0AAACm/w8ABQAFAA0AAACl/w8ABQAFAA0AAACk/w8ABQAFAA0AAACj/w8ABQAFAA0AAACm/xAABQAGAAoAAACl/xAABQAGAAoAAACk/xAABQAGAAoAAACj/xAABQAGAAoAAACs/xAABQAGAAoAAACt/xAABQAGAAoAAACu/xAABQAGAAoAAACv/xAABQAGAAoAAACw/xAABQAGAAoAAACx/xAABQAEABIAAACy/w8ABQAGAAoAAACy/xAABQALAAwAAACx/w8ABQACAAcAAAA=")
 tile_set = SubResource("TileSet_vho18")
 
-[node name="Node2D" type="Node2D" parent="TileMap/Ysorts" unique_id=442836010]
+[node name="Trees" type="Node2D" parent="TileMap/Ysorts" unique_id=442836010]
 z_index = 2
 y_sort_enabled = true
 position = Vector2(67, -40)
 
-[node name="TreeBigNormal" parent="TileMap/Ysorts/Node2D" unique_id=1798803888 instance=ExtResource("9_c4tf3")]
+[node name="TreeBigNormal" parent="TileMap/Ysorts/Trees" unique_id=1798803888 instance=ExtResource("9_c4tf3")]
 position = Vector2(110, -74)
 
-[node name="WaterLilies" parent="TileMap/Ysorts/Node2D" unique_id=156337753 instance=ExtResource("10_es11n")]
+[node name="WaterLilies" parent="TileMap/Ysorts/Trees" unique_id=156337753 instance=ExtResource("10_es11n")]
 position = Vector2(-53, -65)
 
-[node name="TreeBigNormal2" parent="TileMap/Ysorts/Node2D" unique_id=102471618 instance=ExtResource("9_c4tf3")]
+[node name="TreeBigNormal2" parent="TileMap/Ysorts/Trees" unique_id=102471618 instance=ExtResource("9_c4tf3")]
 position = Vector2(80, -176)
 
-[node name="WaterLilies2" parent="TileMap/Ysorts/Node2D" unique_id=572269374 instance=ExtResource("10_es11n")]
+[node name="WaterLilies2" parent="TileMap/Ysorts/Trees" unique_id=572269374 instance=ExtResource("10_es11n")]
 position = Vector2(-120, -39)
+
+[node name="Water" type="Node2D" parent="TileMap/Ysorts/Trees" unique_id=1836974325]
+position = Vector2(-45, 19)
+
+[node name="WaterLilies" type="Node2D" parent="TileMap/Ysorts" unique_id=213527452]
+position = Vector2(22, -21)
 
 [node name="cliff" type="TileMapLayer" parent="TileMap" unique_id=1598011060]
 y_sort_enabled = true

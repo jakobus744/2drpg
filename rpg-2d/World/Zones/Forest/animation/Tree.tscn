@@ -1,4 +1,4 @@
-[gd_scene format=3 uid="uid://cgivf1e11rjje"]
+[gd_scene format=3 uid="uid://pfen4srlqqy7"]
 
 [ext_resource type="Texture2D" uid="uid://dua3wiiv8xota" path="res://Assets/Biome/1.Forest/animation/Trees_animation.png" id="1_l26qk"]
 
@@ -873,5 +873,5 @@ animations = [{
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=624092399]
 sprite_frames = SubResource("SF_Tree")
-animation = &"big_normal_tree"
+animation = &"big_tree"
 autoplay = "big_normal_tree"
