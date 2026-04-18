@@ -1,3 +1,46 @@
 [gd_scene format=3 uid="uid://bee1yxjawfjyl"]
 
+[ext_resource type="Texture2D" uid="uid://ccn52wckr8d0k" path="res://Assets/Biome/1.Forest/animation/water_v2.png" id="1_laobe"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_6f5u6"]
+atlas = ExtResource("1_laobe")
+region = Rect2(0, 0, 229, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_aew42"]
+atlas = ExtResource("1_laobe")
+region = Rect2(0, 48, 229, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_rpgrp"]
+atlas = ExtResource("1_laobe")
+region = Rect2(0, 96, 229, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_p267i"]
+atlas = ExtResource("1_laobe")
+region = Rect2(0, 144, 229, 48)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_kd3lm"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_6f5u6")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_aew42")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_rpgrp")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_p267i")
+}],
+"loop": true,
+"name": &"brigth_blue_1",
+"speed": 5.0
+}]
+
 [node name="1" type="Node2D" unique_id=219350125]
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=742104862]
+sprite_frames = SubResource("SpriteFrames_kd3lm")
+animation = &"brigth_blue_1"
+autoplay = "brigth_blue_1"

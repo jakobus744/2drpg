@@ -107,4 +107,4 @@ animations = [{
 sprite_frames = SubResource("SpriteFrames_xdhrg")
 animation = &"big_normal_tree"
 autoplay = "big_normal_tree"
-frame_progress = 0.21445313
+frame_progress = 0.6269489

@@ -1,0 +1,61 @@
+[gd_scene format=3 uid="uid://crtirfvv3m847"]
+
+[ext_resource type="Texture2D" uid="uid://ccn52wckr8d0k" path="res://Assets/Biome/1.Forest/animation/water_v2.png" id="1_mv3ve"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_7vxlo"]
+atlas = ExtResource("1_mv3ve")
+region = Rect2(516, 0, 172, 33)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_3n7f5"]
+atlas = ExtResource("1_mv3ve")
+region = Rect2(516, 33, 172, 33)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_qtrt8"]
+atlas = ExtResource("1_mv3ve")
+region = Rect2(516, 66, 172, 33)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_nlq15"]
+atlas = ExtResource("1_mv3ve")
+region = Rect2(516, 99, 172, 33)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_kagg0"]
+atlas = ExtResource("1_mv3ve")
+region = Rect2(516, 132, 172, 33)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_nq73g"]
+atlas = ExtResource("1_mv3ve")
+region = Rect2(516, 165, 172, 33)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_owdng"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_7vxlo")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_3n7f5")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_qtrt8")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_nlq15")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_kagg0")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_nq73g")
+}],
+"loop": true,
+"name": &"bright_blue_3",
+"speed": 3.0
+}]
+
+[node name="3" type="Node2D" unique_id=1043617974]
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=1106302578]
+sprite_frames = SubResource("SpriteFrames_owdng")
+animation = &"bright_blue_3"
+autoplay = "bright_blue_3"
+frame_progress = 0.9028138

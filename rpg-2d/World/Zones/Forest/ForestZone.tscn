@@ -9,7 +9,16 @@
 [ext_resource type="Texture2D" uid="uid://diydebf7rya48" path="res://Assets/Biome/1.Forest/Water_coasts.png" id="7_ygit2"]
 [ext_resource type="Texture2D" uid="uid://dr863wljkr0ev" path="res://Assets/Biome/1.Forest/Objects.png" id="8_mrrdy"]
 [ext_resource type="PackedScene" uid="uid://c0hbfrly58rl3" path="res://World/Zones/Forest/animation/trees/big_normal_tree.tscn" id="9_c4tf3"]
-[ext_resource type="PackedScene" uid="uid://dqq73kctlgwtr" path="res://World/Zones/Forest/animation/WaterLilies.tscn" id="10_es11n"]
+[ext_resource type="PackedScene" uid="uid://d4j0lh3sqdrba" path="res://World/Zones/Forest/animation/trees/mid_apple_tree.tscn" id="10_3yovb"]
+[ext_resource type="PackedScene" uid="uid://da784dqkrpv4e" path="res://World/Zones/Forest/animation/waterLilies/big.tscn" id="11_guneo"]
+[ext_resource type="PackedScene" uid="uid://c0dm2eqxmf1xt" path="res://World/Zones/Forest/animation/waterLilies/blossom.tscn" id="12_mx6up"]
+[ext_resource type="PackedScene" uid="uid://n3mgyatuch86" path="res://World/Zones/Forest/animation/waterLilies/normal.tscn" id="13_rsq5a"]
+[ext_resource type="PackedScene" uid="uid://wb4bki5ykrv" path="res://World/Zones/Forest/animation/waterLilies/normal_2.tscn" id="14_v25ht"]
+[ext_resource type="PackedScene" uid="uid://cd1abw0eonr6x" path="res://World/Zones/Forest/animation/water/dark_1.tscn" id="15_2few0"]
+[ext_resource type="PackedScene" uid="uid://bi0a3wyj3iblr" path="res://World/Zones/Forest/animation/water/dark_2.tscn" id="16_6fk55"]
+[ext_resource type="PackedScene" uid="uid://bee1yxjawfjyl" path="res://World/Zones/Forest/animation/water/1.tscn" id="17_cbare"]
+[ext_resource type="PackedScene" uid="uid://crtirfvv3m847" path="res://World/Zones/Forest/animation/water/3.tscn" id="18_l7okb"]
+[ext_resource type="PackedScene" uid="uid://br4jgbuo27c3v" path="res://World/Zones/Forest/animation/water/2.tscn" id="19_s0288"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_v5eci"]
 texture = ExtResource("2_vho18")
@@ -397,22 +406,45 @@ y_sort_enabled = true
 position = Vector2(67, -40)
 
 [node name="TreeBigNormal" parent="TileMap/Ysorts/Trees" unique_id=1798803888 instance=ExtResource("9_c4tf3")]
-position = Vector2(110, -74)
+position = Vector2(165, -57)
 
-[node name="WaterLilies" parent="TileMap/Ysorts/Trees" unique_id=156337753 instance=ExtResource("10_es11n")]
-position = Vector2(-53, -65)
-
-[node name="TreeBigNormal2" parent="TileMap/Ysorts/Trees" unique_id=102471618 instance=ExtResource("9_c4tf3")]
-position = Vector2(80, -176)
-
-[node name="WaterLilies2" parent="TileMap/Ysorts/Trees" unique_id=572269374 instance=ExtResource("10_es11n")]
-position = Vector2(-120, -39)
-
-[node name="Water" type="Node2D" parent="TileMap/Ysorts/Trees" unique_id=1836974325]
-position = Vector2(-45, 19)
+[node name="MidAppleTree" parent="TileMap/Ysorts/Trees" unique_id=656453699 instance=ExtResource("10_3yovb")]
+position = Vector2(-184, -231)
 
 [node name="WaterLilies" type="Node2D" parent="TileMap/Ysorts" unique_id=213527452]
 position = Vector2(22, -21)
+
+[node name="Big" parent="TileMap/Ysorts/WaterLilies" unique_id=1073407388 instance=ExtResource("11_guneo")]
+position = Vector2(614, -444)
+
+[node name="Blossom" parent="TileMap/Ysorts/WaterLilies" unique_id=1200105494 instance=ExtResource("12_mx6up")]
+position = Vector2(375, -413)
+
+[node name="Normal" parent="TileMap/Ysorts/WaterLilies" unique_id=1799699594 instance=ExtResource("13_rsq5a")]
+position = Vector2(324, -376)
+
+[node name="Normal2" parent="TileMap/Ysorts/WaterLilies" unique_id=1003878804 instance=ExtResource("14_v25ht")]
+position = Vector2(240, -284)
+
+[node name="water" type="Node2D" parent="TileMap/Ysorts" unique_id=853509153]
+
+[node name="Dark1" parent="TileMap/Ysorts/water" unique_id=1968387729 instance=ExtResource("15_2few0")]
+position = Vector2(647, -422.00003)
+rotation = -0.04772951
+scale = Vector2(0.94626504, 0.5143763)
+skew = -0.6062306
+
+[node name="Dark2" parent="TileMap/Ysorts/water" unique_id=338720511 instance=ExtResource("16_6fk55")]
+position = Vector2(521, -461)
+
+[node name="1" parent="TileMap/Ysorts/water" unique_id=219350125 instance=ExtResource("17_cbare")]
+position = Vector2(669, -222)
+
+[node name="3" parent="TileMap/Ysorts/water" unique_id=1043617974 instance=ExtResource("18_l7okb")]
+position = Vector2(652, -292)
+
+[node name="2" parent="TileMap/Ysorts/water" unique_id=1281235876 instance=ExtResource("19_s0288")]
+position = Vector2(445, -263)
 
 [node name="cliff" type="TileMapLayer" parent="TileMap" unique_id=1598011060]
 y_sort_enabled = true

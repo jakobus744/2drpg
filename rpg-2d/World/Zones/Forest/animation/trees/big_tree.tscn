@@ -1,3 +1,109 @@
 [gd_scene format=3 uid="uid://cdu46rjgrnaj7"]
 
+[ext_resource type="Texture2D" uid="uid://dua3wiiv8xota" path="res://Assets/Biome/1.Forest/animation/Trees_animation.png" id="1_gnm22"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_76x7d"]
+atlas = ExtResource("1_gnm22")
+region = Rect2(360, 0, 72, 80)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_lfuou"]
+atlas = ExtResource("1_gnm22")
+region = Rect2(360, 80, 72, 80)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_2k270"]
+atlas = ExtResource("1_gnm22")
+region = Rect2(360, 160, 72, 80)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_xu28q"]
+atlas = ExtResource("1_gnm22")
+region = Rect2(360, 240, 72, 80)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ic88c"]
+atlas = ExtResource("1_gnm22")
+region = Rect2(360, 320, 72, 80)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_gq65n"]
+atlas = ExtResource("1_gnm22")
+region = Rect2(360, 400, 72, 80)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_d8x0l"]
+atlas = ExtResource("1_gnm22")
+region = Rect2(360, 480, 72, 80)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_vl3yg"]
+atlas = ExtResource("1_gnm22")
+region = Rect2(360, 560, 72, 80)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_2rind"]
+atlas = ExtResource("1_gnm22")
+region = Rect2(360, 640, 72, 80)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_uube6"]
+atlas = ExtResource("1_gnm22")
+region = Rect2(360, 720, 72, 80)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_1nhqa"]
+atlas = ExtResource("1_gnm22")
+region = Rect2(360, 800, 72, 80)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_jjsvh"]
+atlas = ExtResource("1_gnm22")
+region = Rect2(360, 880, 72, 80)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_qlxts"]
+atlas = ExtResource("1_gnm22")
+region = Rect2(360, 960, 72, 80)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_sw363"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_76x7d")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_lfuou")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_2k270")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_xu28q")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ic88c")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_gq65n")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_d8x0l")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_vl3yg")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_2rind")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_uube6")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_1nhqa")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_jjsvh")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_qlxts")
+}],
+"loop": true,
+"name": &"big_tree",
+"speed": 5.0
+}]
+
 [node name="BigTree" type="Node2D" unique_id=1692239075]
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=920598726]
+sprite_frames = SubResource("SpriteFrames_sw363")
+animation = &"big_tree"
+autoplay = "big_tree"

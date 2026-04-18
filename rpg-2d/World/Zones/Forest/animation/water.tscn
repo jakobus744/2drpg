@@ -1,4 +1,4 @@
-[gd_scene format=3 uid="uid://dmtgh1ewiiwqe"]
+[gd_scene format=3 uid="uid://cog332d4ywx1d"]
 
 [ext_resource type="Texture2D" uid="uid://ccn52wckr8d0k" path="res://Assets/Biome/1.Forest/animation/water_v2.png" id="1_vnxrd"]
 [ext_resource type="Texture2D" uid="uid://bgw05onwu2cjs" path="res://Assets/Biome/1.Forest/animation/Water_detailization1.png" id="2_xrb7k"]
@@ -232,4 +232,3 @@ animations = [{
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=903887131]
 sprite_frames = SubResource("SpriteFrames_gxcln")
 animation = &"bright_blue_3"
-frame_progress = 0.74660337

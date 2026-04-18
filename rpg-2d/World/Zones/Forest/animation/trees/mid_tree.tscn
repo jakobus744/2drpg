@@ -1,3 +1,109 @@
 [gd_scene format=3 uid="uid://yvggllaudj8f"]
 
+[ext_resource type="Texture2D" uid="uid://dua3wiiv8xota" path="res://Assets/Biome/1.Forest/animation/Trees_animation.png" id="1_r1cwe"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_8tee0"]
+atlas = ExtResource("1_r1cwe")
+region = Rect2(448, 0, 64, 80)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_hdc3f"]
+atlas = ExtResource("1_r1cwe")
+region = Rect2(448, 80, 64, 80)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_u26t4"]
+atlas = ExtResource("1_r1cwe")
+region = Rect2(448, 160, 64, 80)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_bsab6"]
+atlas = ExtResource("1_r1cwe")
+region = Rect2(448, 240, 64, 80)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ni2kj"]
+atlas = ExtResource("1_r1cwe")
+region = Rect2(448, 320, 64, 80)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_8ue74"]
+atlas = ExtResource("1_r1cwe")
+region = Rect2(448, 400, 64, 80)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_hdb1s"]
+atlas = ExtResource("1_r1cwe")
+region = Rect2(448, 480, 64, 80)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_6axko"]
+atlas = ExtResource("1_r1cwe")
+region = Rect2(448, 560, 64, 80)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_mk7ey"]
+atlas = ExtResource("1_r1cwe")
+region = Rect2(448, 640, 64, 80)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_awx7p"]
+atlas = ExtResource("1_r1cwe")
+region = Rect2(448, 720, 64, 80)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_dwtqh"]
+atlas = ExtResource("1_r1cwe")
+region = Rect2(448, 800, 64, 80)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_b3jts"]
+atlas = ExtResource("1_r1cwe")
+region = Rect2(448, 880, 64, 80)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_tdh30"]
+atlas = ExtResource("1_r1cwe")
+region = Rect2(448, 960, 64, 80)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_f45ku"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_8tee0")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_hdc3f")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_u26t4")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_bsab6")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ni2kj")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_8ue74")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_hdb1s")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_6axko")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_mk7ey")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_awx7p")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_dwtqh")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_b3jts")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_tdh30")
+}],
+"loop": true,
+"name": &"middle_tree",
+"speed": 5.0
+}]
+
 [node name="MidTree" type="Node2D" unique_id=211735143]
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=1679878976]
+sprite_frames = SubResource("SpriteFrames_f45ku")
+animation = &"middle_tree"
+autoplay = "middle_tree"

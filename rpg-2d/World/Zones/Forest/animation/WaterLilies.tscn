@@ -1,4 +1,4 @@
-[gd_scene format=3 uid="uid://dqq73kctlgwtr"]
+[gd_scene format=3 uid="uid://ljw3yjrsbihs"]
 
 [ext_resource type="Texture2D" uid="uid://k2nf10vkqmd4" path="res://Assets/Biome/1.Forest/animation/Water_lilis.png" id="1_mt4kn"]
 
@@ -197,6 +197,6 @@ animations = [{
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=1156990582]
 sprite_frames = SubResource("SF_WaterLilies")
-animation = &"middle"
+animation = &"big"
 autoplay = "middle"
-frame_progress = 0.25293744
+frame_progress = 0.8667131
