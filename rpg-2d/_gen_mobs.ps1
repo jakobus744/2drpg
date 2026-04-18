@@ -553,66 +553,40 @@ foreach ($a in $huntAnimals) {
 #   Row 0=top half (down,up), Row 1=bottom half (left,right)
 # ================================================================
 
-function DirAtlas2x2($dir, $extId, $fw, $fh) {
-    # 2x2 grid direction positions
-    $x = switch ($dir) { "down" {0} "up" {$fw} "left" {0} "right" {$fw} }
-    $y = switch ($dir) { "down" {0} "up" {0}   "left" {$fh} "right" {$fh} }
-    "[sub_resource type=`"AtlasTexture`" id=`"AT_idle_${dir}_0`"]`natlas = ExtResource(`"$extId`")`nregion = Rect2($x, $y, $fw, $fh)`n`n"
-}
-
-function Build2x2FarmScene($name, $uid, $scriptResPath, $texPath, $fw, $fh, $capR, $capH) {
-    $dirs4 = @("down","up","left","right")
+# Farm animals: simple Sprite2D with full texture (1 image, 1 frame, no direction variants)
+function BuildFarmStaticScene($name, $uid, $scriptResPath, $texPath, $capR, $capH) {
     $sb = [System.Text.StringBuilder]::new()
     $null = $sb.AppendLine("[gd_scene format=4 uid=`"uid://${uid}`"]")
     $null = $sb.AppendLine("")
-    $null = $sb.AppendLine("[ext_resource type=`"Texture2D`" path=`"$texPath`" id=`"tex_idle`"]")
+    $null = $sb.AppendLine("[ext_resource type=`"Texture2D`" path=`"$texPath`" id=`"tex_main`"]")
     $null = $sb.AppendLine("[ext_resource type=`"Script`" path=`"$scriptResPath`" id=`"scr_$name`"]")
     $null = $sb.AppendLine("")
-    foreach ($dir in $dirs4) {
-        $null = $sb.Append((DirAtlas2x2 $dir "tex_idle" $fw $fh))
-    }
-    $sfId  = "SF_$name"
-    $capId = "Cap_$name"
-    $null = $sb.AppendLine("[sub_resource type=`"SpriteFrames`" id=`"$sfId`"]")
-    $entries = $dirs4 | ForEach-Object {
-        $dir = $_
-        "{`"frames`": [{`"duration`": 1.0, `"texture`": SubResource(`"AT_idle_${dir}_0`")}], `"loop`": true, `"name`": &`"idle_${dir}`", `"speed`": 6.0}"
-    }
-    $null = $sb.AppendLine("animations = [$($entries -join ', ')]")
-    $null = $sb.AppendLine("")
-    $null = $sb.AppendLine("[sub_resource type=`"CapsuleShape2D`" id=`"$capId`"]")
+    $null = $sb.AppendLine("[sub_resource type=`"CapsuleShape2D`" id=`"Cap_$name`"]")
     $null = $sb.AppendLine("radius = $capR")
     $null = $sb.AppendLine("height = $capH")
     $null = $sb.AppendLine("")
     $null = $sb.AppendLine("[node name=`"$name`" type=`"CharacterBody2D`"]")
     $null = $sb.AppendLine("script = ExtResource(`"scr_$name`")")
     $null = $sb.AppendLine("")
-    $null = $sb.AppendLine("[node name=`"AnimatedSprite2D`" type=`"AnimatedSprite2D`" parent=`".`"]")
-    $null = $sb.AppendLine("sprite_frames = SubResource(`"$sfId`")")
-    $null = $sb.AppendLine("animation = &`"idle_down`"")
+    $null = $sb.AppendLine("[node name=`"Sprite2D`" type=`"Sprite2D`" parent=`".`"]")
+    $null = $sb.AppendLine("texture = ExtResource(`"tex_main`")")
     $null = $sb.AppendLine("")
     $null = $sb.AppendLine("[node name=`"CollisionShape2D`" type=`"CollisionShape2D`" parent=`".`"]")
-    $null = $sb.AppendLine("shape = SubResource(`"$capId`")")
+    $null = $sb.AppendLine("shape = SubResource(`"Cap_$name`")")
     $sb.ToString()
 }
 
-# 2x2 grid farm animals: fw=imgW/2, fh=imgH/2, n=1 per direction cell
-# Cat   256x256 → fw=128, fh=128
-# Dog   192x256 → fw=96,  fh=128
-# Calt  192x256 → fw=96,  fh=128
-# Buffalo 384x512 → fw=192, fh=256
-# Donkey  384x512 → fw=192, fh=256
 $farmAnimals4 = @(
-    @{n="Cat";    sub="FarmAnimal/Cat";    fw=128; fh=128; r=6;  h=10; f="Mobs/village-farm-animal/Cat_animation_without_shadow.png"}
-    @{n="Dog";    sub="FarmAnimal/Dog";    fw=96;  fh=128; r=8;  h=14; f="Mobs/village-farm-animal/Dog_animation_without_shadow.png"}
-    @{n="Calt";   sub="FarmAnimal/Calt";   fw=96;  fh=128; r=10; h=18; f="Mobs/village-farm-animal/Calt_animation_without_shadow.png"}
-    @{n="Buffalo";sub="FarmAnimal/Buffalo";fw=192; fh=256; r=18; h=32; f="Mobs/village-farm-animal/Buffalo_animation_without_shadow.png"}
-    @{n="Donkey"; sub="FarmAnimal/Donkey"; fw=192; fh=256; r=14; h=28; f="Mobs/village-farm-animal/Donkey_animation_without_shadow.png"}
+    @{n="Cat";    sub="FarmAnimal/Cat";    r=6;  h=10; f="Mobs/village-farm-animal/Cat_animation_without_shadow.png"}
+    @{n="Dog";    sub="FarmAnimal/Dog";    r=8;  h=14; f="Mobs/village-farm-animal/Dog_animation_without_shadow.png"}
+    @{n="Calt";   sub="FarmAnimal/Calt";   r=10; h=18; f="Mobs/village-farm-animal/Calt_animation_without_shadow.png"}
+    @{n="Buffalo";sub="FarmAnimal/Buffalo";r=18; h=32; f="Mobs/village-farm-animal/Buffalo_animation_without_shadow.png"}
+    @{n="Donkey"; sub="FarmAnimal/Donkey"; r=14; h=28; f="Mobs/village-farm-animal/Donkey_animation_without_shadow.png"}
 )
 foreach ($a in $farmAnimals4) {
     $sceneDir  = "$MOBS\$($a.sub)"
     $scriptRes = "res://Mobs/$($a.sub.Replace('\','/'))/$(${a}.n).cs"
-    Write-Scene "$sceneDir\$($a.n).tscn" (Build2x2FarmScene $a.n "mob_$($a.n.ToLower())" $scriptRes "$ASSETS/$($a.f)" $a.fw $a.fh $a.r $a.h)
+    Write-Scene "$sceneDir\$($a.n).tscn" (BuildFarmStaticScene $a.n "mob_$($a.n.ToLower())" $scriptRes "$ASSETS/$($a.f)" $a.r $a.h)
     Write-Scene "$sceneDir\$($a.n).cs"   (FarmAnimalCs $a.n)
 }
 

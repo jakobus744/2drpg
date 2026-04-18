@@ -1888,3 +1888,5 @@ shape = SubResource("CapsuleShape2D_ur7pv")
 
 [node name="Camera2D" type="Camera2D" parent="." unique_id=1319663386]
 position = Vector2(2, 0)
+
+[node name="Bone2D" type="Bone2D" parent="." unique_id=946633017]

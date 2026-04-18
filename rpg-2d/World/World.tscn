@@ -3,7 +3,7 @@
 [ext_resource type="Texture2D" uid="uid://bnxnvadcjr2lm" path="res://art/Wood/mystic_woods_free_2.2/sprites/tilesets/grass.png" id="1_wjoj8"]
 [ext_resource type="Texture2D" uid="uid://dh1hcjlxoe83d" path="res://art/Wood/mystic_woods_free_2.2/sprites/tilesets/plains.png" id="3_jj0au"]
 [ext_resource type="PackedScene" uid="uid://dnuayd7wjni33" path="res://tutorial/tutorial_player.tscn" id="4_bdp8l"]
-[ext_resource type="Texture2D" path="res://Forest.png" id="4_jj0au"]
+[ext_resource type="Texture2D" path="res://Assets/Biome/1.Forest/Objects.png" id="4_jj0au"]
 
 [sub_resource type="CompressedTexture2D" id="CompressedTexture2D_wjoj8"]
 load_path = "res://.godot/imported/objects.png-5ab4ada1e3edafb7db4fdcb01d7e8a6e.ctex"

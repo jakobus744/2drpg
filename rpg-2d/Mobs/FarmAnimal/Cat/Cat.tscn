@@ -1,26 +1,7 @@
 [gd_scene format=4 uid="uid://mob_cat"]
 
-[ext_resource type="Texture2D" path="res://Assets/Mobs/village-farm-animal/Cat_animation_without_shadow.png" id="tex_idle"]
+[ext_resource type="Texture2D" path="res://Assets/Mobs/village-farm-animal/Cat_animation_without_shadow.png" id="tex_main"]
 [ext_resource type="Script" path="res://Mobs/FarmAnimal/Cat/Cat.cs" id="scr_Cat"]
-
-[sub_resource type="AtlasTexture" id="AT_idle_down_0"]
-atlas = ExtResource("tex_idle")
-region = Rect2(0, 0, 128, 128)
-
-[sub_resource type="AtlasTexture" id="AT_idle_up_0"]
-atlas = ExtResource("tex_idle")
-region = Rect2(128, 0, 128, 128)
-
-[sub_resource type="AtlasTexture" id="AT_idle_left_0"]
-atlas = ExtResource("tex_idle")
-region = Rect2(0, 128, 128, 128)
-
-[sub_resource type="AtlasTexture" id="AT_idle_right_0"]
-atlas = ExtResource("tex_idle")
-region = Rect2(128, 128, 128, 128)
-
-[sub_resource type="SpriteFrames" id="SF_Cat"]
-animations = [{"frames": [{"duration": 1.0, "texture": SubResource("AT_idle_down_0")}], "loop": true, "name": &"idle_down", "speed": 6.0}, {"frames": [{"duration": 1.0, "texture": SubResource("AT_idle_up_0")}], "loop": true, "name": &"idle_up", "speed": 6.0}, {"frames": [{"duration": 1.0, "texture": SubResource("AT_idle_left_0")}], "loop": true, "name": &"idle_left", "speed": 6.0}, {"frames": [{"duration": 1.0, "texture": SubResource("AT_idle_right_0")}], "loop": true, "name": &"idle_right", "speed": 6.0}]
 
 [sub_resource type="CapsuleShape2D" id="Cap_Cat"]
 radius = 6
@@ -29,9 +10,8 @@ height = 10
 [node name="Cat" type="CharacterBody2D"]
 script = ExtResource("scr_Cat")
 
-[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
-sprite_frames = SubResource("SF_Cat")
-animation = &"idle_down"
+[node name="Sprite2D" type="Sprite2D" parent="."]
+texture = ExtResource("tex_main")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 shape = SubResource("Cap_Cat")
