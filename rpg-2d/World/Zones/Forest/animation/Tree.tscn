@@ -512,7 +512,7 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_ts4kc")
 }],
-"loop": true,
+"loop": false,
 "name": &"big_apple_tree",
 "speed": 5.0
 }, {
@@ -556,7 +556,7 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_y14v7")
 }],
-"loop": true,
+"loop": false,
 "name": &"big_normal_tree",
 "speed": 8.0
 }, {
@@ -873,5 +873,5 @@ animations = [{
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=624092399]
 sprite_frames = SubResource("SF_Tree")
-animation = &"little_tree"
+animation = &"big_normal_tree"
 autoplay = "big_normal_tree"

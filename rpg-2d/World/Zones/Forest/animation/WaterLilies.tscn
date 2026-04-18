@@ -197,5 +197,6 @@ animations = [{
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=1156990582]
 sprite_frames = SubResource("SF_WaterLilies")
-animation = &"more"
-autoplay = "animate"
+animation = &"middle"
+autoplay = "middle"
+frame_progress = 0.25293744

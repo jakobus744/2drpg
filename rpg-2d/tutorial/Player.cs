@@ -1,211 +1,196 @@
 using Godot;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 
 public partial class Player : CharacterBody2D
 {
-	private const float SpeedWalk = 70.0f;
-	private const float SpeedRun = 100.0f;
+    // ── Geschwindigkeit ───────────────────────────────────────
+    private const float SpeedWalk  = 70f;
+    private const float SpeedRun   = 100f;
 
-	public enum MoveState { Idle, Walk, Run }
+    public enum MoveState { Idle, Walk, Run }
 
-	private MoveState _moveState = MoveState.Idle;
-	private MoveState _lastMoveState = MoveState.Idle;
+    // ── Zustand ───────────────────────────────────────────────
+    private MoveState _moveState     = MoveState.Idle;
+    private MoveState _lastMoveState = MoveState.Idle;
+    private Vector2   _facingDirection = Vector2.Down;
+    private bool      _isAttacking  = false;
+    private bool      _isRolling   = false;
 
-	private Vector2 _facingDirection = Vector2.Down;
-	private bool _isAttacking = false;
+    // Letzte-Taste-gewinnt Input
+    private string       _activeDirection   = "";
+    private List<string> _pressedDirections = new();
 
-	// Für "letzte Taste gewinnt"
-	private string _activeDirection = "";
-	private List<string> _pressedDirections = new List<string>();
+    // ── Nodes ─────────────────────────────────────────────────
+    private AnimatedSprite2D _anim;
 
-	private AnimatedSprite2D _anim;
+    // ═════════════════════════════════════════════════════════
+    // _Ready
+    // ═════════════════════════════════════════════════════════
+    public override void _Ready()
+    {
+        _anim = GetNode<AnimatedSprite2D>("AnimatedSprite2D");
+        _anim.AnimationFinished += OnAnimationFinished;
+    }
 
-	public override void _Ready()
-	{
-		_anim = GetNode<AnimatedSprite2D>("AnimatedSprite2D");
-		
-		// In C# verbinden wir Signale meistens über Events (+=)
-		_anim.AnimationFinished += OnAnimationFinished;
-	}
+    // ═════════════════════════════════════════════════════════
+    // Hauptschleife
+    // ═════════════════════════════════════════════════════════
+    public override void _PhysicsProcess(double delta)
+    {
+        HandleDirectionInput();
+        HandleAttackInput();
+        HandleRollInput();
+        HandleMovement();
+        UpdateAnimation();
+        MoveAndSlide();
+    }
 
-	// HAUPTSCHLEIFE
-	public override void _PhysicsProcess(double delta)
-	{
-		HandleDirectionInput();
-		HandleAttackInput();
-		HandleMovement();
-		UpdateAnimation();
-		MoveAndSlide();
-	}
+    // ═════════════════════════════════════════════════════════
+    // Input / Bewegung
+    // ═════════════════════════════════════════════════════════
+    private void HandleDirectionInput()
+    {
+        if (Input.IsActionJustPressed("up"))    AddDirection("up");
+        if (Input.IsActionJustPressed("down"))  AddDirection("down");
+        if (Input.IsActionJustPressed("left"))  AddDirection("left");
+        if (Input.IsActionJustPressed("right")) AddDirection("right");
 
-	// RICHTUNGS-INPUT (Letzte Taste gewinnt)
-	private void HandleDirectionInput()
-	{
-		if (Input.IsActionJustPressed("up")) AddDirection("up");
-		if (Input.IsActionJustPressed("down")) AddDirection("down");
-		if (Input.IsActionJustPressed("left")) AddDirection("left");
-		if (Input.IsActionJustPressed("right")) AddDirection("right");
+        if (Input.IsActionJustReleased("up"))    RemoveDirection("up");
+        if (Input.IsActionJustReleased("down"))  RemoveDirection("down");
+        if (Input.IsActionJustReleased("left"))  RemoveDirection("left");
+        if (Input.IsActionJustReleased("right")) RemoveDirection("right");
 
-		if (Input.IsActionJustReleased("up")) RemoveDirection("up");
-		if (Input.IsActionJustReleased("down")) RemoveDirection("down");
-		if (Input.IsActionJustReleased("left")) RemoveDirection("left");
-		if (Input.IsActionJustReleased("right")) RemoveDirection("right");
+        _activeDirection = _pressedDirections.Count > 0
+            ? _pressedDirections.Last()
+            : "";
+    }
 
-		if (_pressedDirections.Count > 0)
-		{
-			// System.Linq erlaubt uns hier .Last() auf der Liste aufzurufen
-			_activeDirection = _pressedDirections.Last();
-		}
-		else
-		{
-			_activeDirection = "";
-		}
-	}
+    private void AddDirection(string dir)
+    {
+        if (!_pressedDirections.Contains(dir))
+            _pressedDirections.Add(dir);
+    }
 
-	private void AddDirection(string dir)
-	{
-		if (!_pressedDirections.Contains(dir))
-		{
-			_pressedDirections.Add(dir);
-		}
-	}
+    private void RemoveDirection(string dir) => _pressedDirections.Remove(dir);
 
-	private void RemoveDirection(string dir)
-	{
-		_pressedDirections.Remove(dir);
-	}
+    private void HandleAttackInput()
+    {
+        if (Input.IsActionJustPressed("attack"))
+            StartAttack();
+    }
 
-	// ATTACK-INPUT
-	private void HandleAttackInput()
-	{
-		if (Input.IsActionJustPressed("attack"))
-		{
-			StartAttack();
-		}
-	}
+    private void HandleRollInput()
+    {
+        if (Input.IsActionJustPressed("roll"))
+            StartRoll();
+    }
 
-	private void StartAttack()
-	{
-		if (_isAttacking) return;
+    private void StartRoll()
+    {
+        if (_isRolling || _isAttacking) return;
+        string animName = "roll_" + GetDirectionName();
+        if (!_anim.SpriteFrames.HasAnimation(animName))
+        {
+            GD.Print($"[Roll] Animation '{animName}' nicht gefunden!");
+            return;
+        }
+        _isRolling = true;
+        _anim.Play(animName);
+    }
 
-		_isAttacking = true;
+    private void StartAttack()
+    {
+        if (_isAttacking) return;
+        _isAttacking = true;
+        _anim.Play(GetAttackAnimationName(GetDirectionName()));
+    }
 
-		string dirName = GetDirectionName();
-		string attackAnim = GetAttackAnimationName(dirName);
-		_anim.Play(attackAnim);
-	}
+    private string GetAttackAnimationName(string dir) => _moveState switch
+    {
+        MoveState.Run  => "run_attack_"  + dir,
+        MoveState.Walk => "walk_attack_" + dir,
+        _              => "attack_"      + dir,
+    };
 
-	private string GetAttackAnimationName(string dirName)
-	{
-		switch (_moveState)
-		{
-			case MoveState.Run:
-				return "run_attack_" + dirName;
-			case MoveState.Walk:
-				return "walk_attack_" + dirName;
-			default:
-				return "attack_" + dirName;
-		}
-	}
+    private void HandleMovement()
+    {
+        Vector2 inputDir  = GetCombinedMovementVector();
+        bool    isRunning = Input.IsActionPressed("run");
 
-	// BEWEGUNG BERECHNEN
-	private void HandleMovement()
-	{
-		Vector2 inputDir = DirectionStringToVector(_activeDirection);
-		bool isRunning = Input.IsActionPressed("run");
+        if (inputDir == Vector2.Zero)
+        {
+            _lastMoveState = _moveState;
+            _moveState     = MoveState.Idle;
+            Velocity       = Vector2.Zero;
+        }
+        else
+        {
+            // Facing bleibt auf letzter gedrückter Taste (für Animation)
+            _facingDirection = DirectionStringToVector(_activeDirection);
+            _moveState       = isRunning ? MoveState.Run  : MoveState.Walk;
+            Velocity         = inputDir  * (isRunning ? SpeedRun : SpeedWalk);
+        }
+    }
 
-		if (inputDir == Vector2.Zero)
-		{
-			_lastMoveState = _moveState;
-			_moveState = MoveState.Idle;
-			Velocity = Vector2.Zero;
-		}
-		else
-		{
-			_facingDirection = inputDir;
+    private Vector2 GetCombinedMovementVector()
+    {
+        Vector2 combined = Vector2.Zero;
+        foreach (string dir in _pressedDirections)
+            combined += DirectionStringToVector(dir);
+        return combined == Vector2.Zero ? Vector2.Zero : combined.Normalized();
+    }
 
-			if (isRunning)
-			{
-				_moveState = MoveState.Run;
-				Velocity = inputDir * SpeedRun;
-			}
-			else
-			{
-				_moveState = MoveState.Walk;
-				Velocity = inputDir * SpeedWalk;
-			}
-		}
-	}
+    private Vector2 DirectionStringToVector(string dir) => dir switch
+    {
+        "up"    => Vector2.Up,
+        "down"  => Vector2.Down,
+        "left"  => Vector2.Left,
+        "right" => Vector2.Right,
+        _       => Vector2.Zero,
+    };
 
-	private Vector2 DirectionStringToVector(string dir)
-	{
-		switch (dir)
-		{
-			case "up": return Vector2.Up;
-			case "down": return Vector2.Down;
-			case "left": return Vector2.Left;
-			case "right": return Vector2.Right;
-			default: return Vector2.Zero;
-		}
-	}
+    // ═════════════════════════════════════════════════════════
+    // Animation
+    // ═════════════════════════════════════════════════════════
+    private void UpdateAnimation()
+    {
+        if (_isAttacking || _isRolling) return;
 
-	// ANIMATION
-	private void UpdateAnimation()
-	{
-		if (_isAttacking) return;
+        string dir = GetDirectionName();
+        switch (_moveState)
+        {
+            case MoveState.Idle: PlayIdleAnimation(dir); break;
+            case MoveState.Walk: _anim.Play("walk_" + dir); break;
+            case MoveState.Run:  _anim.Play("run_"  + dir); break;
+        }
+    }
 
-		string dirName = GetDirectionName();
+    private void PlayIdleAnimation(string dir)
+    {
+        string anim = _lastMoveState == MoveState.Run
+            ? "idle_" + dir + ".2"
+            : "idle_" + dir + ".1";
 
-		switch (_moveState)
-		{
-			case MoveState.Idle:
-				PlayIdleAnimation(dirName);
-				break;
-			case MoveState.Walk:
-				_anim.Play("walk_" + dirName);
-				break;
-			case MoveState.Run:
-				_anim.Play("run_" + dirName);
-				break;
-		}
-	}
+        if (!_anim.SpriteFrames.HasAnimation(anim))
+            anim = "idle_" + dir;
 
-	private void PlayIdleAnimation(string dirName)
-	{
-		if (_lastMoveState == MoveState.Run)
-		{
-			_anim.Play("idle_" + dirName + ".2");
-		}
-		else
-		{
-			string idleAnim = "idle_" + dirName + ".1";
-			
-			// In C# rufen wir SpriteFrames direkt als Eigenschaft ab
-			if (!_anim.SpriteFrames.HasAnimation(idleAnim))
-			{
-				idleAnim = "idle_" + dirName;
-			}
-			_anim.Play(idleAnim);
-		}
-	}
+        _anim.Play(anim);
+    }
 
-	private string GetDirectionName()
-	{
-		if (_facingDirection == Vector2.Right) return "right";
-		if (_facingDirection == Vector2.Left) return "left";
-		if (_facingDirection == Vector2.Up) return "up";
-		return "down";
-	}
+    private string GetDirectionName()
+    {
+        if (_facingDirection == Vector2.Right) return "right";
+        if (_facingDirection == Vector2.Left)  return "left";
+        if (_facingDirection == Vector2.Up)    return "up";
+        return "down";
+    }
 
-	// SIGNAL CALLBACKS
-	private void OnAnimationFinished()
-	{
-		// .Animation gibt ein StringName Objekt zurück, .ToString() macht daraus einen C# String
-		if (_anim.Animation.ToString().Contains("attack"))
-		{
-			_isAttacking = false;
-		}
-	}
+    private void OnAnimationFinished()
+    {
+        if (_anim.Animation.ToString().Contains("attack"))
+            _isAttacking = false;
+        if (_anim.Animation.ToString().Contains("roll"))
+            _isRolling = false;
+    }
 }
