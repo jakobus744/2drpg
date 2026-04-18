@@ -1,0 +1,33 @@
+[gd_scene format=4 uid="uid://npc_thief"]
+
+[ext_resource type="Texture2D" path="res://Assets/Charakter/citizens/Thief_idle.png" id="tex_main"]
+[ext_resource type="Script" path="res://Mobs/NPC/Thief/Thief.cs" id="scr_Thief"]
+
+[sub_resource type="AtlasTexture" id="AT_idle_down_0"]
+atlas = ExtResource("tex_main")
+region = Rect2(0, 0, 48, 64)
+
+[sub_resource type="AtlasTexture" id="AT_idle_down_1"]
+atlas = ExtResource("tex_main")
+region = Rect2(48, 0, 48, 64)
+
+[sub_resource type="AtlasTexture" id="AT_idle_down_2"]
+atlas = ExtResource("tex_main")
+region = Rect2(96, 0, 48, 64)
+
+[sub_resource type="SpriteFrames" id="SF_Thief"]
+animations = [{"frames": [{"duration": 1.0, "texture": SubResource("AT_idle_down_0")}, {"duration": 1.0, "texture": SubResource("AT_idle_down_1")}, {"duration": 1.0, "texture": SubResource("AT_idle_down_2")}], "loop": true, "name": &"idle_down", "speed": 8.0}]
+
+[sub_resource type="CapsuleShape2D" id="Cap_Thief"]
+radius = 8
+height = 16
+
+[node name="Thief" type="CharacterBody2D"]
+script = ExtResource("scr_Thief")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+sprite_frames = SubResource("SF_Thief")
+animation = &"idle_down"
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("Cap_Thief")

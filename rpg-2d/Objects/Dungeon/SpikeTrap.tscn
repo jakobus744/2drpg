@@ -1,0 +1,37 @@
+[gd_scene format=4 uid="uid://obj_spiketrap"]
+
+[ext_resource type="Texture2D" path="res://Assets/Biome/Dungeon/Skellet Dungeon/animation/Spike_trap.png" id="tex_main"]
+
+[sub_resource type="AtlasTexture" id="AT_0"]
+atlas = ExtResource("tex_main")
+region = Rect2(0, 0, 48, 48)
+
+[sub_resource type="AtlasTexture" id="AT_1"]
+atlas = ExtResource("tex_main")
+region = Rect2(0, 48, 48, 48)
+
+[sub_resource type="AtlasTexture" id="AT_2"]
+atlas = ExtResource("tex_main")
+region = Rect2(0, 96, 48, 48)
+
+[sub_resource type="AtlasTexture" id="AT_3"]
+atlas = ExtResource("tex_main")
+region = Rect2(0, 144, 48, 48)
+
+[sub_resource type="AtlasTexture" id="AT_4"]
+atlas = ExtResource("tex_main")
+region = Rect2(0, 192, 48, 48)
+
+[sub_resource type="AtlasTexture" id="AT_5"]
+atlas = ExtResource("tex_main")
+region = Rect2(0, 240, 48, 48)
+
+[sub_resource type="SpriteFrames" id="SF_SpikeTrap"]
+animations = [{"frames": [{"duration": 1.0, "texture": SubResource("AT_0")}, {"duration": 1.0, "texture": SubResource("AT_1")}, {"duration": 1.0, "texture": SubResource("AT_2")}, {"duration": 1.0, "texture": SubResource("AT_3")}, {"duration": 1.0, "texture": SubResource("AT_4")}, {"duration": 1.0, "texture": SubResource("AT_5")}], "loop": true, "name": &"extend", "speed": 6.0}]
+
+[node name="SpikeTrap" type="Node2D"]
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+sprite_frames = SubResource("SF_SpikeTrap")
+animation = &"extend"
+autoplay = "extend"

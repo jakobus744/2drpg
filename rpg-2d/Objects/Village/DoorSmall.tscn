@@ -1,0 +1,40 @@
+[gd_scene format=4 uid="uid://obj_doorsm"]
+
+[ext_resource type="Texture2D" path="res://Assets/Biome/village/taverne/animation/door_small.png" id="tex_main"]
+
+[sub_resource type="AtlasTexture" id="AT_0"]
+atlas = ExtResource("tex_main")
+region = Rect2(0, 0, 160, 32)
+
+[sub_resource type="AtlasTexture" id="AT_1"]
+atlas = ExtResource("tex_main")
+region = Rect2(0, 32, 160, 32)
+
+[sub_resource type="AtlasTexture" id="AT_2"]
+atlas = ExtResource("tex_main")
+region = Rect2(0, 64, 160, 32)
+
+[sub_resource type="AtlasTexture" id="AT_3"]
+atlas = ExtResource("tex_main")
+region = Rect2(0, 96, 160, 32)
+
+[sub_resource type="AtlasTexture" id="AT_4"]
+atlas = ExtResource("tex_main")
+region = Rect2(0, 128, 160, 32)
+
+[sub_resource type="AtlasTexture" id="AT_5"]
+atlas = ExtResource("tex_main")
+region = Rect2(0, 160, 160, 32)
+
+[sub_resource type="AtlasTexture" id="AT_6"]
+atlas = ExtResource("tex_main")
+region = Rect2(0, 192, 160, 32)
+
+[sub_resource type="SpriteFrames" id="SF_DoorSmall"]
+animations = [{"frames": [{"duration": 1.0, "texture": SubResource("AT_0")}, {"duration": 1.0, "texture": SubResource("AT_1")}, {"duration": 1.0, "texture": SubResource("AT_2")}, {"duration": 1.0, "texture": SubResource("AT_3")}, {"duration": 1.0, "texture": SubResource("AT_4")}, {"duration": 1.0, "texture": SubResource("AT_5")}, {"duration": 1.0, "texture": SubResource("AT_6")}], "loop": false, "name": &"open", "speed": 8.0}]
+
+[node name="DoorSmall" type="Node2D"]
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+sprite_frames = SubResource("SF_DoorSmall")
+animation = &"open"

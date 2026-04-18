@@ -1,125 +1,37 @@
-[gd_scene format=3 uid="uid://bllbm04f11hnl"]
+[gd_scene format=4 uid="uid://mob_calt"]
 
-[ext_resource type="Script" uid="uid://b5536uoyhbgqn" path="res://Mobs/FarmAnimal/Calt/Calt.cs" id="scr_Calt"]
-[ext_resource type="Texture2D" uid="uid://ysslnik17cam" path="res://Assets/Mobs/village-farm-animal/Calt_animation_without_shadow.png" id="tex_idle"]
+[ext_resource type="Texture2D" path="res://Assets/Mobs/village-farm-animal/Calt_animation_without_shadow.png" id="tex_idle"]
+[ext_resource type="Script" path="res://Mobs/FarmAnimal/Calt/Calt.cs" id="scr_Calt"]
 
 [sub_resource type="AtlasTexture" id="AT_idle_down_0"]
 atlas = ExtResource("tex_idle")
-region = Rect2(0, 0, 64, 64)
-
-[sub_resource type="AtlasTexture" id="AT_idle_down_1"]
-atlas = ExtResource("tex_idle")
-region = Rect2(64, 0, 64, 64)
-
-[sub_resource type="AtlasTexture" id="AT_idle_down_2"]
-atlas = ExtResource("tex_idle")
-region = Rect2(128, 0, 64, 64)
-
-[sub_resource type="AtlasTexture" id="AT_idle_left_0"]
-atlas = ExtResource("tex_idle")
-region = Rect2(0, 128, 64, 64)
-
-[sub_resource type="AtlasTexture" id="AT_idle_left_1"]
-atlas = ExtResource("tex_idle")
-region = Rect2(64, 128, 64, 64)
-
-[sub_resource type="AtlasTexture" id="AT_idle_left_2"]
-atlas = ExtResource("tex_idle")
-region = Rect2(128, 128, 64, 64)
-
-[sub_resource type="AtlasTexture" id="AT_idle_right_0"]
-atlas = ExtResource("tex_idle")
-region = Rect2(0, 192, 64, 64)
-
-[sub_resource type="AtlasTexture" id="AT_idle_right_1"]
-atlas = ExtResource("tex_idle")
-region = Rect2(64, 192, 64, 64)
-
-[sub_resource type="AtlasTexture" id="AT_idle_right_2"]
-atlas = ExtResource("tex_idle")
-region = Rect2(128, 192, 64, 64)
+region = Rect2(0, 0, 96, 128)
 
 [sub_resource type="AtlasTexture" id="AT_idle_up_0"]
 atlas = ExtResource("tex_idle")
-region = Rect2(0, 64, 64, 64)
+region = Rect2(96, 0, 96, 128)
 
-[sub_resource type="AtlasTexture" id="AT_idle_up_1"]
+[sub_resource type="AtlasTexture" id="AT_idle_left_0"]
 atlas = ExtResource("tex_idle")
-region = Rect2(64, 64, 64, 64)
+region = Rect2(0, 128, 96, 128)
 
-[sub_resource type="AtlasTexture" id="AT_idle_up_2"]
+[sub_resource type="AtlasTexture" id="AT_idle_right_0"]
 atlas = ExtResource("tex_idle")
-region = Rect2(128, 64, 64, 64)
+region = Rect2(96, 128, 96, 128)
 
 [sub_resource type="SpriteFrames" id="SF_Calt"]
-animations = [{
-"frames": [{
-"duration": 1.0,
-"texture": SubResource("AT_idle_down_0")
-}, {
-"duration": 1.0,
-"texture": SubResource("AT_idle_down_1")
-}, {
-"duration": 1.0,
-"texture": SubResource("AT_idle_down_2")
-}],
-"loop": true,
-"name": &"idle_down",
-"speed": 6.0
-}, {
-"frames": [{
-"duration": 1.0,
-"texture": SubResource("AT_idle_left_0")
-}, {
-"duration": 1.0,
-"texture": SubResource("AT_idle_left_1")
-}, {
-"duration": 1.0,
-"texture": SubResource("AT_idle_left_2")
-}],
-"loop": true,
-"name": &"idle_left",
-"speed": 6.0
-}, {
-"frames": [{
-"duration": 1.0,
-"texture": SubResource("AT_idle_right_0")
-}, {
-"duration": 1.0,
-"texture": SubResource("AT_idle_right_1")
-}, {
-"duration": 1.0,
-"texture": SubResource("AT_idle_right_2")
-}],
-"loop": true,
-"name": &"idle_right",
-"speed": 6.0
-}, {
-"frames": [{
-"duration": 1.0,
-"texture": SubResource("AT_idle_up_0")
-}, {
-"duration": 1.0,
-"texture": SubResource("AT_idle_up_1")
-}, {
-"duration": 1.0,
-"texture": SubResource("AT_idle_up_2")
-}],
-"loop": true,
-"name": &"idle_up",
-"speed": 6.0
-}]
+animations = [{"frames": [{"duration": 1.0, "texture": SubResource("AT_idle_down_0")}], "loop": true, "name": &"idle_down", "speed": 6.0}, {"frames": [{"duration": 1.0, "texture": SubResource("AT_idle_up_0")}], "loop": true, "name": &"idle_up", "speed": 6.0}, {"frames": [{"duration": 1.0, "texture": SubResource("AT_idle_left_0")}], "loop": true, "name": &"idle_left", "speed": 6.0}, {"frames": [{"duration": 1.0, "texture": SubResource("AT_idle_right_0")}], "loop": true, "name": &"idle_right", "speed": 6.0}]
 
 [sub_resource type="CapsuleShape2D" id="Cap_Calt"]
-radius = 9.0
-height = 18.0
+radius = 10
+height = 18
 
-[node name="Calt" type="CharacterBody2D" unique_id=1704445740]
+[node name="Calt" type="CharacterBody2D"]
 script = ExtResource("scr_Calt")
 
-[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=686096664]
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
 sprite_frames = SubResource("SF_Calt")
-animation = &"idle_right"
+animation = &"idle_down"
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1182757577]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 shape = SubResource("Cap_Calt")

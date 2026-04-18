@@ -1,0 +1,53 @@
+[gd_scene format=4 uid="uid://npc_tradermagic"]
+
+[ext_resource type="Texture2D" path="res://Assets/Charakter/citizens/Trader_magic_animation_with_shadow.png" id="tex_main"]
+[ext_resource type="Script" path="res://Mobs/NPC/TraderMagic/TraderMagic.cs" id="scr_TraderMagic"]
+
+[sub_resource type="AtlasTexture" id="AT_idle_down_0"]
+atlas = ExtResource("tex_main")
+region = Rect2(0, 0, 48, 48)
+
+[sub_resource type="AtlasTexture" id="AT_idle_down_1"]
+atlas = ExtResource("tex_main")
+region = Rect2(48, 0, 48, 48)
+
+[sub_resource type="AtlasTexture" id="AT_idle_down_2"]
+atlas = ExtResource("tex_main")
+region = Rect2(96, 0, 48, 48)
+
+[sub_resource type="AtlasTexture" id="AT_idle_down_3"]
+atlas = ExtResource("tex_main")
+region = Rect2(144, 0, 48, 48)
+
+[sub_resource type="AtlasTexture" id="AT_idle_down_4"]
+atlas = ExtResource("tex_main")
+region = Rect2(192, 0, 48, 48)
+
+[sub_resource type="AtlasTexture" id="AT_idle_down_5"]
+atlas = ExtResource("tex_main")
+region = Rect2(240, 0, 48, 48)
+
+[sub_resource type="AtlasTexture" id="AT_idle_down_6"]
+atlas = ExtResource("tex_main")
+region = Rect2(288, 0, 48, 48)
+
+[sub_resource type="AtlasTexture" id="AT_idle_down_7"]
+atlas = ExtResource("tex_main")
+region = Rect2(336, 0, 48, 48)
+
+[sub_resource type="SpriteFrames" id="SF_TraderMagic"]
+animations = [{"frames": [{"duration": 1.0, "texture": SubResource("AT_idle_down_0")}, {"duration": 1.0, "texture": SubResource("AT_idle_down_1")}, {"duration": 1.0, "texture": SubResource("AT_idle_down_2")}, {"duration": 1.0, "texture": SubResource("AT_idle_down_3")}, {"duration": 1.0, "texture": SubResource("AT_idle_down_4")}, {"duration": 1.0, "texture": SubResource("AT_idle_down_5")}, {"duration": 1.0, "texture": SubResource("AT_idle_down_6")}, {"duration": 1.0, "texture": SubResource("AT_idle_down_7")}], "loop": true, "name": &"idle_down", "speed": 8.0}]
+
+[sub_resource type="CapsuleShape2D" id="Cap_TraderMagic"]
+radius = 6
+height = 14
+
+[node name="TraderMagic" type="CharacterBody2D"]
+script = ExtResource("scr_TraderMagic")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+sprite_frames = SubResource("SF_TraderMagic")
+animation = &"idle_down"
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("Cap_TraderMagic")

@@ -1,0 +1,69 @@
+[gd_scene format=4 uid="uid://npc_mage3"]
+
+[ext_resource type="Texture2D" path="res://Assets/Charakter/NPC/Mage3.png" id="tex_main"]
+[ext_resource type="Script" path="res://Mobs/NPC/Mage3/Mage3.cs" id="scr_Mage3"]
+
+[sub_resource type="AtlasTexture" id="AT_idle_down_0"]
+atlas = ExtResource("tex_main")
+region = Rect2(0, 0, 48, 48)
+
+[sub_resource type="AtlasTexture" id="AT_idle_down_1"]
+atlas = ExtResource("tex_main")
+region = Rect2(48, 0, 48, 48)
+
+[sub_resource type="AtlasTexture" id="AT_idle_down_2"]
+atlas = ExtResource("tex_main")
+region = Rect2(96, 0, 48, 48)
+
+[sub_resource type="AtlasTexture" id="AT_idle_down_3"]
+atlas = ExtResource("tex_main")
+region = Rect2(144, 0, 48, 48)
+
+[sub_resource type="AtlasTexture" id="AT_idle_down_4"]
+atlas = ExtResource("tex_main")
+region = Rect2(192, 0, 48, 48)
+
+[sub_resource type="AtlasTexture" id="AT_idle_down_5"]
+atlas = ExtResource("tex_main")
+region = Rect2(240, 0, 48, 48)
+
+[sub_resource type="AtlasTexture" id="AT_idle_down_6"]
+atlas = ExtResource("tex_main")
+region = Rect2(288, 0, 48, 48)
+
+[sub_resource type="AtlasTexture" id="AT_idle_down_7"]
+atlas = ExtResource("tex_main")
+region = Rect2(336, 0, 48, 48)
+
+[sub_resource type="AtlasTexture" id="AT_idle_down_8"]
+atlas = ExtResource("tex_main")
+region = Rect2(384, 0, 48, 48)
+
+[sub_resource type="AtlasTexture" id="AT_idle_down_9"]
+atlas = ExtResource("tex_main")
+region = Rect2(432, 0, 48, 48)
+
+[sub_resource type="AtlasTexture" id="AT_idle_down_10"]
+atlas = ExtResource("tex_main")
+region = Rect2(480, 0, 48, 48)
+
+[sub_resource type="AtlasTexture" id="AT_idle_down_11"]
+atlas = ExtResource("tex_main")
+region = Rect2(528, 0, 48, 48)
+
+[sub_resource type="SpriteFrames" id="SF_Mage3"]
+animations = [{"frames": [{"duration": 1.0, "texture": SubResource("AT_idle_down_0")}, {"duration": 1.0, "texture": SubResource("AT_idle_down_1")}, {"duration": 1.0, "texture": SubResource("AT_idle_down_2")}, {"duration": 1.0, "texture": SubResource("AT_idle_down_3")}, {"duration": 1.0, "texture": SubResource("AT_idle_down_4")}, {"duration": 1.0, "texture": SubResource("AT_idle_down_5")}, {"duration": 1.0, "texture": SubResource("AT_idle_down_6")}, {"duration": 1.0, "texture": SubResource("AT_idle_down_7")}, {"duration": 1.0, "texture": SubResource("AT_idle_down_8")}, {"duration": 1.0, "texture": SubResource("AT_idle_down_9")}, {"duration": 1.0, "texture": SubResource("AT_idle_down_10")}, {"duration": 1.0, "texture": SubResource("AT_idle_down_11")}], "loop": true, "name": &"idle_down", "speed": 8.0}]
+
+[sub_resource type="CapsuleShape2D" id="Cap_Mage3"]
+radius = 8
+height = 18
+
+[node name="Mage3" type="CharacterBody2D"]
+script = ExtResource("scr_Mage3")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+sprite_frames = SubResource("SF_Mage3")
+animation = &"idle_down"
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("Cap_Mage3")

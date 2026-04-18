@@ -1,0 +1,157 @@
+[gd_scene format=4 uid="uid://obj_birdfly"]
+
+[ext_resource type="Texture2D" path="res://Assets/Biome/1.Forest/animation/bird_fly_animation.png" id="tex_main"]
+
+[sub_resource type="AtlasTexture" id="AT_fly_down_0"]
+atlas = ExtResource("tex_main")
+region = Rect2(0, 0, 48, 128)
+
+[sub_resource type="AtlasTexture" id="AT_fly_down_1"]
+atlas = ExtResource("tex_main")
+region = Rect2(48, 0, 48, 128)
+
+[sub_resource type="AtlasTexture" id="AT_fly_down_2"]
+atlas = ExtResource("tex_main")
+region = Rect2(96, 0, 48, 128)
+
+[sub_resource type="AtlasTexture" id="AT_fly_down_3"]
+atlas = ExtResource("tex_main")
+region = Rect2(144, 0, 48, 128)
+
+[sub_resource type="AtlasTexture" id="AT_fly_down_4"]
+atlas = ExtResource("tex_main")
+region = Rect2(192, 0, 48, 128)
+
+[sub_resource type="AtlasTexture" id="AT_fly_down_5"]
+atlas = ExtResource("tex_main")
+region = Rect2(240, 0, 48, 128)
+
+[sub_resource type="AtlasTexture" id="AT_fly_down_6"]
+atlas = ExtResource("tex_main")
+region = Rect2(288, 0, 48, 128)
+
+[sub_resource type="AtlasTexture" id="AT_fly_down_7"]
+atlas = ExtResource("tex_main")
+region = Rect2(336, 0, 48, 128)
+
+[sub_resource type="AtlasTexture" id="AT_fly_down_8"]
+atlas = ExtResource("tex_main")
+region = Rect2(384, 0, 48, 128)
+
+[sub_resource type="AtlasTexture" id="AT_fly_up_0"]
+atlas = ExtResource("tex_main")
+region = Rect2(0, 128, 48, 128)
+
+[sub_resource type="AtlasTexture" id="AT_fly_up_1"]
+atlas = ExtResource("tex_main")
+region = Rect2(48, 128, 48, 128)
+
+[sub_resource type="AtlasTexture" id="AT_fly_up_2"]
+atlas = ExtResource("tex_main")
+region = Rect2(96, 128, 48, 128)
+
+[sub_resource type="AtlasTexture" id="AT_fly_up_3"]
+atlas = ExtResource("tex_main")
+region = Rect2(144, 128, 48, 128)
+
+[sub_resource type="AtlasTexture" id="AT_fly_up_4"]
+atlas = ExtResource("tex_main")
+region = Rect2(192, 128, 48, 128)
+
+[sub_resource type="AtlasTexture" id="AT_fly_up_5"]
+atlas = ExtResource("tex_main")
+region = Rect2(240, 128, 48, 128)
+
+[sub_resource type="AtlasTexture" id="AT_fly_up_6"]
+atlas = ExtResource("tex_main")
+region = Rect2(288, 128, 48, 128)
+
+[sub_resource type="AtlasTexture" id="AT_fly_up_7"]
+atlas = ExtResource("tex_main")
+region = Rect2(336, 128, 48, 128)
+
+[sub_resource type="AtlasTexture" id="AT_fly_up_8"]
+atlas = ExtResource("tex_main")
+region = Rect2(384, 128, 48, 128)
+
+[sub_resource type="AtlasTexture" id="AT_fly_left_0"]
+atlas = ExtResource("tex_main")
+region = Rect2(0, 256, 48, 128)
+
+[sub_resource type="AtlasTexture" id="AT_fly_left_1"]
+atlas = ExtResource("tex_main")
+region = Rect2(48, 256, 48, 128)
+
+[sub_resource type="AtlasTexture" id="AT_fly_left_2"]
+atlas = ExtResource("tex_main")
+region = Rect2(96, 256, 48, 128)
+
+[sub_resource type="AtlasTexture" id="AT_fly_left_3"]
+atlas = ExtResource("tex_main")
+region = Rect2(144, 256, 48, 128)
+
+[sub_resource type="AtlasTexture" id="AT_fly_left_4"]
+atlas = ExtResource("tex_main")
+region = Rect2(192, 256, 48, 128)
+
+[sub_resource type="AtlasTexture" id="AT_fly_left_5"]
+atlas = ExtResource("tex_main")
+region = Rect2(240, 256, 48, 128)
+
+[sub_resource type="AtlasTexture" id="AT_fly_left_6"]
+atlas = ExtResource("tex_main")
+region = Rect2(288, 256, 48, 128)
+
+[sub_resource type="AtlasTexture" id="AT_fly_left_7"]
+atlas = ExtResource("tex_main")
+region = Rect2(336, 256, 48, 128)
+
+[sub_resource type="AtlasTexture" id="AT_fly_left_8"]
+atlas = ExtResource("tex_main")
+region = Rect2(384, 256, 48, 128)
+
+[sub_resource type="AtlasTexture" id="AT_fly_right_0"]
+atlas = ExtResource("tex_main")
+region = Rect2(0, 384, 48, 128)
+
+[sub_resource type="AtlasTexture" id="AT_fly_right_1"]
+atlas = ExtResource("tex_main")
+region = Rect2(48, 384, 48, 128)
+
+[sub_resource type="AtlasTexture" id="AT_fly_right_2"]
+atlas = ExtResource("tex_main")
+region = Rect2(96, 384, 48, 128)
+
+[sub_resource type="AtlasTexture" id="AT_fly_right_3"]
+atlas = ExtResource("tex_main")
+region = Rect2(144, 384, 48, 128)
+
+[sub_resource type="AtlasTexture" id="AT_fly_right_4"]
+atlas = ExtResource("tex_main")
+region = Rect2(192, 384, 48, 128)
+
+[sub_resource type="AtlasTexture" id="AT_fly_right_5"]
+atlas = ExtResource("tex_main")
+region = Rect2(240, 384, 48, 128)
+
+[sub_resource type="AtlasTexture" id="AT_fly_right_6"]
+atlas = ExtResource("tex_main")
+region = Rect2(288, 384, 48, 128)
+
+[sub_resource type="AtlasTexture" id="AT_fly_right_7"]
+atlas = ExtResource("tex_main")
+region = Rect2(336, 384, 48, 128)
+
+[sub_resource type="AtlasTexture" id="AT_fly_right_8"]
+atlas = ExtResource("tex_main")
+region = Rect2(384, 384, 48, 128)
+
+[sub_resource type="SpriteFrames" id="SF_BirdFly"]
+animations = [{"frames": [{"duration": 1.0, "texture": SubResource("AT_fly_down_0")}, {"duration": 1.0, "texture": SubResource("AT_fly_down_1")}, {"duration": 1.0, "texture": SubResource("AT_fly_down_2")}, {"duration": 1.0, "texture": SubResource("AT_fly_down_3")}, {"duration": 1.0, "texture": SubResource("AT_fly_down_4")}, {"duration": 1.0, "texture": SubResource("AT_fly_down_5")}, {"duration": 1.0, "texture": SubResource("AT_fly_down_6")}, {"duration": 1.0, "texture": SubResource("AT_fly_down_7")}, {"duration": 1.0, "texture": SubResource("AT_fly_down_8")}], "loop": true, "name": &"fly_down", "speed": 10}, {"frames": [{"duration": 1.0, "texture": SubResource("AT_fly_up_0")}, {"duration": 1.0, "texture": SubResource("AT_fly_up_1")}, {"duration": 1.0, "texture": SubResource("AT_fly_up_2")}, {"duration": 1.0, "texture": SubResource("AT_fly_up_3")}, {"duration": 1.0, "texture": SubResource("AT_fly_up_4")}, {"duration": 1.0, "texture": SubResource("AT_fly_up_5")}, {"duration": 1.0, "texture": SubResource("AT_fly_up_6")}, {"duration": 1.0, "texture": SubResource("AT_fly_up_7")}, {"duration": 1.0, "texture": SubResource("AT_fly_up_8")}], "loop": true, "name": &"fly_up", "speed": 10}, {"frames": [{"duration": 1.0, "texture": SubResource("AT_fly_left_0")}, {"duration": 1.0, "texture": SubResource("AT_fly_left_1")}, {"duration": 1.0, "texture": SubResource("AT_fly_left_2")}, {"duration": 1.0, "texture": SubResource("AT_fly_left_3")}, {"duration": 1.0, "texture": SubResource("AT_fly_left_4")}, {"duration": 1.0, "texture": SubResource("AT_fly_left_5")}, {"duration": 1.0, "texture": SubResource("AT_fly_left_6")}, {"duration": 1.0, "texture": SubResource("AT_fly_left_7")}, {"duration": 1.0, "texture": SubResource("AT_fly_left_8")}], "loop": true, "name": &"fly_left", "speed": 10}, {"frames": [{"duration": 1.0, "texture": SubResource("AT_fly_right_0")}, {"duration": 1.0, "texture": SubResource("AT_fly_right_1")}, {"duration": 1.0, "texture": SubResource("AT_fly_right_2")}, {"duration": 1.0, "texture": SubResource("AT_fly_right_3")}, {"duration": 1.0, "texture": SubResource("AT_fly_right_4")}, {"duration": 1.0, "texture": SubResource("AT_fly_right_5")}, {"duration": 1.0, "texture": SubResource("AT_fly_right_6")}, {"duration": 1.0, "texture": SubResource("AT_fly_right_7")}, {"duration": 1.0, "texture": SubResource("AT_fly_right_8")}], "loop": true, "name": &"fly_right", "speed": 10}]
+
+[node name="BirdFly" type="Node2D"]
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+sprite_frames = SubResource("SF_BirdFly")
+animation = &"fly_down"
+autoplay = "fly_down"

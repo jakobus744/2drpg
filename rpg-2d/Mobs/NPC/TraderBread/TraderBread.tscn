@@ -1,0 +1,69 @@
+[gd_scene format=4 uid="uid://npc_traderbread"]
+
+[ext_resource type="Texture2D" path="res://Assets/Charakter/citizens/Trader_bread_animation_with_shadow.png" id="tex_main"]
+[ext_resource type="Script" path="res://Mobs/NPC/TraderBread/TraderBread.cs" id="scr_TraderBread"]
+
+[sub_resource type="AtlasTexture" id="AT_idle_down_0"]
+atlas = ExtResource("tex_main")
+region = Rect2(0, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AT_idle_down_1"]
+atlas = ExtResource("tex_main")
+region = Rect2(32, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AT_idle_down_2"]
+atlas = ExtResource("tex_main")
+region = Rect2(64, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AT_idle_down_3"]
+atlas = ExtResource("tex_main")
+region = Rect2(96, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AT_idle_down_4"]
+atlas = ExtResource("tex_main")
+region = Rect2(128, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AT_idle_down_5"]
+atlas = ExtResource("tex_main")
+region = Rect2(160, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AT_idle_down_6"]
+atlas = ExtResource("tex_main")
+region = Rect2(192, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AT_idle_down_7"]
+atlas = ExtResource("tex_main")
+region = Rect2(224, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AT_idle_down_8"]
+atlas = ExtResource("tex_main")
+region = Rect2(256, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AT_idle_down_9"]
+atlas = ExtResource("tex_main")
+region = Rect2(288, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AT_idle_down_10"]
+atlas = ExtResource("tex_main")
+region = Rect2(320, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AT_idle_down_11"]
+atlas = ExtResource("tex_main")
+region = Rect2(352, 0, 32, 32)
+
+[sub_resource type="SpriteFrames" id="SF_TraderBread"]
+animations = [{"frames": [{"duration": 1.0, "texture": SubResource("AT_idle_down_0")}, {"duration": 1.0, "texture": SubResource("AT_idle_down_1")}, {"duration": 1.0, "texture": SubResource("AT_idle_down_2")}, {"duration": 1.0, "texture": SubResource("AT_idle_down_3")}, {"duration": 1.0, "texture": SubResource("AT_idle_down_4")}, {"duration": 1.0, "texture": SubResource("AT_idle_down_5")}, {"duration": 1.0, "texture": SubResource("AT_idle_down_6")}, {"duration": 1.0, "texture": SubResource("AT_idle_down_7")}, {"duration": 1.0, "texture": SubResource("AT_idle_down_8")}, {"duration": 1.0, "texture": SubResource("AT_idle_down_9")}, {"duration": 1.0, "texture": SubResource("AT_idle_down_10")}, {"duration": 1.0, "texture": SubResource("AT_idle_down_11")}], "loop": true, "name": &"idle_down", "speed": 8.0}]
+
+[sub_resource type="CapsuleShape2D" id="Cap_TraderBread"]
+radius = 6
+height = 14
+
+[node name="TraderBread" type="CharacterBody2D"]
+script = ExtResource("scr_TraderBread")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+sprite_frames = SubResource("SF_TraderBread")
+animation = &"idle_down"
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("Cap_TraderBread")

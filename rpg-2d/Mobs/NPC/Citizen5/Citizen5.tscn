@@ -1,0 +1,310 @@
+[gd_scene format=4 uid="uid://npc_citizen5"]
+
+[ext_resource type="Texture2D" path="res://Assets/Charakter/citizens/Citizen5_Idle_with_shadow.png" id="tex_idle"]
+[ext_resource type="Texture2D" path="res://Assets/Charakter/citizens/Citizen5_Walk_with_shadow.png" id="tex_walk"]
+[ext_resource type="Script" path="res://Mobs/NPC/Citizen5/Citizen5.cs" id="scr_Citizen5"]
+
+[sub_resource type="AtlasTexture" id="AT_idle_down_0"]
+atlas = ExtResource("tex_idle")
+region = Rect2(0, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AT_idle_down_1"]
+atlas = ExtResource("tex_idle")
+region = Rect2(32, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AT_idle_down_2"]
+atlas = ExtResource("tex_idle")
+region = Rect2(64, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AT_idle_down_3"]
+atlas = ExtResource("tex_idle")
+region = Rect2(96, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AT_idle_down_4"]
+atlas = ExtResource("tex_idle")
+region = Rect2(128, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AT_idle_down_5"]
+atlas = ExtResource("tex_idle")
+region = Rect2(160, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AT_idle_down_6"]
+atlas = ExtResource("tex_idle")
+region = Rect2(192, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AT_idle_down_7"]
+atlas = ExtResource("tex_idle")
+region = Rect2(224, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AT_idle_down_8"]
+atlas = ExtResource("tex_idle")
+region = Rect2(256, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AT_idle_down_9"]
+atlas = ExtResource("tex_idle")
+region = Rect2(288, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AT_idle_down_10"]
+atlas = ExtResource("tex_idle")
+region = Rect2(320, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AT_idle_down_11"]
+atlas = ExtResource("tex_idle")
+region = Rect2(352, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AT_walk_down_0"]
+atlas = ExtResource("tex_walk")
+region = Rect2(0, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AT_walk_down_1"]
+atlas = ExtResource("tex_walk")
+region = Rect2(32, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AT_walk_down_2"]
+atlas = ExtResource("tex_walk")
+region = Rect2(64, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AT_walk_down_3"]
+atlas = ExtResource("tex_walk")
+region = Rect2(96, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AT_walk_down_4"]
+atlas = ExtResource("tex_walk")
+region = Rect2(128, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AT_walk_down_5"]
+atlas = ExtResource("tex_walk")
+region = Rect2(160, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AT_idle_up_0"]
+atlas = ExtResource("tex_idle")
+region = Rect2(0, 32, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AT_idle_up_1"]
+atlas = ExtResource("tex_idle")
+region = Rect2(32, 32, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AT_idle_up_2"]
+atlas = ExtResource("tex_idle")
+region = Rect2(64, 32, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AT_idle_up_3"]
+atlas = ExtResource("tex_idle")
+region = Rect2(96, 32, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AT_idle_up_4"]
+atlas = ExtResource("tex_idle")
+region = Rect2(128, 32, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AT_idle_up_5"]
+atlas = ExtResource("tex_idle")
+region = Rect2(160, 32, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AT_idle_up_6"]
+atlas = ExtResource("tex_idle")
+region = Rect2(192, 32, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AT_idle_up_7"]
+atlas = ExtResource("tex_idle")
+region = Rect2(224, 32, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AT_idle_up_8"]
+atlas = ExtResource("tex_idle")
+region = Rect2(256, 32, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AT_idle_up_9"]
+atlas = ExtResource("tex_idle")
+region = Rect2(288, 32, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AT_idle_up_10"]
+atlas = ExtResource("tex_idle")
+region = Rect2(320, 32, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AT_idle_up_11"]
+atlas = ExtResource("tex_idle")
+region = Rect2(352, 32, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AT_walk_up_0"]
+atlas = ExtResource("tex_walk")
+region = Rect2(0, 32, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AT_walk_up_1"]
+atlas = ExtResource("tex_walk")
+region = Rect2(32, 32, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AT_walk_up_2"]
+atlas = ExtResource("tex_walk")
+region = Rect2(64, 32, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AT_walk_up_3"]
+atlas = ExtResource("tex_walk")
+region = Rect2(96, 32, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AT_walk_up_4"]
+atlas = ExtResource("tex_walk")
+region = Rect2(128, 32, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AT_walk_up_5"]
+atlas = ExtResource("tex_walk")
+region = Rect2(160, 32, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AT_idle_left_0"]
+atlas = ExtResource("tex_idle")
+region = Rect2(0, 64, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AT_idle_left_1"]
+atlas = ExtResource("tex_idle")
+region = Rect2(32, 64, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AT_idle_left_2"]
+atlas = ExtResource("tex_idle")
+region = Rect2(64, 64, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AT_idle_left_3"]
+atlas = ExtResource("tex_idle")
+region = Rect2(96, 64, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AT_idle_left_4"]
+atlas = ExtResource("tex_idle")
+region = Rect2(128, 64, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AT_idle_left_5"]
+atlas = ExtResource("tex_idle")
+region = Rect2(160, 64, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AT_idle_left_6"]
+atlas = ExtResource("tex_idle")
+region = Rect2(192, 64, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AT_idle_left_7"]
+atlas = ExtResource("tex_idle")
+region = Rect2(224, 64, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AT_idle_left_8"]
+atlas = ExtResource("tex_idle")
+region = Rect2(256, 64, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AT_idle_left_9"]
+atlas = ExtResource("tex_idle")
+region = Rect2(288, 64, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AT_idle_left_10"]
+atlas = ExtResource("tex_idle")
+region = Rect2(320, 64, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AT_idle_left_11"]
+atlas = ExtResource("tex_idle")
+region = Rect2(352, 64, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AT_walk_left_0"]
+atlas = ExtResource("tex_walk")
+region = Rect2(0, 64, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AT_walk_left_1"]
+atlas = ExtResource("tex_walk")
+region = Rect2(32, 64, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AT_walk_left_2"]
+atlas = ExtResource("tex_walk")
+region = Rect2(64, 64, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AT_walk_left_3"]
+atlas = ExtResource("tex_walk")
+region = Rect2(96, 64, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AT_walk_left_4"]
+atlas = ExtResource("tex_walk")
+region = Rect2(128, 64, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AT_walk_left_5"]
+atlas = ExtResource("tex_walk")
+region = Rect2(160, 64, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AT_idle_right_0"]
+atlas = ExtResource("tex_idle")
+region = Rect2(0, 96, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AT_idle_right_1"]
+atlas = ExtResource("tex_idle")
+region = Rect2(32, 96, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AT_idle_right_2"]
+atlas = ExtResource("tex_idle")
+region = Rect2(64, 96, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AT_idle_right_3"]
+atlas = ExtResource("tex_idle")
+region = Rect2(96, 96, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AT_idle_right_4"]
+atlas = ExtResource("tex_idle")
+region = Rect2(128, 96, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AT_idle_right_5"]
+atlas = ExtResource("tex_idle")
+region = Rect2(160, 96, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AT_idle_right_6"]
+atlas = ExtResource("tex_idle")
+region = Rect2(192, 96, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AT_idle_right_7"]
+atlas = ExtResource("tex_idle")
+region = Rect2(224, 96, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AT_idle_right_8"]
+atlas = ExtResource("tex_idle")
+region = Rect2(256, 96, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AT_idle_right_9"]
+atlas = ExtResource("tex_idle")
+region = Rect2(288, 96, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AT_idle_right_10"]
+atlas = ExtResource("tex_idle")
+region = Rect2(320, 96, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AT_idle_right_11"]
+atlas = ExtResource("tex_idle")
+region = Rect2(352, 96, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AT_walk_right_0"]
+atlas = ExtResource("tex_walk")
+region = Rect2(0, 96, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AT_walk_right_1"]
+atlas = ExtResource("tex_walk")
+region = Rect2(32, 96, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AT_walk_right_2"]
+atlas = ExtResource("tex_walk")
+region = Rect2(64, 96, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AT_walk_right_3"]
+atlas = ExtResource("tex_walk")
+region = Rect2(96, 96, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AT_walk_right_4"]
+atlas = ExtResource("tex_walk")
+region = Rect2(128, 96, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AT_walk_right_5"]
+atlas = ExtResource("tex_walk")
+region = Rect2(160, 96, 32, 32)
+
+[sub_resource type="SpriteFrames" id="SF_Citizen5"]
+animations = [{"frames": [{"duration": 1.0, "texture": SubResource("AT_idle_down_0")}, {"duration": 1.0, "texture": SubResource("AT_idle_down_1")}, {"duration": 1.0, "texture": SubResource("AT_idle_down_2")}, {"duration": 1.0, "texture": SubResource("AT_idle_down_3")}, {"duration": 1.0, "texture": SubResource("AT_idle_down_4")}, {"duration": 1.0, "texture": SubResource("AT_idle_down_5")}, {"duration": 1.0, "texture": SubResource("AT_idle_down_6")}, {"duration": 1.0, "texture": SubResource("AT_idle_down_7")}, {"duration": 1.0, "texture": SubResource("AT_idle_down_8")}, {"duration": 1.0, "texture": SubResource("AT_idle_down_9")}, {"duration": 1.0, "texture": SubResource("AT_idle_down_10")}, {"duration": 1.0, "texture": SubResource("AT_idle_down_11")}], "loop": true, "name": &"idle_down", "speed": 8}, {"frames": [{"duration": 1.0, "texture": SubResource("AT_walk_down_0")}, {"duration": 1.0, "texture": SubResource("AT_walk_down_1")}, {"duration": 1.0, "texture": SubResource("AT_walk_down_2")}, {"duration": 1.0, "texture": SubResource("AT_walk_down_3")}, {"duration": 1.0, "texture": SubResource("AT_walk_down_4")}, {"duration": 1.0, "texture": SubResource("AT_walk_down_5")}], "loop": true, "name": &"walk_down", "speed": 8}, {"frames": [{"duration": 1.0, "texture": SubResource("AT_idle_up_0")}, {"duration": 1.0, "texture": SubResource("AT_idle_up_1")}, {"duration": 1.0, "texture": SubResource("AT_idle_up_2")}, {"duration": 1.0, "texture": SubResource("AT_idle_up_3")}, {"duration": 1.0, "texture": SubResource("AT_idle_up_4")}, {"duration": 1.0, "texture": SubResource("AT_idle_up_5")}, {"duration": 1.0, "texture": SubResource("AT_idle_up_6")}, {"duration": 1.0, "texture": SubResource("AT_idle_up_7")}, {"duration": 1.0, "texture": SubResource("AT_idle_up_8")}, {"duration": 1.0, "texture": SubResource("AT_idle_up_9")}, {"duration": 1.0, "texture": SubResource("AT_idle_up_10")}, {"duration": 1.0, "texture": SubResource("AT_idle_up_11")}], "loop": true, "name": &"idle_up", "speed": 8}, {"frames": [{"duration": 1.0, "texture": SubResource("AT_walk_up_0")}, {"duration": 1.0, "texture": SubResource("AT_walk_up_1")}, {"duration": 1.0, "texture": SubResource("AT_walk_up_2")}, {"duration": 1.0, "texture": SubResource("AT_walk_up_3")}, {"duration": 1.0, "texture": SubResource("AT_walk_up_4")}, {"duration": 1.0, "texture": SubResource("AT_walk_up_5")}], "loop": true, "name": &"walk_up", "speed": 8}, {"frames": [{"duration": 1.0, "texture": SubResource("AT_idle_left_0")}, {"duration": 1.0, "texture": SubResource("AT_idle_left_1")}, {"duration": 1.0, "texture": SubResource("AT_idle_left_2")}, {"duration": 1.0, "texture": SubResource("AT_idle_left_3")}, {"duration": 1.0, "texture": SubResource("AT_idle_left_4")}, {"duration": 1.0, "texture": SubResource("AT_idle_left_5")}, {"duration": 1.0, "texture": SubResource("AT_idle_left_6")}, {"duration": 1.0, "texture": SubResource("AT_idle_left_7")}, {"duration": 1.0, "texture": SubResource("AT_idle_left_8")}, {"duration": 1.0, "texture": SubResource("AT_idle_left_9")}, {"duration": 1.0, "texture": SubResource("AT_idle_left_10")}, {"duration": 1.0, "texture": SubResource("AT_idle_left_11")}], "loop": true, "name": &"idle_left", "speed": 8}, {"frames": [{"duration": 1.0, "texture": SubResource("AT_walk_left_0")}, {"duration": 1.0, "texture": SubResource("AT_walk_left_1")}, {"duration": 1.0, "texture": SubResource("AT_walk_left_2")}, {"duration": 1.0, "texture": SubResource("AT_walk_left_3")}, {"duration": 1.0, "texture": SubResource("AT_walk_left_4")}, {"duration": 1.0, "texture": SubResource("AT_walk_left_5")}], "loop": true, "name": &"walk_left", "speed": 8}, {"frames": [{"duration": 1.0, "texture": SubResource("AT_idle_right_0")}, {"duration": 1.0, "texture": SubResource("AT_idle_right_1")}, {"duration": 1.0, "texture": SubResource("AT_idle_right_2")}, {"duration": 1.0, "texture": SubResource("AT_idle_right_3")}, {"duration": 1.0, "texture": SubResource("AT_idle_right_4")}, {"duration": 1.0, "texture": SubResource("AT_idle_right_5")}, {"duration": 1.0, "texture": SubResource("AT_idle_right_6")}, {"duration": 1.0, "texture": SubResource("AT_idle_right_7")}, {"duration": 1.0, "texture": SubResource("AT_idle_right_8")}, {"duration": 1.0, "texture": SubResource("AT_idle_right_9")}, {"duration": 1.0, "texture": SubResource("AT_idle_right_10")}, {"duration": 1.0, "texture": SubResource("AT_idle_right_11")}], "loop": true, "name": &"idle_right", "speed": 8}, {"frames": [{"duration": 1.0, "texture": SubResource("AT_walk_right_0")}, {"duration": 1.0, "texture": SubResource("AT_walk_right_1")}, {"duration": 1.0, "texture": SubResource("AT_walk_right_2")}, {"duration": 1.0, "texture": SubResource("AT_walk_right_3")}, {"duration": 1.0, "texture": SubResource("AT_walk_right_4")}, {"duration": 1.0, "texture": SubResource("AT_walk_right_5")}], "loop": true, "name": &"walk_right", "speed": 8}]
+
+[sub_resource type="CapsuleShape2D" id="Cap_Citizen5"]
+radius = 6
+height = 14
+
+[node name="Citizen5" type="CharacterBody2D"]
+script = ExtResource("scr_Citizen5")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+sprite_frames = SubResource("SF_Citizen5")
+animation = &"idle_down"
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("Cap_Citizen5")
