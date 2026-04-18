@@ -1,0 +1,103 @@
+[gd_scene format=3 uid="uid://d0bytdb0qiamm"]
+
+[ext_resource type="Texture2D" uid="uid://ckrm008l1mkfh" path="res://Assets/Biome/village/guild-hall/animation/Flags_animation.png" id="1_bm0cg"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_8ego7"]
+atlas = ExtResource("1_bm0cg")
+region = Rect2(0, 0, 48, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_uertc"]
+atlas = ExtResource("1_bm0cg")
+region = Rect2(0, 48, 48, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_itpmd"]
+atlas = ExtResource("1_bm0cg")
+region = Rect2(0, 96, 48, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_5ugu1"]
+atlas = ExtResource("1_bm0cg")
+region = Rect2(0, 144, 48, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_yvbn4"]
+atlas = ExtResource("1_bm0cg")
+region = Rect2(0, 192, 48, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_t04kw"]
+atlas = ExtResource("1_bm0cg")
+region = Rect2(0, 240, 48, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_xmxdc"]
+atlas = ExtResource("1_bm0cg")
+region = Rect2(0, 288, 48, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ptdk0"]
+atlas = ExtResource("1_bm0cg")
+region = Rect2(0, 336, 48, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_lpn3r"]
+atlas = ExtResource("1_bm0cg")
+region = Rect2(0, 384, 48, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_vlgpb"]
+atlas = ExtResource("1_bm0cg")
+region = Rect2(0, 432, 48, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_0v5qa"]
+atlas = ExtResource("1_bm0cg")
+region = Rect2(0, 480, 48, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ekguk"]
+atlas = ExtResource("1_bm0cg")
+region = Rect2(0, 528, 48, 48)
+
+[sub_resource type="SpriteFrames" id="SF_MarketCandle"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_8ego7")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_uertc")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_itpmd")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_5ugu1")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_yvbn4")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_t04kw")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_xmxdc")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ptdk0")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_lpn3r")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_vlgpb")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_0v5qa")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ekguk")
+}],
+"loop": true,
+"name": &"flag",
+"speed": 8.0
+}]
+
+[node name="MarketCandle" type="Node2D" unique_id=916273598]
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=1816230488]
+sprite_frames = SubResource("SF_MarketCandle")
+animation = &"flag"
+autoplay = "flag"
+frame_progress = 0.8913687

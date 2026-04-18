@@ -1,0 +1,103 @@
+[gd_scene format=3 uid="uid://dq3nwp4fhcf81"]
+
+[ext_resource type="Texture2D" uid="uid://ddiu81sn3chd6" path="res://Assets/Biome/glowing-cave/animation/Wisp1.png" id="1_3vsj3"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_xvetv"]
+atlas = ExtResource("1_3vsj3")
+region = Rect2(0, 0, 192, 46)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_x8d48"]
+atlas = ExtResource("1_3vsj3")
+region = Rect2(0, 46, 192, 46)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_gjdj3"]
+atlas = ExtResource("1_3vsj3")
+region = Rect2(0, 92, 192, 46)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_0days"]
+atlas = ExtResource("1_3vsj3")
+region = Rect2(0, 138, 192, 46)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_sgh0r"]
+atlas = ExtResource("1_3vsj3")
+region = Rect2(0, 184, 192, 46)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_7uap4"]
+atlas = ExtResource("1_3vsj3")
+region = Rect2(0, 230, 192, 46)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_rfyjn"]
+atlas = ExtResource("1_3vsj3")
+region = Rect2(0, 276, 192, 46)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_2co33"]
+atlas = ExtResource("1_3vsj3")
+region = Rect2(0, 322, 192, 46)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_kou2g"]
+atlas = ExtResource("1_3vsj3")
+region = Rect2(0, 368, 192, 46)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_cuo31"]
+atlas = ExtResource("1_3vsj3")
+region = Rect2(0, 414, 192, 46)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_8pdgs"]
+atlas = ExtResource("1_3vsj3")
+region = Rect2(0, 460, 192, 46)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_uj8un"]
+atlas = ExtResource("1_3vsj3")
+region = Rect2(0, 506, 192, 46)
+
+[sub_resource type="SpriteFrames" id="SF_Wisp"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_xvetv")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_x8d48")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_gjdj3")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_0days")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_sgh0r")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_7uap4")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_rfyjn")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_2co33")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_kou2g")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_cuo31")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_8pdgs")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_uj8un")
+}],
+"loop": true,
+"name": &"float",
+"speed": 6.0
+}]
+
+[node name="Wisp" type="Node2D" unique_id=2140193977]
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=812778228]
+sprite_frames = SubResource("SF_Wisp")
+animation = &"float"
+autoplay = "float"
+frame_progress = 0.030296246

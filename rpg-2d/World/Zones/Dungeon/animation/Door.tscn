@@ -1,0 +1,98 @@
+[gd_scene format=3 uid="uid://cfb20tga0chfv"]
+
+[ext_resource type="Texture2D" uid="uid://pt5u3hm1u6b1" path="res://Assets/Biome/Dungeon/Skellet Dungeon/animation/Chest_door_lever.png" id="1_sihfo"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_fij7r"]
+atlas = ExtResource("1_sihfo")
+region = Rect2(62, 0, 31, 31)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_guaik"]
+atlas = ExtResource("1_sihfo")
+region = Rect2(62, 31, 31, 31)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_1a61a"]
+atlas = ExtResource("1_sihfo")
+region = Rect2(62, 62, 31, 31)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_bx5wt"]
+atlas = ExtResource("1_sihfo")
+region = Rect2(62, 93, 31, 31)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_kdgy6"]
+atlas = ExtResource("1_sihfo")
+region = Rect2(62, 124, 31, 31)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_cqle5"]
+atlas = ExtResource("1_sihfo")
+region = Rect2(34, 0, 34, 30)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_hyju6"]
+atlas = ExtResource("1_sihfo")
+region = Rect2(34, 30, 34, 30)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_t4d2y"]
+atlas = ExtResource("1_sihfo")
+region = Rect2(34, 60, 34, 30)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_momwx"]
+atlas = ExtResource("1_sihfo")
+region = Rect2(34, 90, 34, 30)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_uv7ew"]
+atlas = ExtResource("1_sihfo")
+region = Rect2(34, 120, 34, 30)
+
+[sub_resource type="SpriteFrames" id="SF_Door"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_fij7r")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_guaik")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_1a61a")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_bx5wt")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_kdgy6")
+}],
+"loop": false,
+"name": &"chest",
+"speed": 8.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_cqle5")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_hyju6")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_t4d2y")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_momwx")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_uv7ew")
+}],
+"loop": true,
+"name": &"hebel",
+"speed": 5.0
+}, {
+"frames": [],
+"loop": true,
+"name": &"new_animation",
+"speed": 5.0
+}]
+
+[node name="Door" type="Node2D" unique_id=251639198]
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=933332417]
+sprite_frames = SubResource("SF_Door")
+animation = &"new_animation"
+autoplay = "chest"

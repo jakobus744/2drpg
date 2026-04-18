@@ -1,0 +1,47 @@
+[gd_scene format=3 uid="uid://dn2hccmtga6hn"]
+
+[ext_resource type="Texture2D" uid="uid://8jg5cp62miks" path="res://Assets/Biome/village/fishing-house/animation/Windows_doors.png" id="1_4ccv5"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_rwi40"]
+atlas = ExtResource("1_4ccv5")
+region = Rect2(0, 96, 80, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_qe8dx"]
+atlas = ExtResource("1_4ccv5")
+region = Rect2(0, 64, 80, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_43t67"]
+atlas = ExtResource("1_4ccv5")
+region = Rect2(0, 32, 80, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_pdwrd"]
+atlas = ExtResource("1_4ccv5")
+region = Rect2(0, 0, 80, 32)
+
+[sub_resource type="SpriteFrames" id="SF_DragonWing"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_rwi40")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_qe8dx")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_43t67")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_pdwrd")
+}],
+"loop": true,
+"name": &"flap",
+"speed": 2.0
+}]
+
+[node name="DragonWing" type="Node2D" unique_id=380300809]
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=827707724]
+sprite_frames = SubResource("SF_DragonWing")
+animation = &"flap"
+autoplay = "flap"
+frame_progress = 0.9934591

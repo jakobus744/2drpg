@@ -7,7 +7,7 @@
 [sub_resource type="CompressedTexture2D" id="CompressedTexture2D_wjoj8"]
 load_path = "res://.godot/imported/objects.png-5ab4ada1e3edafb7db4fdcb01d7e8a6e.ctex"
 
-[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_jj0au"]
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_68as8"]
 texture = SubResource("CompressedTexture2D_wjoj8")
 0:0/0 = 0
 0:0/0/physics_layer_0/polygon_0/points = PackedVector2Array(1.2590103, 4.856186, 1.0791531, 2.6978817, 6.4749146, 1.7985878, -5.3957615, 1.6187286, -4.856186, 1.6187286, -1.978447, 2.6978817, -1.0791531, 4.6763268)
@@ -38,11 +38,11 @@ texture = SubResource("CompressedTexture2D_wjoj8")
 10:7/0/y_sort_origin = 4
 10:7/0/physics_layer_0/polygon_0/points = PackedVector2Array(-10.431807, 2.5180225, 0.35971832, 1.7985878, 10.072088, 2.3381634, 5.935339, 8, -5.75548, 8)
 
-[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_wy0bs"]
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_opcmc"]
 texture = ExtResource("1_wjoj8")
 0:0/0 = 0
 
-[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_emumq"]
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_n6xv8"]
 texture = ExtResource("3_jj0au")
 4:0/size_in_atlas = Vector2i(2, 2)
 4:0/0 = 0
@@ -111,15 +111,11 @@ texture = ExtResource("3_jj0au")
 1:8/size_in_atlas = Vector2i(2, 2)
 1:8/0 = 0
 
-[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_5irk3"]
-34:49/0 = 0
-
 [sub_resource type="TileSet" id="TileSet_5irk3"]
 physics_layer_0/collision_layer = 1
-sources/0 = SubResource("TileSetAtlasSource_jj0au")
-sources/1 = SubResource("TileSetAtlasSource_wy0bs")
-sources/2 = SubResource("TileSetAtlasSource_emumq")
-sources/4 = SubResource("TileSetAtlasSource_5irk3")
+sources/0 = SubResource("TileSetAtlasSource_68as8")
+sources/1 = SubResource("TileSetAtlasSource_opcmc")
+sources/2 = SubResource("TileSetAtlasSource_n6xv8")
 
 [node name="Main_World" type="Node2D" unique_id=149295726]
 y_sort_enabled = true

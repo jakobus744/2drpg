@@ -1,0 +1,155 @@
+[gd_scene format=3 uid="uid://dhgvt0qh7g6fh"]
+
+[ext_resource type="Texture2D" uid="uid://cj2eiot73im8e" path="res://Assets/Biome/Dungeon/Skellet Dungeon/animation/Waterfalls.png" id="1_1uqsf"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_14utr"]
+atlas = ExtResource("1_1uqsf")
+region = Rect2(0, 0, 48, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_0r4il"]
+atlas = ExtResource("1_1uqsf")
+region = Rect2(0, 48, 48, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_rk6du"]
+atlas = ExtResource("1_1uqsf")
+region = Rect2(0, 96, 48, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_wk665"]
+atlas = ExtResource("1_1uqsf")
+region = Rect2(0, 144, 48, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_n7wvt"]
+atlas = ExtResource("1_1uqsf")
+region = Rect2(0, 192, 48, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_83sf3"]
+atlas = ExtResource("1_1uqsf")
+region = Rect2(0, 240, 48, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_qau7j"]
+atlas = ExtResource("1_1uqsf")
+region = Rect2(0, 324, 32, 54)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_5xuje"]
+atlas = ExtResource("1_1uqsf")
+region = Rect2(32, 324, 32, 54)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ieuhv"]
+atlas = ExtResource("1_1uqsf")
+region = Rect2(64, 324, 32, 54)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_54s3c"]
+atlas = ExtResource("1_1uqsf")
+region = Rect2(96, 324, 32, 54)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_14tqk"]
+atlas = ExtResource("1_1uqsf")
+region = Rect2(128, 324, 32, 54)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_4vxyv"]
+atlas = ExtResource("1_1uqsf")
+region = Rect2(160, 324, 32, 54)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_guvok"]
+atlas = ExtResource("1_1uqsf")
+region = Rect2(96, 0, 48, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_13maw"]
+atlas = ExtResource("1_1uqsf")
+region = Rect2(96, 48, 48, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_e12ea"]
+atlas = ExtResource("1_1uqsf")
+region = Rect2(96, 96, 48, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_cs2ka"]
+atlas = ExtResource("1_1uqsf")
+region = Rect2(96, 144, 48, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_m2xf1"]
+atlas = ExtResource("1_1uqsf")
+region = Rect2(96, 192, 48, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_lirsl"]
+atlas = ExtResource("1_1uqsf")
+region = Rect2(96, 240, 48, 48)
+
+[sub_resource type="SpriteFrames" id="SF_DungeonWaterfall"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_14utr")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_0r4il")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_rk6du")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_wk665")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_n7wvt")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_83sf3")
+}],
+"loop": true,
+"name": &"fall",
+"speed": 8.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_qau7j")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_5xuje")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ieuhv")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_54s3c")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_14tqk")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_4vxyv")
+}],
+"loop": true,
+"name": &"rohr",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_guvok")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_13maw")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_e12ea")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_cs2ka")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_m2xf1")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_lirsl")
+}],
+"loop": true,
+"name": &"waterfall",
+"speed": 5.0
+}]
+
+[node name="DungeonWaterfall" type="Node2D" unique_id=608300034]
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=1542916638]
+sprite_frames = SubResource("SF_DungeonWaterfall")
+animation = &"rohr"
+autoplay = "fall"
+frame_progress = 0.72051483

@@ -1,0 +1,108 @@
+[gd_scene format=3 uid="uid://chwa82dmu2gto"]
+
+[ext_resource type="Texture2D" uid="uid://x83grrokqewo" path="res://Assets/Biome/Dungeon/Skellet Dungeon/animation/fire_animation.png" id="1_qm1ty"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_dy7y7"]
+atlas = ExtResource("1_qm1ty")
+region = Rect2(84, 0, 42, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_jwqob"]
+atlas = ExtResource("1_qm1ty")
+region = Rect2(84, 48, 42, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_wpkwb"]
+atlas = ExtResource("1_qm1ty")
+region = Rect2(84, 96, 42, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_a7kkx"]
+atlas = ExtResource("1_qm1ty")
+region = Rect2(84, 144, 42, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_4m56v"]
+atlas = ExtResource("1_qm1ty")
+region = Rect2(84, 192, 42, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ty06m"]
+atlas = ExtResource("1_qm1ty")
+region = Rect2(84, 240, 42, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_mkwq0"]
+atlas = ExtResource("1_qm1ty")
+region = Rect2(0, 0, 35, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_s0iar"]
+atlas = ExtResource("1_qm1ty")
+region = Rect2(0, 48, 35, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ep18r"]
+atlas = ExtResource("1_qm1ty")
+region = Rect2(0, 96, 35, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_sef6r"]
+atlas = ExtResource("1_qm1ty")
+region = Rect2(0, 144, 35, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_c8wkc"]
+atlas = ExtResource("1_qm1ty")
+region = Rect2(0, 192, 35, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_34xly"]
+atlas = ExtResource("1_qm1ty")
+region = Rect2(0, 240, 35, 48)
+
+[sub_resource type="SpriteFrames" id="SF_FireTrap"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_dy7y7")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_jwqob")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_wpkwb")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_a7kkx")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_4m56v")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ty06m")
+}],
+"loop": true,
+"name": &"großes_feuer",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_mkwq0")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_s0iar")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ep18r")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_sef6r")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_c8wkc")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_34xly")
+}],
+"loop": true,
+"name": &"kleine_fackel",
+"speed": 8.0
+}]
+
+[node name="FireTrap" type="Node2D" unique_id=898673583]
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=1032139084]
+sprite_frames = SubResource("SF_FireTrap")
+animation = &"großes_feuer"
+autoplay = "kleine_fackel"
+frame_progress = 0.8791606

@@ -1,0 +1,61 @@
+[gd_scene format=3 uid="uid://7wrdim4hqiar"]
+
+[ext_resource type="Texture2D" uid="uid://brkempxun2vq3" path="res://Assets/Biome/Flying-endgame/animation/Tree_animated.png" id="1_u40gv"]
+
+[sub_resource type="AtlasTexture" id="AT_0"]
+atlas = ExtResource("1_u40gv")
+region = Rect2(0, 0, 160, 160)
+
+[sub_resource type="AtlasTexture" id="AT_1"]
+atlas = ExtResource("1_u40gv")
+region = Rect2(160, 0, 160, 160)
+
+[sub_resource type="AtlasTexture" id="AT_2"]
+atlas = ExtResource("1_u40gv")
+region = Rect2(320, 0, 160, 160)
+
+[sub_resource type="AtlasTexture" id="AT_3"]
+atlas = ExtResource("1_u40gv")
+region = Rect2(480, 0, 160, 160)
+
+[sub_resource type="AtlasTexture" id="AT_4"]
+atlas = ExtResource("1_u40gv")
+region = Rect2(640, 0, 160, 160)
+
+[sub_resource type="AtlasTexture" id="AT_5"]
+atlas = ExtResource("1_u40gv")
+region = Rect2(800, 0, 160, 160)
+
+[sub_resource type="SpriteFrames" id="SF_SkyTree"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AT_0")
+}, {
+"duration": 1.0,
+"texture": SubResource("AT_1")
+}, {
+"duration": 1.0,
+"texture": SubResource("AT_2")
+}, {
+"duration": 1.0,
+"texture": SubResource("AT_3")
+}, {
+"duration": 1.0,
+"texture": SubResource("AT_4")
+}, {
+"duration": 1.0,
+"texture": SubResource("AT_5")
+}],
+"loop": true,
+"name": &"sway",
+"speed": 8.0
+}]
+
+[node name="SkyTree" type="Node2D" unique_id=227769320]
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=1863472232]
+sprite_frames = SubResource("SF_SkyTree")
+animation = &"sway"
+autoplay = "sway"
+frame_progress = 0.20269805

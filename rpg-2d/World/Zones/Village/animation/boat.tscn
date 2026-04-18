@@ -1,0 +1,45 @@
+[gd_scene format=3 uid="uid://dtjy2uaauq45y"]
+
+[ext_resource type="Texture2D" uid="uid://clclt1pmw70bo" path="res://Assets/Biome/village/fishing-house/animation/Boat2.png" id="1_horq8"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_82aln"]
+atlas = ExtResource("1_horq8")
+region = Rect2(0, 0, 160, 112)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_wewh5"]
+atlas = ExtResource("1_horq8")
+region = Rect2(160, 0, 160, 112)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_e2i2g"]
+atlas = ExtResource("1_horq8")
+region = Rect2(320, 0, 160, 112)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_82wvb"]
+atlas = ExtResource("1_horq8")
+region = Rect2(480, 0, 160, 112)
+
+[sub_resource type="SpriteFrames" id="SF_DoorSmall"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_82aln")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_wewh5")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_e2i2g")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_82wvb")
+}],
+"loop": false,
+"name": &"boat_2",
+"speed": 8.0
+}]
+
+[node name="DoorSmall" type="Node2D" unique_id=1765915190]
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=709784359]
+sprite_frames = SubResource("SF_DoorSmall")
+animation = &"boat_2"

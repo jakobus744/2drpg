@@ -1,0 +1,104 @@
+[gd_scene format=3 uid="uid://dj82bam4f6bfq"]
+
+[ext_resource type="Texture2D" uid="uid://ct1dnj3s176n2" path="res://Assets/Biome/village/magic-tower/animation/Lightning.png" id="1_t2ie8"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_re7fb"]
+atlas = ExtResource("1_t2ie8")
+region = Rect2(0, 0, 80, 128)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_rfuhj"]
+atlas = ExtResource("1_t2ie8")
+region = Rect2(80, 0, 80, 128)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_2s8vp"]
+atlas = ExtResource("1_t2ie8")
+region = Rect2(160, 0, 80, 128)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_e03o7"]
+atlas = ExtResource("1_t2ie8")
+region = Rect2(240, 0, 80, 128)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ibhl3"]
+atlas = ExtResource("1_t2ie8")
+region = Rect2(0, 128, 80, 128)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_pggof"]
+atlas = ExtResource("1_t2ie8")
+region = Rect2(80, 128, 80, 128)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_gia0j"]
+atlas = ExtResource("1_t2ie8")
+region = Rect2(160, 128, 80, 128)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_edl8o"]
+atlas = ExtResource("1_t2ie8")
+region = Rect2(240, 128, 80, 128)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_6g888"]
+atlas = ExtResource("1_t2ie8")
+region = Rect2(0, 256, 80, 128)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_mj4ua"]
+atlas = ExtResource("1_t2ie8")
+region = Rect2(80, 256, 80, 128)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_l76rg"]
+atlas = ExtResource("1_t2ie8")
+region = Rect2(160, 256, 80, 128)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_dn2f3"]
+atlas = ExtResource("1_t2ie8")
+region = Rect2(240, 256, 80, 128)
+
+[sub_resource type="SpriteFrames" id="SF_Lightning"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_re7fb")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_rfuhj")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_2s8vp")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_e03o7")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ibhl3")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_pggof")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_gia0j")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_edl8o")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_6g888")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_mj4ua")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_l76rg")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_dn2f3")
+}],
+"loop": false,
+"name": &"flash",
+"speed": 12.0
+}]
+
+[node name="Lightning" type="Node2D" unique_id=2063435071]
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=470120178]
+sprite_frames = SubResource("SF_Lightning")
+animation = &"flash"
+autoplay = "flash"
+frame = 11
+frame_progress = 1.0

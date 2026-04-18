@@ -1,0 +1,154 @@
+[gd_scene format=3 uid="uid://teygbgxxmrve"]
+
+[ext_resource type="Texture2D" uid="uid://csii8o6h46o0w" path="res://Assets/Biome/Coast/animation/water_detilazation.png" id="1_af0ok"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_48uyw"]
+atlas = ExtResource("1_af0ok")
+region = Rect2(0, 0, 229, 33)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_lhogc"]
+atlas = ExtResource("1_af0ok")
+region = Rect2(0, 33, 229, 33)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_fjhvf"]
+atlas = ExtResource("1_af0ok")
+region = Rect2(0, 66, 229, 33)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_rtgya"]
+atlas = ExtResource("1_af0ok")
+region = Rect2(0, 99, 229, 33)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_okjls"]
+atlas = ExtResource("1_af0ok")
+region = Rect2(0, 132, 229, 33)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_fcjcr"]
+atlas = ExtResource("1_af0ok")
+region = Rect2(0, 165, 229, 33)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_o4jbp"]
+atlas = ExtResource("1_af0ok")
+region = Rect2(516, 0, 172, 33)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_q2o6n"]
+atlas = ExtResource("1_af0ok")
+region = Rect2(516, 33, 172, 33)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_t6uuh"]
+atlas = ExtResource("1_af0ok")
+region = Rect2(516, 66, 172, 33)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_3k8a8"]
+atlas = ExtResource("1_af0ok")
+region = Rect2(516, 99, 172, 33)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_otoi5"]
+atlas = ExtResource("1_af0ok")
+region = Rect2(516, 132, 172, 33)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ncgvm"]
+atlas = ExtResource("1_af0ok")
+region = Rect2(516, 165, 172, 33)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_1yjsd"]
+atlas = ExtResource("1_af0ok")
+region = Rect2(229, 192, 229, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_4r1bk"]
+atlas = ExtResource("1_af0ok")
+region = Rect2(229, 240, 229, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_k8v2a"]
+atlas = ExtResource("1_af0ok")
+region = Rect2(229, 288, 229, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_3j0x6"]
+atlas = ExtResource("1_af0ok")
+region = Rect2(229, 336, 229, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_vykgb"]
+atlas = ExtResource("1_af0ok")
+region = Rect2(229, 384, 229, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_8ks40"]
+atlas = ExtResource("1_af0ok")
+region = Rect2(229, 432, 229, 48)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_2t85v"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_48uyw")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_lhogc")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_fjhvf")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_rtgya")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_okjls")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_fcjcr")
+}],
+"loop": true,
+"name": &"1",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_o4jbp")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_q2o6n")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_t6uuh")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_3k8a8")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_otoi5")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ncgvm")
+}],
+"loop": true,
+"name": &"2",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_1yjsd")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_4r1bk")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_k8v2a")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_3j0x6")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_vykgb")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_8ks40")
+}],
+"loop": true,
+"name": &"3",
+"speed": 5.0
+}]
+
+[node name="Water" type="Node2D" unique_id=1970200277]
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=799748312]
+sprite_frames = SubResource("SpriteFrames_2t85v")
+animation = &"3"
+frame_progress = 0.49249765

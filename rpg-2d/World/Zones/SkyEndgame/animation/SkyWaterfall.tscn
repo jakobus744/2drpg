@@ -1,0 +1,155 @@
+[gd_scene format=3 uid="uid://cjdrfvchmtl1g"]
+
+[ext_resource type="Texture2D" uid="uid://rp1qsmnrgprg" path="res://Assets/Biome/Flying-endgame/animation/Waterfalls.png" id="1_0vror"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_smnka"]
+atlas = ExtResource("1_0vror")
+region = Rect2(0, 0, 48, 176)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_foikc"]
+atlas = ExtResource("1_0vror")
+region = Rect2(0, 176, 48, 176)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_oc657"]
+atlas = ExtResource("1_0vror")
+region = Rect2(0, 352, 48, 176)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_dnjj0"]
+atlas = ExtResource("1_0vror")
+region = Rect2(0, 528, 48, 176)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_erw8d"]
+atlas = ExtResource("1_0vror")
+region = Rect2(0, 704, 48, 176)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_iwys8"]
+atlas = ExtResource("1_0vror")
+region = Rect2(0, 880, 48, 176)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_unotn"]
+atlas = ExtResource("1_0vror")
+region = Rect2(144, 0, 48, 176)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_0xugr"]
+atlas = ExtResource("1_0vror")
+region = Rect2(144, 176, 48, 176)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_xwsxr"]
+atlas = ExtResource("1_0vror")
+region = Rect2(144, 352, 48, 176)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_goyqt"]
+atlas = ExtResource("1_0vror")
+region = Rect2(144, 528, 48, 176)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_87vcs"]
+atlas = ExtResource("1_0vror")
+region = Rect2(144, 704, 48, 176)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_8aomj"]
+atlas = ExtResource("1_0vror")
+region = Rect2(144, 880, 48, 176)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_umxu3"]
+atlas = ExtResource("1_0vror")
+region = Rect2(48, 0, 48, 176)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_vuc7m"]
+atlas = ExtResource("1_0vror")
+region = Rect2(48, 176, 48, 176)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_am6o3"]
+atlas = ExtResource("1_0vror")
+region = Rect2(48, 352, 48, 176)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_smoyj"]
+atlas = ExtResource("1_0vror")
+region = Rect2(48, 528, 48, 176)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_wnsl1"]
+atlas = ExtResource("1_0vror")
+region = Rect2(48, 704, 48, 176)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ddx6o"]
+atlas = ExtResource("1_0vror")
+region = Rect2(48, 880, 48, 176)
+
+[sub_resource type="SpriteFrames" id="SF_SkyWaterfall"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_smnka")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_foikc")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_oc657")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_dnjj0")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_erw8d")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_iwys8")
+}],
+"loop": true,
+"name": &"2",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_unotn")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_0xugr")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_xwsxr")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_goyqt")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_87vcs")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_8aomj")
+}],
+"loop": true,
+"name": &"3",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_umxu3")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_vuc7m")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_am6o3")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_smoyj")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_wnsl1")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ddx6o")
+}],
+"loop": true,
+"name": &"fall",
+"speed": 8.0
+}]
+
+[node name="SkyWaterfall" type="Node2D" unique_id=1329125794]
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=80678366]
+sprite_frames = SubResource("SF_SkyWaterfall")
+animation = &"3"
+autoplay = "fall"
+frame_progress = 0.15063354

@@ -1,0 +1,116 @@
+[gd_scene format=3 uid="uid://dsarnlr7wvq3h"]
+
+[ext_resource type="Texture2D" uid="uid://ddryo37orhrn8" path="res://Assets/Biome/1.Forest/animation/bird_fly_animation.png" id="1_lpnh2"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_fckdk"]
+atlas = ExtResource("1_lpnh2")
+region = Rect2(144, 0, 144, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_2co1v"]
+atlas = ExtResource("1_lpnh2")
+region = Rect2(144, 64, 144, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_yvex0"]
+atlas = ExtResource("1_lpnh2")
+region = Rect2(144, 128, 144, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_6qk23"]
+atlas = ExtResource("1_lpnh2")
+region = Rect2(144, 192, 144, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_k8ww6"]
+atlas = ExtResource("1_lpnh2")
+region = Rect2(144, 256, 144, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_67q6q"]
+atlas = ExtResource("1_lpnh2")
+region = Rect2(144, 320, 144, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_y0npf"]
+atlas = ExtResource("1_lpnh2")
+region = Rect2(144, 384, 144, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_4kjrw"]
+atlas = ExtResource("1_lpnh2")
+region = Rect2(144, 448, 144, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_2vywl"]
+atlas = ExtResource("1_lpnh2")
+region = Rect2(144, 512, 144, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_frlx4"]
+atlas = ExtResource("1_lpnh2")
+region = Rect2(144, 576, 144, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_polmm"]
+atlas = ExtResource("1_lpnh2")
+region = Rect2(144, 640, 144, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_83b4v"]
+atlas = ExtResource("1_lpnh2")
+region = Rect2(144, 704, 144, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_231q1"]
+atlas = ExtResource("1_lpnh2")
+region = Rect2(144, 768, 144, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ychnp"]
+atlas = ExtResource("1_lpnh2")
+region = Rect2(144, 832, 144, 64)
+
+[sub_resource type="SpriteFrames" id="SF_BirdFly"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_fckdk")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_2co1v")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_yvex0")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_6qk23")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_k8ww6")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_67q6q")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_y0npf")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_4kjrw")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_2vywl")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_frlx4")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_polmm")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_83b4v")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_231q1")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ychnp")
+}],
+"loop": true,
+"name": &"fly",
+"speed": 10.0
+}]
+
+[node name="BirdFly" type="Node2D" unique_id=1509683807]
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=928637589]
+sprite_frames = SubResource("SF_BirdFly")
+animation = &"fly"
+frame_progress = 0.95003116

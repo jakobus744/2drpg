@@ -1,0 +1,103 @@
+[gd_scene format=3 uid="uid://b2t8xl53u5gca"]
+
+[ext_resource type="Texture2D" uid="uid://0wrv2p3w2frl" path="res://Assets/Biome/1.Forest/animation/Boiler.png" id="1_a0sma"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_f3bq8"]
+atlas = ExtResource("1_a0sma")
+region = Rect2(0, 0, 32, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_44lce"]
+atlas = ExtResource("1_a0sma")
+region = Rect2(32, 0, 32, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_dl4xd"]
+atlas = ExtResource("1_a0sma")
+region = Rect2(64, 0, 32, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_040e6"]
+atlas = ExtResource("1_a0sma")
+region = Rect2(96, 0, 32, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_updrr"]
+atlas = ExtResource("1_a0sma")
+region = Rect2(128, 0, 32, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_o8jql"]
+atlas = ExtResource("1_a0sma")
+region = Rect2(160, 0, 32, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_5n2ra"]
+atlas = ExtResource("1_a0sma")
+region = Rect2(192, 0, 32, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_g558t"]
+atlas = ExtResource("1_a0sma")
+region = Rect2(224, 0, 32, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_molui"]
+atlas = ExtResource("1_a0sma")
+region = Rect2(256, 0, 32, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_f1k1y"]
+atlas = ExtResource("1_a0sma")
+region = Rect2(288, 0, 32, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_eydq0"]
+atlas = ExtResource("1_a0sma")
+region = Rect2(320, 0, 32, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_0m3d0"]
+atlas = ExtResource("1_a0sma")
+region = Rect2(352, 0, 32, 48)
+
+[sub_resource type="SpriteFrames" id="SF_Boiler"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_f3bq8")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_44lce")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_dl4xd")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_040e6")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_updrr")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_o8jql")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_5n2ra")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_g558t")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_molui")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_f1k1y")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_eydq0")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_0m3d0")
+}],
+"loop": true,
+"name": &"boil",
+"speed": 8.0
+}]
+
+[node name="Boiler" type="Node2D" unique_id=1866361576]
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=1751763083]
+sprite_frames = SubResource("SF_Boiler")
+animation = &"boil"
+autoplay = "boil"
+frame_progress = 0.45255497

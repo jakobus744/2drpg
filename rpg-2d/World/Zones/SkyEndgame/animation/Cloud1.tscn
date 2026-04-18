@@ -1,0 +1,108 @@
+[gd_scene format=3 uid="uid://6jas5i6gfo7p"]
+
+[ext_resource type="Texture2D" uid="uid://bh8hr2aug7s23" path="res://Assets/Biome/Flying-endgame/animation/Clouds_animated1.png" id="1_414lp"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_y0o10"]
+atlas = ExtResource("1_414lp")
+region = Rect2(0, 0, 64, 37)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ov5by"]
+atlas = ExtResource("1_414lp")
+region = Rect2(64, 0, 64, 37)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_8hckv"]
+atlas = ExtResource("1_414lp")
+region = Rect2(128, 0, 64, 37)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_c1fys"]
+atlas = ExtResource("1_414lp")
+region = Rect2(192, 0, 64, 37)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_6j5qw"]
+atlas = ExtResource("1_414lp")
+region = Rect2(256, 0, 64, 37)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_x34cl"]
+atlas = ExtResource("1_414lp")
+region = Rect2(320, 0, 64, 37)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_5fw2b"]
+atlas = ExtResource("1_414lp")
+region = Rect2(0, 38, 48, 38)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_iq4ho"]
+atlas = ExtResource("1_414lp")
+region = Rect2(48, 38, 48, 38)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_n8akv"]
+atlas = ExtResource("1_414lp")
+region = Rect2(96, 38, 48, 38)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_2s7qg"]
+atlas = ExtResource("1_414lp")
+region = Rect2(144, 38, 48, 38)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_0kt7e"]
+atlas = ExtResource("1_414lp")
+region = Rect2(192, 38, 48, 38)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_qrltw"]
+atlas = ExtResource("1_414lp")
+region = Rect2(240, 38, 48, 38)
+
+[sub_resource type="SpriteFrames" id="SF_Cloud1"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_y0o10")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ov5by")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_8hckv")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_c1fys")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_6j5qw")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_x34cl")
+}],
+"loop": true,
+"name": &"drift",
+"speed": 8.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_5fw2b")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_iq4ho")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_n8akv")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_2s7qg")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_0kt7e")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_qrltw")
+}],
+"loop": true,
+"name": &"middle",
+"speed": 5.0
+}]
+
+[node name="Cloud1" type="Node2D" unique_id=61633121]
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=1870972937]
+sprite_frames = SubResource("SF_Cloud1")
+animation = &"drift"
+autoplay = "drift"
+frame_progress = 0.4024227

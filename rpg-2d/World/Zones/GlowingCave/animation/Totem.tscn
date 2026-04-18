@@ -1,0 +1,87 @@
+[gd_scene format=3 uid="uid://bphdn8siyji18"]
+
+[ext_resource type="Texture2D" uid="uid://j2l364b24fnb" path="res://Assets/Biome/glowing-cave/animation/Totem_animation.png" id="1_qaq2o"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_vh0dp"]
+atlas = ExtResource("1_qaq2o")
+region = Rect2(0, 0, 96, 88)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_mqai0"]
+atlas = ExtResource("1_qaq2o")
+region = Rect2(96, 0, 96, 88)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_nynkt"]
+atlas = ExtResource("1_qaq2o")
+region = Rect2(192, 0, 96, 88)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_gcnue"]
+atlas = ExtResource("1_qaq2o")
+region = Rect2(288, 0, 96, 88)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_guap3"]
+atlas = ExtResource("1_qaq2o")
+region = Rect2(384, 0, 96, 88)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_vi86p"]
+atlas = ExtResource("1_qaq2o")
+region = Rect2(480, 0, 96, 88)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_v6ruw"]
+atlas = ExtResource("1_qaq2o")
+region = Rect2(0, 88, 82, 88)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_dfebb"]
+atlas = ExtResource("1_qaq2o")
+region = Rect2(82, 88, 82, 88)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_eejij"]
+atlas = ExtResource("1_qaq2o")
+region = Rect2(164, 88, 82, 88)
+
+[sub_resource type="SpriteFrames" id="SF_Totem"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_vh0dp")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_mqai0")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_nynkt")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_gcnue")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_guap3")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_vi86p")
+}],
+"loop": true,
+"name": &"1",
+"speed": 8.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_v6ruw")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_dfebb")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_eejij")
+}],
+"loop": true,
+"name": &"2",
+"speed": 5.0
+}]
+
+[node name="Totem" type="Node2D" unique_id=1282177962]
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=758153933]
+sprite_frames = SubResource("SF_Totem")
+animation = &"1"
+autoplay = "1"
+frame_progress = 0.16985069

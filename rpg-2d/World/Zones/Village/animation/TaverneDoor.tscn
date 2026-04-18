@@ -1,0 +1,48 @@
+[gd_scene format=3 uid="uid://u3odvraghf4g"]
+
+[ext_resource type="Texture2D" uid="uid://b1t2ddqb86hi4" path="res://Assets/Biome/village/taverne/animation/Animation_windows_doors.png" id="1_87pb5"]
+
+[sub_resource type="AtlasTexture" id="AT_1"]
+atlas = ExtResource("1_87pb5")
+region = Rect2(64, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AT_3"]
+atlas = ExtResource("1_87pb5")
+region = Rect2(192, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AT_6"]
+atlas = ExtResource("1_87pb5")
+region = Rect2(384, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AT_8"]
+atlas = ExtResource("1_87pb5")
+region = Rect2(512, 0, 64, 64)
+
+[sub_resource type="SpriteFrames" id="SF_TaverneDoor"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AT_1")
+}, {
+"duration": 1.0,
+"texture": SubResource("AT_3")
+}, {
+"duration": 1.0,
+"texture": SubResource("AT_6")
+}, {
+"duration": 1.0,
+"texture": SubResource("AT_8")
+}],
+"loop": false,
+"name": &"open",
+"speed": 8.0
+}]
+
+[node name="TaverneDoor" type="Node2D" unique_id=94322096]
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=1575249451]
+sprite_frames = SubResource("SF_TaverneDoor")
+animation = &"open"
+autoplay = "open"
+frame = 3
+frame_progress = 1.0

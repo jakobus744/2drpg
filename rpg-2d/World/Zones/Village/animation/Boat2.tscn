@@ -1,0 +1,47 @@
+[gd_scene format=3 uid="uid://d0a62x7rlb5ms"]
+
+[ext_resource type="Texture2D" uid="uid://ffofh72xlpau" path="res://Assets/Biome/village/fishing-house/animation/Boat1.png" id="1_m0ogw"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_oh2g5"]
+atlas = ExtResource("1_m0ogw")
+region = Rect2(0, 0, 176, 128)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_j0wqh"]
+atlas = ExtResource("1_m0ogw")
+region = Rect2(176, 0, 176, 128)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_gb4m7"]
+atlas = ExtResource("1_m0ogw")
+region = Rect2(352, 0, 176, 128)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ya2tx"]
+atlas = ExtResource("1_m0ogw")
+region = Rect2(528, 0, 176, 128)
+
+[sub_resource type="SpriteFrames" id="SF_Boat2"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_oh2g5")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_j0wqh")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_gb4m7")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ya2tx")
+}],
+"loop": true,
+"name": &"boat",
+"speed": 8.0
+}]
+
+[node name="Boat2" type="Node2D" unique_id=1524738292]
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=1102183447]
+sprite_frames = SubResource("SF_Boat2")
+animation = &"boat"
+autoplay = "boat"
+frame_progress = 0.5240749

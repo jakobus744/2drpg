@@ -1,0 +1,201 @@
+[gd_scene format=3 uid="uid://dqq73kctlgwtr"]
+
+[ext_resource type="Texture2D" uid="uid://k2nf10vkqmd4" path="res://Assets/Biome/1.Forest/animation/Water_lilis.png" id="1_mt4kn"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_pa05r"]
+atlas = ExtResource("1_mt4kn")
+region = Rect2(0, 0, 60, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ryqk3"]
+atlas = ExtResource("1_mt4kn")
+region = Rect2(0, 32, 60, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_3pkye"]
+atlas = ExtResource("1_mt4kn")
+region = Rect2(0, 64, 60, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_b7pjo"]
+atlas = ExtResource("1_mt4kn")
+region = Rect2(0, 96, 60, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ish6g"]
+atlas = ExtResource("1_mt4kn")
+region = Rect2(0, 128, 60, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_nn3bc"]
+atlas = ExtResource("1_mt4kn")
+region = Rect2(0, 160, 60, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ny6ug"]
+atlas = ExtResource("1_mt4kn")
+region = Rect2(60, 0, 60, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_fssl8"]
+atlas = ExtResource("1_mt4kn")
+region = Rect2(60, 32, 60, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_35qcw"]
+atlas = ExtResource("1_mt4kn")
+region = Rect2(60, 64, 60, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_k88cf"]
+atlas = ExtResource("1_mt4kn")
+region = Rect2(60, 96, 60, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_behjo"]
+atlas = ExtResource("1_mt4kn")
+region = Rect2(60, 128, 60, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_c4uey"]
+atlas = ExtResource("1_mt4kn")
+region = Rect2(60, 160, 60, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_6wekx"]
+atlas = ExtResource("1_mt4kn")
+region = Rect2(120, 0, 60, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_fyexv"]
+atlas = ExtResource("1_mt4kn")
+region = Rect2(120, 32, 60, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_y5440"]
+atlas = ExtResource("1_mt4kn")
+region = Rect2(120, 64, 60, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_u6tpr"]
+atlas = ExtResource("1_mt4kn")
+region = Rect2(120, 96, 60, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_pjfik"]
+atlas = ExtResource("1_mt4kn")
+region = Rect2(120, 128, 60, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_8rddl"]
+atlas = ExtResource("1_mt4kn")
+region = Rect2(120, 160, 60, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ugow1"]
+atlas = ExtResource("1_mt4kn")
+region = Rect2(180, 0, 60, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ksfol"]
+atlas = ExtResource("1_mt4kn")
+region = Rect2(180, 32, 60, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_djyna"]
+atlas = ExtResource("1_mt4kn")
+region = Rect2(180, 64, 60, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_mdili"]
+atlas = ExtResource("1_mt4kn")
+region = Rect2(180, 96, 60, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_b0fo6"]
+atlas = ExtResource("1_mt4kn")
+region = Rect2(180, 128, 60, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_8ap1u"]
+atlas = ExtResource("1_mt4kn")
+region = Rect2(180, 160, 60, 32)
+
+[sub_resource type="SpriteFrames" id="SF_WaterLilies"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_pa05r")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ryqk3")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_3pkye")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_b7pjo")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ish6g")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_nn3bc")
+}],
+"loop": true,
+"name": &"animate",
+"speed": 8.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ny6ug")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_fssl8")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_35qcw")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_k88cf")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_behjo")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_c4uey")
+}],
+"loop": true,
+"name": &"big",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_6wekx")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_fyexv")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_y5440")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_u6tpr")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_pjfik")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_8rddl")
+}],
+"loop": true,
+"name": &"middle",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ugow1")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ksfol")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_djyna")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_mdili")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_b0fo6")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_8ap1u")
+}],
+"loop": true,
+"name": &"more",
+"speed": 5.0
+}]
+
+[node name="WaterLilies" type="Node2D" unique_id=156337753]
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=1156990582]
+sprite_frames = SubResource("SF_WaterLilies")
+animation = &"more"
+autoplay = "animate"

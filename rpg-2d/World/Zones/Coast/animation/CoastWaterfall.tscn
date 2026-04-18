@@ -1,0 +1,70 @@
+[gd_scene format=3 uid="uid://bhpniw6w7swpt"]
+
+[ext_resource type="Texture2D" uid="uid://co6jdmrm4vgb1" path="res://Assets/Biome/Coast/animation/waterfall.png" id="1_lutu8"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_705gg"]
+atlas = ExtResource("1_lutu8")
+region = Rect2(96, 0, 24, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_g460m"]
+atlas = ExtResource("1_lutu8")
+region = Rect2(96, 160, 24, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_a3ecq"]
+atlas = ExtResource("1_lutu8")
+region = Rect2(0, 0, 24, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_l0q6c"]
+atlas = ExtResource("1_lutu8")
+region = Rect2(0, 160, 24, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_w6tcc"]
+atlas = ExtResource("1_lutu8")
+region = Rect2(48, 0, 48, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_7on3h"]
+atlas = ExtResource("1_lutu8")
+region = Rect2(48, 240, 48, 48)
+
+[sub_resource type="SpriteFrames" id="SF_CoastWaterfall"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_705gg")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_g460m")
+}],
+"loop": true,
+"name": &"2",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_a3ecq")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_l0q6c")
+}],
+"loop": true,
+"name": &"fall",
+"speed": 8.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_w6tcc")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_7on3h")
+}],
+"loop": true,
+"name": &"right",
+"speed": 5.0
+}]
+
+[node name="CoastWaterfall" type="Node2D" unique_id=463306523]
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=235147907]
+sprite_frames = SubResource("SF_CoastWaterfall")
+animation = &"right"
+autoplay = "fall"

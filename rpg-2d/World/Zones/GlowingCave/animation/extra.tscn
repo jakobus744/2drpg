@@ -1,0 +1,99 @@
+[gd_scene format=3 uid="uid://dm2o3g3di61aw"]
+
+[ext_resource type="Texture2D" uid="uid://d01tglfo1xra" path="res://Assets/Biome/glowing-cave/animation/Details.png" id="1_gfpkh"]
+[ext_resource type="Texture2D" uid="uid://8juu2nc46bnm" path="res://Assets/Biome/glowing-cave/animation/Water_coasts.png" id="2_0coeb"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_hyp8f"]
+atlas = ExtResource("1_gfpkh")
+region = Rect2(96, 89, 32, 89)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_wcctk"]
+atlas = ExtResource("1_gfpkh")
+region = Rect2(128, 89, 32, 89)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_wioip"]
+atlas = ExtResource("1_gfpkh")
+region = Rect2(0, 0, 40, 95)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_u6qff"]
+atlas = ExtResource("1_gfpkh")
+region = Rect2(80, 0, 40, 95)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_bwe08"]
+atlas = ExtResource("2_0coeb")
+region = Rect2(0, 0, 72, 80)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_dfwaj"]
+atlas = ExtResource("2_0coeb")
+region = Rect2(0, 80, 72, 80)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_7m6fk"]
+atlas = ExtResource("2_0coeb")
+region = Rect2(0, 160, 72, 80)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_7mhrh"]
+atlas = ExtResource("2_0coeb")
+region = Rect2(0, 240, 72, 80)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_m2xuv"]
+atlas = ExtResource("2_0coeb")
+region = Rect2(0, 320, 72, 80)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_fta75"]
+atlas = ExtResource("2_0coeb")
+region = Rect2(0, 400, 72, 80)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_16ug6"]
+animations = [{
+"frames": [{
+"duration": 2.5,
+"texture": SubResource("AtlasTexture_hyp8f")
+}, {
+"duration": 3.54,
+"texture": SubResource("AtlasTexture_wcctk")
+}],
+"loop": true,
+"name": &"glowing_drop_stone",
+"speed": 2.0
+}, {
+"frames": [{
+"duration": 2.4,
+"texture": SubResource("AtlasTexture_wioip")
+}, {
+"duration": 3.51,
+"texture": SubResource("AtlasTexture_u6qff")
+}],
+"loop": true,
+"name": &"glowing_stone",
+"speed": 2.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_bwe08")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_dfwaj")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_7m6fk")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_7mhrh")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_m2xuv")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_fta75")
+}],
+"loop": true,
+"name": &"water_stone",
+"speed": 5.0
+}]
+
+[node name="Extra" type="Node2D" unique_id=1720525335]
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=1884053923]
+sprite_frames = SubResource("SpriteFrames_16ug6")
+animation = &"glowing_stone"
+frame_progress = 0.110604346

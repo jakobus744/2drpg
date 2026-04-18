@@ -1,0 +1,60 @@
+[gd_scene format=3 uid="uid://bv130apd5ctta"]
+
+[ext_resource type="Texture2D" uid="uid://wqjeuftxl7jt" path="res://Assets/Biome/village/farm-house/animation/Sails_animation.png" id="1_agb86"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_6v2wf"]
+atlas = ExtResource("1_agb86")
+region = Rect2(0, 0, 160, 144)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_6tlmi"]
+atlas = ExtResource("1_agb86")
+region = Rect2(0, 144, 160, 144)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_11amx"]
+atlas = ExtResource("1_agb86")
+region = Rect2(0, 288, 160, 144)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ykxa6"]
+atlas = ExtResource("1_agb86")
+region = Rect2(0, 432, 160, 144)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_rnp6y"]
+atlas = ExtResource("1_agb86")
+region = Rect2(0, 576, 160, 144)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_11vnp"]
+atlas = ExtResource("1_agb86")
+region = Rect2(0, 720, 160, 144)
+
+[sub_resource type="SpriteFrames" id="SF_Boat1"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_6v2wf")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_6tlmi")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_11amx")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ykxa6")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_rnp6y")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_11vnp")
+}],
+"loop": true,
+"name": &"windrad",
+"speed": 8.0
+}]
+
+[node name="Boat1" type="Node2D" unique_id=1057698048]
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=2052075011]
+sprite_frames = SubResource("SF_Boat1")
+animation = &"windrad"
+autoplay = "windrad"

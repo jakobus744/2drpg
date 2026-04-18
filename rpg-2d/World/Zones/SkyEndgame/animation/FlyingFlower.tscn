@@ -1,0 +1,61 @@
+[gd_scene format=3 uid="uid://dfk13sh5uq81p"]
+
+[ext_resource type="Texture2D" uid="uid://l6dhv6wabid1" path="res://Assets/Biome/Flying-endgame/animation/Flying_flowers.png" id="1_5fg8p"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_78luy"]
+atlas = ExtResource("1_5fg8p")
+region = Rect2(0, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_tvwnf"]
+atlas = ExtResource("1_5fg8p")
+region = Rect2(64, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_7ftw2"]
+atlas = ExtResource("1_5fg8p")
+region = Rect2(128, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_hpyga"]
+atlas = ExtResource("1_5fg8p")
+region = Rect2(192, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_22slq"]
+atlas = ExtResource("1_5fg8p")
+region = Rect2(256, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_jineo"]
+atlas = ExtResource("1_5fg8p")
+region = Rect2(320, 0, 64, 64)
+
+[sub_resource type="SpriteFrames" id="SF_FlyingFlower"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_78luy")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_tvwnf")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_7ftw2")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_hpyga")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_22slq")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_jineo")
+}],
+"loop": true,
+"name": &"float",
+"speed": 8.0
+}]
+
+[node name="FlyingFlower" type="Node2D" unique_id=1545543261]
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=1289229618]
+sprite_frames = SubResource("SF_FlyingFlower")
+animation = &"float"
+autoplay = "float"
+frame_progress = 0.57388836

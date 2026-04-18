@@ -1,9 +1,9 @@
-[gd_scene format=4 uid="uid://npc_boy"]
+[gd_scene format=3 uid="uid://bqxw0bfluiygc"]
 
-[ext_resource type="Texture2D" path="res://Assets/Charakter/NPC/Boy_amazed.png" id="tex_amazed"]
-[ext_resource type="Texture2D" path="res://Assets/Charakter/NPC/Boy_weaves.png" id="tex_weaves"]
-[ext_resource type="Texture2D" path="res://Assets/Charakter/NPC/Boy_looking.png" id="tex_looking"]
-[ext_resource type="Script" path="res://Mobs/NPC/Boy/Boy.cs" id="scr_Boy"]
+[ext_resource type="Script" uid="uid://cu8ddon6bxb6m" path="res://Mobs/NPC/Boy/Boy.cs" id="scr_Boy"]
+[ext_resource type="Texture2D" uid="uid://cmes47xjie2tn" path="res://Assets/Charakter/NPC/Boy_amazed.png" id="tex_amazed"]
+[ext_resource type="Texture2D" uid="uid://bhr6cgkms23kw" path="res://Assets/Charakter/NPC/Boy_looking.png" id="tex_looking"]
+[ext_resource type="Texture2D" uid="uid://yhe2cbirqqw1" path="res://Assets/Charakter/NPC/Boy_weaves.png" id="tex_weaves"]
 
 [sub_resource type="AtlasTexture" id="AT_amazed_down_0"]
 atlas = ExtResource("tex_amazed")
@@ -35,38 +35,6 @@ region = Rect2(288, 0, 48, 48)
 
 [sub_resource type="AtlasTexture" id="AT_amazed_down_7"]
 atlas = ExtResource("tex_amazed")
-region = Rect2(336, 0, 48, 48)
-
-[sub_resource type="AtlasTexture" id="AT_weaves_down_0"]
-atlas = ExtResource("tex_weaves")
-region = Rect2(0, 0, 48, 48)
-
-[sub_resource type="AtlasTexture" id="AT_weaves_down_1"]
-atlas = ExtResource("tex_weaves")
-region = Rect2(48, 0, 48, 48)
-
-[sub_resource type="AtlasTexture" id="AT_weaves_down_2"]
-atlas = ExtResource("tex_weaves")
-region = Rect2(96, 0, 48, 48)
-
-[sub_resource type="AtlasTexture" id="AT_weaves_down_3"]
-atlas = ExtResource("tex_weaves")
-region = Rect2(144, 0, 48, 48)
-
-[sub_resource type="AtlasTexture" id="AT_weaves_down_4"]
-atlas = ExtResource("tex_weaves")
-region = Rect2(192, 0, 48, 48)
-
-[sub_resource type="AtlasTexture" id="AT_weaves_down_5"]
-atlas = ExtResource("tex_weaves")
-region = Rect2(240, 0, 48, 48)
-
-[sub_resource type="AtlasTexture" id="AT_weaves_down_6"]
-atlas = ExtResource("tex_weaves")
-region = Rect2(288, 0, 48, 48)
-
-[sub_resource type="AtlasTexture" id="AT_weaves_down_7"]
-atlas = ExtResource("tex_weaves")
 region = Rect2(336, 0, 48, 48)
 
 [sub_resource type="AtlasTexture" id="AT_looking_down_0"]
@@ -101,19 +69,138 @@ region = Rect2(288, 0, 48, 48)
 atlas = ExtResource("tex_looking")
 region = Rect2(336, 0, 48, 48)
 
+[sub_resource type="AtlasTexture" id="AT_weaves_down_0"]
+atlas = ExtResource("tex_weaves")
+region = Rect2(0, 0, 48, 48)
+
+[sub_resource type="AtlasTexture" id="AT_weaves_down_1"]
+atlas = ExtResource("tex_weaves")
+region = Rect2(48, 0, 48, 48)
+
+[sub_resource type="AtlasTexture" id="AT_weaves_down_2"]
+atlas = ExtResource("tex_weaves")
+region = Rect2(96, 0, 48, 48)
+
+[sub_resource type="AtlasTexture" id="AT_weaves_down_3"]
+atlas = ExtResource("tex_weaves")
+region = Rect2(144, 0, 48, 48)
+
+[sub_resource type="AtlasTexture" id="AT_weaves_down_4"]
+atlas = ExtResource("tex_weaves")
+region = Rect2(192, 0, 48, 48)
+
+[sub_resource type="AtlasTexture" id="AT_weaves_down_5"]
+atlas = ExtResource("tex_weaves")
+region = Rect2(240, 0, 48, 48)
+
+[sub_resource type="AtlasTexture" id="AT_weaves_down_6"]
+atlas = ExtResource("tex_weaves")
+region = Rect2(288, 0, 48, 48)
+
+[sub_resource type="AtlasTexture" id="AT_weaves_down_7"]
+atlas = ExtResource("tex_weaves")
+region = Rect2(336, 0, 48, 48)
+
 [sub_resource type="SpriteFrames" id="SF_Boy"]
-animations = [{"frames": [{"duration": 1.0, "texture": SubResource("AT_amazed_down_0")}, {"duration": 1.0, "texture": SubResource("AT_amazed_down_1")}, {"duration": 1.0, "texture": SubResource("AT_amazed_down_2")}, {"duration": 1.0, "texture": SubResource("AT_amazed_down_3")}, {"duration": 1.0, "texture": SubResource("AT_amazed_down_4")}, {"duration": 1.0, "texture": SubResource("AT_amazed_down_5")}, {"duration": 1.0, "texture": SubResource("AT_amazed_down_6")}, {"duration": 1.0, "texture": SubResource("AT_amazed_down_7")}], "loop": true, "name": &"amazed_down", "speed": 8.0}, {"frames": [{"duration": 1.0, "texture": SubResource("AT_weaves_down_0")}, {"duration": 1.0, "texture": SubResource("AT_weaves_down_1")}, {"duration": 1.0, "texture": SubResource("AT_weaves_down_2")}, {"duration": 1.0, "texture": SubResource("AT_weaves_down_3")}, {"duration": 1.0, "texture": SubResource("AT_weaves_down_4")}, {"duration": 1.0, "texture": SubResource("AT_weaves_down_5")}, {"duration": 1.0, "texture": SubResource("AT_weaves_down_6")}, {"duration": 1.0, "texture": SubResource("AT_weaves_down_7")}], "loop": true, "name": &"weaves_down", "speed": 8.0}, {"frames": [{"duration": 1.0, "texture": SubResource("AT_looking_down_0")}, {"duration": 1.0, "texture": SubResource("AT_looking_down_1")}, {"duration": 1.0, "texture": SubResource("AT_looking_down_2")}, {"duration": 1.0, "texture": SubResource("AT_looking_down_3")}, {"duration": 1.0, "texture": SubResource("AT_looking_down_4")}, {"duration": 1.0, "texture": SubResource("AT_looking_down_5")}, {"duration": 1.0, "texture": SubResource("AT_looking_down_6")}, {"duration": 1.0, "texture": SubResource("AT_looking_down_7")}], "loop": true, "name": &"looking_down", "speed": 8.0}]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AT_amazed_down_0")
+}, {
+"duration": 1.0,
+"texture": SubResource("AT_amazed_down_1")
+}, {
+"duration": 1.0,
+"texture": SubResource("AT_amazed_down_2")
+}, {
+"duration": 1.0,
+"texture": SubResource("AT_amazed_down_3")
+}, {
+"duration": 1.0,
+"texture": SubResource("AT_amazed_down_4")
+}, {
+"duration": 1.0,
+"texture": SubResource("AT_amazed_down_5")
+}, {
+"duration": 1.0,
+"texture": SubResource("AT_amazed_down_6")
+}, {
+"duration": 1.0,
+"texture": SubResource("AT_amazed_down_7")
+}],
+"loop": true,
+"name": &"amazed_down",
+"speed": 8.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AT_looking_down_0")
+}, {
+"duration": 1.0,
+"texture": SubResource("AT_looking_down_1")
+}, {
+"duration": 1.0,
+"texture": SubResource("AT_looking_down_2")
+}, {
+"duration": 1.0,
+"texture": SubResource("AT_looking_down_3")
+}, {
+"duration": 1.0,
+"texture": SubResource("AT_looking_down_4")
+}, {
+"duration": 1.0,
+"texture": SubResource("AT_looking_down_5")
+}, {
+"duration": 1.0,
+"texture": SubResource("AT_looking_down_6")
+}, {
+"duration": 1.0,
+"texture": SubResource("AT_looking_down_7")
+}],
+"loop": true,
+"name": &"looking_down",
+"speed": 8.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AT_weaves_down_0")
+}, {
+"duration": 1.0,
+"texture": SubResource("AT_weaves_down_1")
+}, {
+"duration": 1.0,
+"texture": SubResource("AT_weaves_down_2")
+}, {
+"duration": 1.0,
+"texture": SubResource("AT_weaves_down_3")
+}, {
+"duration": 1.0,
+"texture": SubResource("AT_weaves_down_4")
+}, {
+"duration": 1.0,
+"texture": SubResource("AT_weaves_down_5")
+}, {
+"duration": 1.0,
+"texture": SubResource("AT_weaves_down_6")
+}, {
+"duration": 1.0,
+"texture": SubResource("AT_weaves_down_7")
+}],
+"loop": true,
+"name": &"weaves_down",
+"speed": 8.0
+}]
 
 [sub_resource type="CapsuleShape2D" id="Cap_Boy"]
-radius = 6
-height = 12
+radius = 6.0
+height = 12.0
 
-[node name="Boy" type="CharacterBody2D"]
+[node name="Boy" type="CharacterBody2D" unique_id=1566564293]
 script = ExtResource("scr_Boy")
 
-[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=1640113446]
 sprite_frames = SubResource("SF_Boy")
-animation = &"amazed_down"
+animation = &"weaves_down"
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1901729085]
 shape = SubResource("Cap_Boy")

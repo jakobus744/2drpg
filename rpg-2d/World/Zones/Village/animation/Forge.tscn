@@ -1,0 +1,61 @@
+[gd_scene format=3 uid="uid://gce7kxmvglxs"]
+
+[ext_resource type="Texture2D" uid="uid://dycggdjyklow8" path="res://Assets/Biome/village/shoping-house/animation/Forge.png" id="1_efoys"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_cxl84"]
+atlas = ExtResource("1_efoys")
+region = Rect2(0, 0, 64, 96)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_3mh4p"]
+atlas = ExtResource("1_efoys")
+region = Rect2(64, 0, 64, 96)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_pdbil"]
+atlas = ExtResource("1_efoys")
+region = Rect2(128, 0, 64, 96)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_puk4y"]
+atlas = ExtResource("1_efoys")
+region = Rect2(192, 0, 64, 96)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_7hw3g"]
+atlas = ExtResource("1_efoys")
+region = Rect2(256, 0, 64, 96)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_45xk4"]
+atlas = ExtResource("1_efoys")
+region = Rect2(320, 0, 64, 96)
+
+[sub_resource type="SpriteFrames" id="SF_Forge"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_cxl84")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_3mh4p")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_pdbil")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_puk4y")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_7hw3g")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_45xk4")
+}],
+"loop": true,
+"name": &"spark",
+"speed": 8.0
+}]
+
+[node name="Forge" type="Node2D" unique_id=1788218753]
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=1627036365]
+sprite_frames = SubResource("SF_Forge")
+animation = &"spark"
+autoplay = "spark"
+frame_progress = 0.6214054
