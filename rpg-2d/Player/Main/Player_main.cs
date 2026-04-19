@@ -2,7 +2,7 @@ using Godot;
 using System.Collections.Generic;
 using System.Linq;
 
-public partial class Player : CharacterBody2D
+public partial class Player_main : CharacterBody2D
 {
     // ── Geschwindigkeit ───────────────────────────────────────
     private const float SpeedWalk  = 70f;
@@ -16,6 +16,8 @@ public partial class Player : CharacterBody2D
     private Vector2   _facingDirection = Vector2.Down;
     private bool      _isAttacking  = false;
     private bool      _isRolling   = false;
+
+    private bool IsActionLocked => _isAttacking || _isRolling;
 
     // Letzte-Taste-gewinnt Input
     private string       _activeDirection   = "";
@@ -88,7 +90,7 @@ public partial class Player : CharacterBody2D
 
     private void StartRoll()
     {
-        if (_isRolling || _isAttacking) return;
+        if (IsActionLocked) return;
         string animName = "roll_" + GetDirectionName();
         if (!_anim.SpriteFrames.HasAnimation(animName))
         {
@@ -101,9 +103,17 @@ public partial class Player : CharacterBody2D
 
     private void StartAttack()
     {
-        if (_isAttacking) return;
+        if (IsActionLocked) return;
+
+        string animName = GetAttackAnimationName(GetDirectionName());
+        if (!_anim.SpriteFrames.HasAnimation(animName))
+        {
+            GD.Print($"[Attack] Animation '{animName}' nicht gefunden!");
+            return;
+        }
+
         _isAttacking = true;
-        _anim.Play(GetAttackAnimationName(GetDirectionName()));
+        _anim.Play(animName);
     }
 
     private string GetAttackAnimationName(string dir) => _moveState switch
@@ -155,7 +165,7 @@ public partial class Player : CharacterBody2D
     // ═════════════════════════════════════════════════════════
     private void UpdateAnimation()
     {
-        if (_isAttacking || _isRolling) return;
+        if (IsActionLocked) return;
 
         string dir = GetDirectionName();
         switch (_moveState)
@@ -188,9 +198,11 @@ public partial class Player : CharacterBody2D
 
     private void OnAnimationFinished()
     {
-        if (_anim.Animation.ToString().Contains("attack"))
+        string finishedAnimation = _anim.Animation.ToString();
+
+        if (finishedAnimation.Contains("attack"))
             _isAttacking = false;
-        if (_anim.Animation.ToString().Contains("roll"))
+        if (finishedAnimation.Contains("roll"))
             _isRolling = false;
     }
 }

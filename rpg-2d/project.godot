@@ -14,10 +14,6 @@ config/name="RPG 2d"
 run/main_scene="uid://cc8qsty6libro"
 config/features=PackedStringArray("4.6", "C#", "Forward Plus")
 
-[display]
-
-window/stretch/scale=4.0
-
 [dotnet]
 
 project/assembly_name="RPG 2d"
