@@ -15,7 +15,7 @@
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_ur7pv"]
 radius = 4.0
-height = 14.0
+height = 12.0
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_dwpxe"]
 atlas = ExtResource("2_m5hx8")
@@ -2123,7 +2123,7 @@ y_sort_enabled = true
 script = ExtResource("1_xiiv8")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=933356697]
-position = Vector2(0, 5)
+position = Vector2(0, 6)
 shape = SubResource("CapsuleShape2D_ur7pv")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=782352616]
