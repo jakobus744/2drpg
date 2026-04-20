@@ -13,6 +13,10 @@
 [ext_resource type="Texture2D" uid="uid://d3j73c6t8ocgv" path="res://Assets/Charakter/Player/main/Swordsman_lvl2_Walk_with_shadow.png" id="10_frpnd"]
 [ext_resource type="Script" uid="uid://cg1uqlqcfps31" path="res://Player/PlayerInput.cs" id="12_rkm3v"]
 
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_ur7pv"]
+radius = 4.0
+height = 14.0
+
 [sub_resource type="AtlasTexture" id="AtlasTexture_dwpxe"]
 atlas = ExtResource("2_m5hx8")
 region = Rect2(0, 0, 64, 64)
@@ -2114,22 +2118,19 @@ animations = [{
 "speed": 5.0
 }]
 
-[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_ur7pv"]
-radius = 3.0
-height = 18.0
-
 [node name="main_player" type="CharacterBody2D" unique_id=1642242014]
 y_sort_enabled = true
 script = ExtResource("1_xiiv8")
 
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=933356697]
+position = Vector2(0, 5)
+shape = SubResource("CapsuleShape2D_ur7pv")
+
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=782352616]
 z_index = 1
+y_sort_enabled = true
 sprite_frames = SubResource("SpriteFrames_sh265")
 animation = &"idle_left"
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=933356697]
-position = Vector2(-1, 2)
-shape = SubResource("CapsuleShape2D_ur7pv")
 
 [node name="Camera2D" type="Camera2D" parent="." unique_id=1319663386]
 position = Vector2(2, 0)

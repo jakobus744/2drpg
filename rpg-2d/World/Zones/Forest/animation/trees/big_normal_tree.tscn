@@ -14,6 +14,10 @@ region = Rect2(0, 80, 64, 80)
 atlas = ExtResource("1_axli3")
 region = Rect2(0, 160, 64, 80)
 
+[sub_resource type="AtlasTexture" id="AtlasTexture_a7x13"]
+atlas = ExtResource("1_axli3")
+region = Rect2(0, 560, 64, 80)
+
 [sub_resource type="AtlasTexture" id="AtlasTexture_w2x6t"]
 atlas = ExtResource("1_axli3")
 region = Rect2(0, 240, 64, 80)
@@ -29,10 +33,6 @@ region = Rect2(0, 400, 64, 80)
 [sub_resource type="AtlasTexture" id="AtlasTexture_uu672"]
 atlas = ExtResource("1_axli3")
 region = Rect2(0, 480, 64, 80)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_a7x13"]
-atlas = ExtResource("1_axli3")
-region = Rect2(0, 560, 64, 80)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_fcp2g"]
 atlas = ExtResource("1_axli3")
@@ -67,6 +67,9 @@ animations = [{
 "texture": SubResource("AtlasTexture_7o4fi")
 }, {
 "duration": 1.0,
+"texture": SubResource("AtlasTexture_a7x13")
+}, {
+"duration": 1.0,
 "texture": SubResource("AtlasTexture_w2x6t")
 }, {
 "duration": 1.0,
@@ -77,9 +80,6 @@ animations = [{
 }, {
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_uu672")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_a7x13")
 }, {
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_fcp2g")
@@ -101,10 +101,25 @@ animations = [{
 "speed": 5.0
 }]
 
+[sub_resource type="PhysicsMaterial" id="PhysicsMaterial_5daln"]
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_nxmu2"]
+radius = 15.0
+height = 34.0
+
 [node name="TreeBigNormal" type="Node2D" unique_id=1798803888]
+y_sort_enabled = true
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=2037413623]
+y_sort_enabled = true
 sprite_frames = SubResource("SpriteFrames_xdhrg")
 animation = &"big_normal_tree"
 autoplay = "big_normal_tree"
 frame_progress = 0.6269489
+
+[node name="StaticBody2D" type="StaticBody2D" parent="." unique_id=1707813006]
+physics_material_override = SubResource("PhysicsMaterial_5daln")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="StaticBody2D" unique_id=1805964443]
+position = Vector2(0, 21)
+shape = SubResource("CapsuleShape2D_nxmu2")
