@@ -5,7 +5,6 @@
 [ext_resource type="PackedScene" uid="uid://dnuayd7wjni33" path="res://tutorial/tutorial_player.tscn" id="4_bdp8l"]
 
 [sub_resource type="CompressedTexture2D" id="CompressedTexture2D_wjoj8"]
-load_path = "res://.godot/imported/objects.png-5ab4ada1e3edafb7db4fdcb01d7e8a6e.ctex"
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_68as8"]
 texture = SubResource("CompressedTexture2D_wjoj8")
@@ -17,23 +16,18 @@ texture = SubResource("CompressedTexture2D_wjoj8")
 5:0/0 = 0
 5:0/0/y_sort_origin = 4
 5:0/0/physics_layer_0/polygon_0/points = PackedVector2Array(-5.935338, 5.5756207, -6.115197, 2.5180225, 5.75548, 2.3381634, 5.5756207, 5.75548)
-11:2/size_in_atlas = Vector2i(1, 2)
 11:2/0 = 0
 11:2/0/y_sort_origin = 10
 11:2/0/physics_layer_0/polygon_0/points = PackedVector2Array(-7.1943493, -13.3095455, 7.01449, -14.208839, 6.2950554, 11.690819, -6.4749146, 11.51096)
-0:5/size_in_atlas = Vector2i(3, 4)
 0:5/0 = 0
 0:5/0/y_sort_origin = 14
 0:5/0/physics_layer_0/polygon_0/points = PackedVector2Array(-6.0539856, 21.985523, -10.196184, 15.612907, -2.2304153, 14.338383, 4.4608307, 13.063862, 9.240292, 18.799213, 6.372616, 23.260044, -5.7353535, 21.985523)
-6:7/size_in_atlas = Vector2i(2, 2)
 6:7/0 = 0
 6:7/0/y_sort_origin = 8
 6:7/0/physics_layer_0/polygon_0/points = PackedVector2Array(-14.388699, 3.057598, -11.3311, 12.230394, -2.5180225, 12.590111, 9.172794, 12.230394, 13.129688, 3.2374573, -0.71943474, 3.057598)
-8:6/size_in_atlas = Vector2i(2, 3)
 8:6/0 = 0
 8:6/0/y_sort_origin = 15
 8:6/0/physics_layer_0/polygon_0/points = PackedVector2Array(-7.3285084, 14.338383, -0.9558945, 14.975647, 7.0098763, 14.0197525, 6.0539856, 18.161953, -0.31863022, 20.392368, -5.098093, 18.799213)
-10:7/size_in_atlas = Vector2i(2, 2)
 10:7/0 = 0
 10:7/0/y_sort_origin = 4
 10:7/0/physics_layer_0/polygon_0/points = PackedVector2Array(-10.431807, 2.5180225, 0.35971832, 1.7985878, 10.072088, 2.3381634, 5.935339, 8, -5.75548, 8)

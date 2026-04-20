@@ -5,4 +5,8 @@
     <EnableDynamicLoading>true</EnableDynamicLoading>
     <RootNamespace>RPG2d</RootNamespace>
   </PropertyGroup>
+  <ItemGroup>
+    <Folder Include="Player\Female\" />
+    <Folder Include="Player\Main\" />
+  </ItemGroup>
 </Project>

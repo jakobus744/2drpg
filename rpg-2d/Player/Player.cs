@@ -1,0 +1,125 @@
+using Godot;
+
+namespace RPG2d.Player;
+
+public partial class Player : CharacterBody2D
+{
+	private const float SpeedWalk = 70f;
+	private const float SpeedRun = 100f;
+
+	public enum MoveState { Idle, Walk, Run }
+	
+private MoveState _moveState = MoveState.Idle;
+	private MoveState _lastMoveState = MoveState.Idle;
+	private Vector2 _facingDirection = Vector2.Down;
+	private bool _isAttacking = false;
+	private bool _isRolling = false;
+
+	private bool IsActionLocked => _isAttacking || _isRolling;
+
+	private AnimatedSprite2D _anim;
+
+	public override void _EnterTree()
+	{
+		// Der Node-Name ist die Netzwerk-ID. So weiß Godot, wem die Figur gehört.
+		SetMultiplayerAuthority(1);
+	}
+
+	public override void _Ready()
+	{
+		_anim = GetNode<AnimatedSprite2D>("AnimatedSprite2D");
+		_anim.AnimationFinished += OnAnimationFinished;
+	}
+	
+	// Player Input verarbeiten, sowohl auf dem Server als auch auf dem Client
+	public void ProcessCommand(PlayerCmd cmd)
+	{
+		// 1. Aktionen verarbeiten
+		if (cmd.IsAttackPressed && !IsActionLocked) StartAttack(cmd.FacingDirection);
+		if (cmd.IsRollPressed && !IsActionLocked) StartRoll(cmd.FacingDirection);
+
+		// 2. Bewegung verarbeiten
+		if (cmd.MovementVector == Vector2.Zero)
+		{
+			_lastMoveState = _moveState;
+			_moveState = MoveState.Idle;
+			Velocity = Vector2.Zero;
+		}
+		else
+		{
+			_facingDirection = DirectionStringToVector(cmd.FacingDirection);
+			_moveState = cmd.IsRunPressed ? MoveState.Run : MoveState.Walk;
+			Velocity = cmd.MovementVector * (cmd.IsRunPressed ? SpeedRun : SpeedWalk);
+		}
+
+		// 3. Animation updaten und bewegen
+		UpdateAnimation(cmd.FacingDirection);
+		MoveAndSlide();
+	}
+
+	private void StartRoll(string dirName)
+	{
+		string animName = "roll_" + dirName;
+		if (!_anim.SpriteFrames.HasAnimation(animName)) return;
+		
+		_isRolling = true;
+		_anim.Play(animName);
+	}
+
+	private void StartAttack(string dirName)
+	{
+		string animName = GetAttackAnimationName(dirName);
+		if (!_anim.SpriteFrames.HasAnimation(animName)) return;
+
+		_isAttacking = true;
+		_anim.Play(animName);
+	}
+
+	private string GetAttackAnimationName(string dir) => _moveState switch
+	{
+		MoveState.Run => "run_attack_" + dir,
+		MoveState.Walk => "walk_attack_" + dir,
+		_ => "attack_" + dir,
+	};
+
+	private void UpdateAnimation(string dirName)
+	{
+		if (IsActionLocked) return;
+
+		switch (_moveState)
+		{
+			case MoveState.Idle: PlayIdleAnimation(dirName); break;
+			case MoveState.Walk: _anim.Play("walk_" + dirName); break;
+			case MoveState.Run: _anim.Play("run_" + dirName); break;
+		}
+	}
+
+	private void PlayIdleAnimation(string dir)
+	{
+		string anim = _lastMoveState == MoveState.Run
+			? "idle_" + dir + ".2"
+			: "idle_" + dir + ".1";
+
+		if (!_anim.SpriteFrames.HasAnimation(anim))
+			anim = "idle_" + dir;
+
+		_anim.Play(anim);
+	}
+
+	private Vector2 DirectionStringToVector(string dir) => dir switch
+	{
+		"up" => Vector2.Up,
+		"down" => Vector2.Down,
+		"left" => Vector2.Left,
+		"right" => Vector2.Right,
+		_ => Vector2.Zero,
+	};
+
+	private void OnAnimationFinished()
+	{
+		string finishedAnimation = _anim.Animation.ToString();
+
+		if (finishedAnimation.Contains("attack")) _isAttacking = false;
+		if (finishedAnimation.Contains("roll")) _isRolling = false;
+	}
+}

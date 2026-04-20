@@ -1,5 +1,6 @@
 [gd_scene format=3 uid="uid://xwhdjjo8ejn2"]
 
+[ext_resource type="Script" uid="uid://c0w5whv2syxu" path="res://Player/Player.cs" id="1_xiiv8"]
 [ext_resource type="Texture2D" uid="uid://3fql1mrkraxc" path="res://Assets/Charakter/Player/main/Swordsman_lvl2_attack_with_shadow.png" id="2_m5hx8"]
 [ext_resource type="Texture2D" uid="uid://o0qcbehmepqj" path="res://Assets/Charakter/Player/main/Swordsman_lvl2_Death_with_shadow.png" id="3_bds80"]
 [ext_resource type="Texture2D" uid="uid://5dmu2swfxwtp" path="res://art/PNG/Swordsman_lvl1/With_shadow/Swordsman_lvl1_Hurt_with_shadow.png" id="4_r0eh7"]
@@ -10,7 +11,7 @@
 [ext_resource type="Texture2D" uid="uid://bqg835vt8rubu" path="res://Assets/Charakter/Player/main/Swordsman_lvl2_Run_with_shadow.png" id="8_auxe2"]
 [ext_resource type="Texture2D" uid="uid://dmrj8l0vrvkn" path="res://Assets/Charakter/Player/main/Swordsman_lvl2_Walk_Attack_with_shadow.png" id="9_kesnb"]
 [ext_resource type="Texture2D" uid="uid://d3j73c6t8ocgv" path="res://Assets/Charakter/Player/main/Swordsman_lvl2_Walk_with_shadow.png" id="10_frpnd"]
-[ext_resource type="Script" uid="uid://dixg5ae4xqwtc" path="res://Player/Main/Player_main.cs" id="11_player_main"]
+[ext_resource type="Script" uid="uid://cg1uqlqcfps31" path="res://Player/PlayerInput.cs" id="12_rkm3v"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_dwpxe"]
 atlas = ExtResource("2_m5hx8")
@@ -2119,7 +2120,7 @@ height = 18.0
 
 [node name="main_player" type="CharacterBody2D" unique_id=1642242014]
 y_sort_enabled = true
-script = ExtResource("11_player_main")
+script = ExtResource("1_xiiv8")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=782352616]
 z_index = 1
@@ -2133,3 +2134,6 @@ shape = SubResource("CapsuleShape2D_ur7pv")
 [node name="Camera2D" type="Camera2D" parent="." unique_id=1319663386]
 position = Vector2(2, 0)
 zoom = Vector2(4, 4)
+
+[node name="Input" type="Node" parent="." unique_id=2062619980]
+script = ExtResource("12_rkm3v")
