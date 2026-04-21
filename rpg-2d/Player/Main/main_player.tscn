@@ -2134,7 +2134,7 @@ animation = &"idle_left"
 
 [node name="Camera2D" type="Camera2D" parent="." unique_id=1319663386]
 position = Vector2(2, 0)
-zoom = Vector2(4, 4)
+zoom = Vector2(3.8, 3.8)
 
 [node name="Input" type="Node" parent="." unique_id=2062619980]
 script = ExtResource("12_rkm3v")
