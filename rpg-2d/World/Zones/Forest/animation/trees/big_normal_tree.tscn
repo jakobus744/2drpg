@@ -84,7 +84,7 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_fcp2g")
 }, {
-"duration": 1.0,
+"duration": 15.0,
 "texture": SubResource("AtlasTexture_y14v7")
 }, {
 "duration": 1.0,
@@ -98,28 +98,28 @@ animations = [{
 }],
 "loop": true,
 "name": &"big_normal_tree",
-"speed": 5.0
+"speed": 2.0
 }]
 
-[sub_resource type="PhysicsMaterial" id="PhysicsMaterial_5daln"]
-
-[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_nxmu2"]
-radius = 15.0
-height = 34.0
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_5daln"]
+radius = 14.0
+height = 28.0
 
 [node name="TreeBigNormal" type="Node2D" unique_id=1798803888]
 y_sort_enabled = true
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=2037413623]
 y_sort_enabled = true
+position = Vector2(-1, -20)
 sprite_frames = SubResource("SpriteFrames_xdhrg")
 animation = &"big_normal_tree"
 autoplay = "big_normal_tree"
-frame_progress = 0.6269489
+frame = 6
+frame_progress = 0.9226375
 
-[node name="StaticBody2D" type="StaticBody2D" parent="." unique_id=1707813006]
-physics_material_override = SubResource("PhysicsMaterial_5daln")
+[node name="StaticBody2D" type="StaticBody2D" parent="." unique_id=1304726172]
+y_sort_enabled = true
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="StaticBody2D" unique_id=1805964443]
-position = Vector2(0, 21)
-shape = SubResource("CapsuleShape2D_nxmu2")
+[node name="CollisionShape2D" type="CollisionShape2D" parent="StaticBody2D" unique_id=1547245818]
+y_sort_enabled = true
+shape = SubResource("CapsuleShape2D_5daln")
