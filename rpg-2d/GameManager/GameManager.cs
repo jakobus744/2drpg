@@ -1,69 +1,87 @@
-﻿using Godot;
+using Godot;
 
 namespace RPG2d.GameManager;
 
 public partial class GameManager : Node
 {
-    [Export] 
-    private PackedScene _playerScene;
+	[Export] 
+	private PackedScene _playerScene;
+	[Export]
+	private PackedScene _mainLevelScene;
 
-    private const int Port = 8910;
+	private const int Port = 8910;
 
-    public override void _Ready()
-    {
-        // Wenn ein ANDERER Spieler unserem Server beitritt, rufen wir AddPlayer auf
-        Multiplayer.PeerConnected += AddPlayer;
-        
-        // Wenn ein Spieler unseren Server verlässt, löschen wir ihn
-        Multiplayer.PeerDisconnected += RemovePlayer;
-    }
+	public override void _Ready()
+	{
+		Multiplayer.PeerConnected += AddPlayer;
+		Multiplayer.PeerDisconnected += RemovePlayer;
+	}
 
-    // Diese Funktion rufen wir auf, um den Server zu starten (Host)
-    public void StartHost()
-    {
-        var peer = new ENetMultiplayerPeer();
-        // Erstellt einen Server auf Port 8910 mit maximal 4 Spielern
-        var error = peer.CreateServer(Port, 4); 
-        
-        if (error != Error.Ok)
-        {
-            GD.PrintErr("Server konnte nicht gestartet werden: " + error);
-            return;
-        }
+	public async void StartHost()
+	{
+		var peer = new ENetMultiplayerPeer();
+		var error = peer.CreateServer(Port, 4); 
+		
+		if (error != Error.Ok)
+		{
+			GD.PrintErr("Server konnte nicht gestartet werden: " + error);
+			return;
+		}
+		
+		GD.Print("Server wurde gestartet!");
+		
+		Multiplayer.MultiplayerPeer = peer;
+		
+		GetTree().ChangeSceneToFile(_mainLevelScene);
+		
+		// Warten bis Szene gewechselt wurde
+		await ToSignal(GetTree(), SceneTree.SignalName.ProcessFrame);
+		
+		AddPlayer(1);
+	}
 
-        Multiplayer.MultiplayerPeer = peer;
-        GD.Print("Server gestartet! Ich bin der Host.");
+	public void JoinGame()
+	{
+		var peer = new ENetMultiplayerPeer();
+		peer.CreateClient("127.0.0.1", Port); 
+		
+		Multiplayer.MultiplayerPeer = peer;
+		GD.Print("Verbinde als Client...");
+		
+		GetTree().ChangeSceneToPacked(_mainLevelScene);
+	}
 
-        // Wir müssen uns selbst (ID 1) auch in die Welt spawnen!
-        AddPlayer(1);
-    }
+	private void AddPlayer(long id)
+	{	
+		if (!Multiplayer.IsServer())
+			return;
 
-    // Diese Funktion rufen wir auf, um uns als Client zu verbinden
-    public void JoinGame()
-    {
-        var peer = new ENetMultiplayerPeer();
-        // Verbindet sich mit dem eigenen PC (localhost)
-        peer.CreateClient("127.0.0.1", Port); 
-        
-        Multiplayer.MultiplayerPeer = peer;
-        GD.Print("Verbinde als Client...");
-    }
+		GD.Print($"Spawne Spieler mit ID: {id}");
+		
+		var playerInstance = _playerScene.Instantiate<Player.Player>();
+		playerInstance.Name = id.ToString();
+		
+		var playersContainer = GetTree().CurrentScene.GetNodeOrNull("Players");
+		
+		if (playersContainer != null)
+		{
 
-    private void AddPlayer(long id)
-    {
-        GD.Print($"Spawne Spieler mit ID: {id}");
-        
-        // 1. Player-Szene instanziieren
-        Player.Player playerInstance = _playerScene.Instantiate<Player.Player>();
-        playerInstance.Name = id.ToString();
-        
-        AddChild(playerInstance);
-    }
+			playersContainer.AddChild(playerInstance);
+		}
+		else
+		{
+			GD.PrintErr("Konnte Players-Container nicht finden. Stelle sicher, dass die aktuelle Szene einen Node namens 'Players' hat.");
+		}
+	}
 
-    private void RemovePlayer(long id)
-    {
-        GD.Print($"Spieler {id} hat das Spiel verlassen.");
-        var playerNode = GetNodeOrNull(id.ToString());
-        playerNode?.QueueFree();
-    }
+	private void RemovePlayer(long id)
+	{
+		if (!Multiplayer.IsServer())
+			return;
+		
+		GD.Print($"Spieler {id} hat das Spiel verlassen.");
+		var playersContainer = GetTree().CurrentScene.GetNodeOrNull("Players");
+		var playerNode = playersContainer?.GetNodeOrNull(id.ToString());
+		playerNode?.QueueFree();
+	}
 }

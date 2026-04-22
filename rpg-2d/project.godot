@@ -11,8 +11,12 @@ config_version=5
 [application]
 
 config/name="RPG 2d"
-run/main_scene="uid://ce2m7bujxchji"
+run/main_scene="uid://ch002pri6psr4"
 config/features=PackedStringArray("4.6", "C#", "Forward Plus")
+
+[autoload]
+
+GameManager="*uid://bnvy32tti6o44"
 
 [dotnet]
 

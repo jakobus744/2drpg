@@ -9,11 +9,7 @@
 [ext_resource type="Texture2D" uid="uid://dl7kwicdit7wu" path="res://art/PNG/Swordsman_lvl1/With_shadow/Swordsman_lvl1_Run_with_shadow.png" id="7_oprun"]
 [ext_resource type="Texture2D" uid="uid://dndjsqrvdmlsv" path="res://art/PNG/Swordsman_lvl1/With_shadow/Swordsman_lvl1_Walk_with_shadow.png" id="8_a8ls1"]
 [ext_resource type="Texture2D" uid="uid://3et36nokt124" path="res://art/PNG/Swordsman_lvl1/With_shadow/Swordsman_lvl1_Walk_Attack_with_shadow.png" id="9_qfm1y"]
-<<<<<<< Updated upstream
 [ext_resource type="Script" uid="uid://cg1uqlqcfps31" path="res://Player/PlayerInput.cs" id="10_j57cw"]
-=======
-[ext_resource type="Script" uid="uid://b2ng2rxq3teo0" path="res://tutorial/Player.cs" id="script_player"]
->>>>>>> Stashed changes
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_ujl30"]
 atlas = ExtResource("2_y4r1p")

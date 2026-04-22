@@ -14,15 +14,23 @@ private MoveState _moveState = MoveState.Idle;
 	private Vector2 _facingDirection = Vector2.Down;
 	private bool _isAttacking = false;
 	private bool _isRolling = false;
-
+	
 	private bool IsActionLocked => _isAttacking || _isRolling;
 
 	private AnimatedSprite2D _anim;
+	
 
 	public override void _EnterTree()
 	{
-		// Der Node-Name ist die Netzwerk-ID. So weiß Godot, wem die Figur gehört.
-		SetMultiplayerAuthority(1);
+		// Sollte immer der Fall sein, außer wir testen etwas spezifisches wo wir die Node manuell hinzufügen
+		if (int.TryParse(Name, out int peerId))
+		{
+			SetMultiplayerAuthority(peerId);
+		}
+		else
+		{
+			SetMultiplayerAuthority(1);
+		}
 	}
 
 	public override void _Ready()
@@ -32,7 +40,7 @@ private MoveState _moveState = MoveState.Idle;
 	}
 	
 	// Player Input verarbeiten, sowohl auf dem Server als auch auf dem Client
-	public void ProcessCommand(PlayerCmd cmd)
+	public PlayerState ProcessCommand(PlayerCmd cmd)
 	{
 		// 1. Aktionen verarbeiten
 		if (cmd.IsAttackPressed && !IsActionLocked) StartAttack(cmd.FacingDirection);
@@ -55,6 +63,13 @@ private MoveState _moveState = MoveState.Idle;
 		// 3. Animation updaten und bewegen
 		UpdateAnimation(cmd.FacingDirection);
 		MoveAndSlide();
+
+		// 4. State zurück geben
+		return new PlayerState
+		{
+			Position = Position,
+			Velocity = Velocity
+		};
 	}
 
 	private void StartRoll(string dirName)
@@ -121,5 +136,11 @@ private MoveState _moveState = MoveState.Idle;
 
 		if (finishedAnimation.Contains("attack")) _isAttacking = false;
 		if (finishedAnimation.Contains("roll")) _isRolling = false;
+	}
+	
+	public void ApplyState(PlayerState state)
+	{
+		Position = state.Position;
+		Velocity = state.Velocity;
 	}
 }

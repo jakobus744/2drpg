@@ -1,0 +1,10 @@
+[gd_scene format=3 uid="uid://bnvy32tti6o44"]
+
+[ext_resource type="Script" uid="uid://b0f6peht2dvih" path="res://GameManager/GameManager.cs" id="1_v4rul"]
+[ext_resource type="PackedScene" uid="uid://xwhdjjo8ejn2" path="res://Player/Main/main_player.tscn" id="2_pe3qf"]
+[ext_resource type="PackedScene" uid="uid://cc8qsty6libro" path="res://World/Zones/Forest/ForestZone.tscn" id="3_pe3qf"]
+
+[node name="GameManager" type="Node" unique_id=797792432]
+script = ExtResource("1_v4rul")
+_playerScene = ExtResource("2_pe3qf")
+_mainLevelScene = ExtResource("3_pe3qf")
