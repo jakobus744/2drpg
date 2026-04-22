@@ -49,7 +49,7 @@ animations = [{
 }],
 "loop": true,
 "name": &"dark_blue_1",
-"speed": 5.0
+"speed": 2.0
 }]
 
 [node name="Dark1" type="Node2D" unique_id=1968387729]
@@ -58,3 +58,4 @@ animations = [{
 sprite_frames = SubResource("SpriteFrames_4pjna")
 animation = &"dark_blue_1"
 autoplay = "dark_blue_1"
+frame_progress = 0.93152404
