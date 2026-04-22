@@ -2118,6 +2118,14 @@ animations = [{
 "speed": 5.0
 }]
 
+[sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_xiiv8"]
+properties/0/path = NodePath(".:SyncPosition")
+properties/0/spawn = true
+properties/0/replication_mode = 1
+properties/1/path = NodePath(".:SyncAnimation")
+properties/1/spawn = true
+properties/1/replication_mode = 1
+
 [node name="main_player" type="CharacterBody2D" unique_id=1642242014]
 z_index = 3
 y_sort_enabled = true
@@ -2139,3 +2147,6 @@ zoom = Vector2(3.8, 3.8)
 
 [node name="Input" type="Node" parent="." unique_id=2062619980]
 script = ExtResource("12_rkm3v")
+
+[node name="ServerSynchronizer" type="MultiplayerSynchronizer" parent="." unique_id=1097874494]
+replication_config = SubResource("SceneReplicationConfig_xiiv8")

@@ -13,22 +13,39 @@ public partial class PlayerInput : Node
 	private const int BufferSize = 128;
 	private readonly PlayerCmd[] _commandBuffer = new PlayerCmd[BufferSize];
 	private readonly PlayerState[] _stateBuffer = new PlayerState[BufferSize];
-
+	
+	private readonly Queue<PlayerCmd> _serverCommandQueue = new Queue<PlayerCmd>();
 	public override void _PhysicsProcess(double delta)
 	{
-		if (!IsMultiplayerAuthority())
-			return;
+		if (IsMultiplayerAuthority())
+		{
 
-		++_currentTick;
+			++_currentTick;
 
-		var cmd = BuildPlayerCommand();
-		cmd.Tick = _currentTick;
+			var cmd = BuildPlayerCommand();
+			cmd.Tick = _currentTick;
 
-		_commandBuffer[_currentTick % BufferSize] = cmd;
-		_stateBuffer[_currentTick % BufferSize] = GetParent<Player>().ProcessCommand(cmd);
+			_commandBuffer[_currentTick % BufferSize] = cmd;
+			_stateBuffer[_currentTick % BufferSize] = GetParent<Player>().ProcessCommand(cmd);
 
-		if (!Multiplayer.IsServer())
-			RpcId(1, MethodName.ReceiveCommand, cmd.ToBytes());
+			if (!Multiplayer.IsServer())
+				RpcId(1, MethodName.ReceiveCommand, cmd.ToBytes());
+		} else if (Multiplayer.IsServer())
+		{
+			PlayerState state = null;
+			while (_serverCommandQueue.Count > 0)
+			{
+				var cmd = _serverCommandQueue.Dequeue();
+				_currentTick = cmd.Tick;
+				
+				state = GetParent<Player>().ProcessCommand(cmd);
+			}
+
+			if (state != null)
+			{
+				RpcId(Multiplayer.GetRemoteSenderId(), MethodName.ReceivePlayerState, _currentTick, state.ToBytes());
+			}
+		}
 	}
 
 	public PlayerCmd GetCommand(uint tick)
@@ -99,10 +116,7 @@ public partial class PlayerInput : Node
 			return;
 
 		var cmd = PlayerCmd.FromBytes(cmdData);
-		var state = GetParent<Player>().ProcessCommand(cmd);
-		
-		// Reply with the server state
-		RpcId(Multiplayer.GetRemoteSenderId(), MethodName.ReceivePlayerState, cmd.Tick, state.ToBytes());
+		_serverCommandQueue.Enqueue(cmd);
 	}
 
 	[Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = false, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
@@ -116,12 +130,14 @@ public partial class PlayerInput : Node
 		
 		// Vergleichen mit dem Server
 		var predictedState = _stateBuffer[tickAcknowledged % BufferSize];
-		if(state.Position.DistanceSquaredTo(predictedState.Position) < 0.01f && state.Position.DistanceSquaredTo(predictedState.Velocity)  < 0.01f)
+		if(state.Position.DistanceSquaredTo(predictedState.Position) < 1f && state.Velocity.DistanceSquaredTo(predictedState.Velocity)  < 1f)
 		{
 			return;
 		}
 		
 		GD.Print($"Reprediction nötig! Server State weicht von Prediction ab. Tick: {tickAcknowledged}");
+		GD.Print($"Server State: Pos({state.Position}), Vel({state.Velocity})");
+		GD.Print($"Predicted State: Pos({predictedState.Position}), Vel({predictedState.Velocity})");
 		_lastTickAcknowledged = tickAcknowledged;
 		
 		var player = GetParent<Player>();

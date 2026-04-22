@@ -9,7 +9,7 @@ public partial class Player : CharacterBody2D
 
 	public enum MoveState { Idle, Walk, Run }
 	
-private MoveState _moveState = MoveState.Idle;
+	private MoveState _moveState = MoveState.Idle;
 	private MoveState _lastMoveState = MoveState.Idle;
 	private Vector2 _facingDirection = Vector2.Down;
 	private bool _isAttacking = false;
@@ -19,6 +19,8 @@ private MoveState _moveState = MoveState.Idle;
 
 	private AnimatedSprite2D _anim;
 	
+	[Export] public Vector2 SyncPosition = Vector2.Zero;
+	[Export] public string SyncAnimation = "";
 
 	public override void _EnterTree()
 	{
@@ -37,8 +39,35 @@ private MoveState _moveState = MoveState.Idle;
 	{
 		_anim = GetNode<AnimatedSprite2D>("AnimatedSprite2D");
 		_anim.AnimationFinished += OnAnimationFinished;
+		
+		var sync = GetNodeOrNull<MultiplayerSynchronizer>("ServerSynchronizer");
+		sync?.SetMultiplayerAuthority(1);
+		
+		var camera = GetNodeOrNull<Camera2D>("Camera2D");
+		if (camera != null)
+		{
+			camera.Enabled = IsMultiplayerAuthority();
+		}
 	}
-	
+
+	public override void _PhysicsProcess(double delta)
+	{
+		if (Multiplayer.IsServer())
+		{
+			SyncPosition = Position;
+			SyncAnimation = _anim.Animation;
+		}
+
+		if (IsMultiplayerAuthority()) return;
+		
+		Position = Position.Lerp(SyncPosition, (float)delta * 15f);
+
+		if (!string.IsNullOrEmpty(SyncAnimation))
+		{
+			_anim.Play(SyncAnimation);
+		}
+	}
+
 	// Player Input verarbeiten, sowohl auf dem Server als auch auf dem Client
 	public PlayerState ProcessCommand(PlayerCmd cmd)
 	{

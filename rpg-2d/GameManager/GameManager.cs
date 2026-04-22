@@ -17,7 +17,7 @@ public partial class GameManager : Node
 		Multiplayer.PeerDisconnected += RemovePlayer;
 	}
 
-	public async void StartHost()
+	public void StartHost()
 	{
 		var peer = new ENetMultiplayerPeer();
 		var error = peer.CreateServer(Port, 4); 
@@ -32,10 +32,10 @@ public partial class GameManager : Node
 		
 		Multiplayer.MultiplayerPeer = peer;
 		
-		GetTree().ChangeSceneToFile(_mainLevelScene);
-		
-		// Warten bis Szene gewechselt wurde
-		await ToSignal(GetTree(), SceneTree.SignalName.ProcessFrame);
+		GetTree().CurrentScene.QueueFree();
+		Node newLevel = _mainLevelScene.Instantiate();
+		GetTree().Root.AddChild(newLevel);
+		GetTree().CurrentScene = newLevel;
 		
 		AddPlayer(1);
 	}
@@ -48,7 +48,10 @@ public partial class GameManager : Node
 		Multiplayer.MultiplayerPeer = peer;
 		GD.Print("Verbinde als Client...");
 		
-		GetTree().ChangeSceneToPacked(_mainLevelScene);
+		GetTree().CurrentScene.QueueFree();
+		Node newLevel = _mainLevelScene.Instantiate();
+		GetTree().Root.AddChild(newLevel);
+		GetTree().CurrentScene = newLevel;
 	}
 
 	private void AddPlayer(long id)
