@@ -57,7 +57,7 @@ region = Rect2(192, 960, 64, 80)
 [sub_resource type="SpriteFrames" id="SpriteFrames_5yycs"]
 animations = [{
 "frames": [{
-"duration": 1.0,
+"duration": 15.0,
 "texture": SubResource("AtlasTexture_7jjcj")
 }, {
 "duration": 1.0,
@@ -96,7 +96,7 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_ts4kc")
 }],
-"loop": false,
+"loop": true,
 "name": &"big_apple_tree",
 "speed": 5.0
 }]
@@ -104,6 +104,7 @@ animations = [{
 [node name="MidAppleTree" type="Node2D" unique_id=656453699]
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=2042542939]
+y_sort_enabled = true
 sprite_frames = SubResource("SpriteFrames_5yycs")
 animation = &"big_apple_tree"
 autoplay = "big_apple_tree"

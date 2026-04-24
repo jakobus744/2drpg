@@ -2127,22 +2127,19 @@ properties/1/spawn = true
 properties/1/replication_mode = 1
 
 [node name="main_player" type="CharacterBody2D" unique_id=1642242014]
-z_index = 3
+z_index = 2
 y_sort_enabled = true
 script = ExtResource("1_xiiv8")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=933356697]
-y_sort_enabled = true
 position = Vector2(0, 6)
 shape = SubResource("CapsuleShape2D_ur7pv")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=782352616]
-y_sort_enabled = true
 sprite_frames = SubResource("SpriteFrames_sh265")
 animation = &"idle_left"
 
 [node name="Camera2D" type="Camera2D" parent="." unique_id=1319663386]
-y_sort_enabled = true
 zoom = Vector2(3.8, 3.8)
 
 [node name="Input" type="Node" parent="." unique_id=2062619980]

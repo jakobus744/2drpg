@@ -1,13 +1,11 @@
 [gd_scene format=3 uid="uid://ch002pri6psr4"]
 
 [ext_resource type="Script" uid="uid://srmqmg7bmtpx" path="res://UI/MainMenu/MainMenu.cs" id="1_fw0vt"]
-[ext_resource type="PackedScene" uid="uid://cc8qsty6libro" path="res://World/Zones/Forest/ForestZone.tscn" id="2_8x0bb"]
 
 [node name="MainMenu" type="Control" unique_id=1418235620 node_paths=PackedStringArray("_hostButton", "_joinButton")]
 layout_mode = 3
 anchors_preset = 0
 script = ExtResource("1_fw0vt")
-_levelScene = ExtResource("2_8x0bb")
 _hostButton = NodePath("CenterContainer/VBoxContainer/HostButton")
 _joinButton = NodePath("CenterContainer/VBoxContainer/JoinButton")
 

@@ -37,6 +37,7 @@ public partial class Player : CharacterBody2D
 
 	public override void _Ready()
 	{
+		YSortEnabled = false;
 		_anim = GetNode<AnimatedSprite2D>("AnimatedSprite2D");
 		_anim.AnimationFinished += OnAnimationFinished;
 		
