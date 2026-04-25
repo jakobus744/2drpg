@@ -1,93 +1,106 @@
-# 2DRPG
+# 🗡️ 2D RPG
 
+Ein Multiplayer-fähiges 2D Top-Down RPG, entwickelt mit **Godot 4** und **C#** im Rahmen eines Hochschulprojekts (6. Semester, HS Flensburg).
 
+---
 
-## Getting started
+## 🎮 Über das Projekt
 
-To make it easy for you to get started with GitLab, here's a list of recommended next steps.
+Ein handgezeichnetes 2D RPG mit Pixel-Art Grafiken, Echtzeit-Multiplayer über das lokale Netzwerk, animierten Welten und einem wachsenden Kampfsystem.
 
-Already a pro? Just edit this README.md and make it your own. Want to make it easy? [Use the template at the bottom](#editing-this-readme)!
+**Engine:** Godot 4.6 (Mono / C#)  
+**Sprache:** C#  
+**Repository:** [GitLab – HS Flensburg](https://gitlab.hs-flensburg.de/roja6078/2drpg)
 
-## Add your files
+---
 
-- [ ] [Create](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#create-a-file) or [upload](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#upload-a-file) files
-- [ ] [Add files using the command line](https://docs.gitlab.com/topics/git/add_files/#add-files-to-a-git-repository) or push an existing Git repository with the following command:
+## ✅ Bisher umgesetzt
 
-```
-cd existing_repo
-git remote add origin https://gitlab.hs-flensburg.de/roja6078/2drpg.git
-git branch -M main
-git push -uf origin main
-```
+### 🌍 Welt & Map
+- Forest Zone mit animierten Bäumen (Idle-Animation, Autoplay)
+- Y-Sort korrekt eingerichtet – Spieler verschwindet hinter Bäumen je nach Y-Position
+- TileMap mit mehreren Layern:
+  - `Ground` – Boden
+  - `Ground2` – Wasser, Pfade, Details (z=1, Y-Sort)
+  - `Y-sort` – Objekte mit Tiefensortierung (z=2, Y-Sort)
+  - `YY-leaves` – Baumkronen / Überhänge (z=3, immer über Spieler)
+- Terrain-Blending via TileSet Terrain Sets
+- Kollisionsformen auf Tiles (Physics Layer im TileSet)
+- Wasser-Animationen, Seerosen, Waldlichtungen
 
-## Integrate with your tools
+### 🧍 Spieler
+- Bewegung (Walk / Run) mit Animationen in alle 4 Richtungen
+- Angriffs-System (Basis)
+- Roll-Mechanik mit Richtungsanimation
+- Multiplayer Authority (jeder Spieler kontrolliert sich selbst)
+- Y-Sort korrekt – Spieler sortiert sich korrekt hinter Weltobjects
+- Kamera folgt lokalem Spieler (deaktiviert bei Remote-Spielern)
 
-- [ ] [Set up project integrations](https://gitlab.hs-flensburg.de/roja6078/2drpg/-/settings/integrations)
+### 🌐 Multiplayer
+- ENet-basierter Host/Client Aufbau
+- `GameManager` als Autoload-Singleton
+- Spieler werden direkt in `Main_World` gespawnt (für korrektes Y-Sort)
+- `MultiplayerSpawner` synchronisiert Spieler-Nodes auf Clients
+- Position & Animation werden über `MultiplayerSynchronizer` synchronisiert
+- Main Menu mit Host- und Join-Button
 
-## Collaborate with your team
+### 🗺️ Zonen (geplant / in Arbeit)
+Folgende Biome sind als Assets / Zonen vorbereitet:
+`Forest` · `Grassland` · `Village` · `Coast` · `Swamp` · `Desert` · `Winter` · `Dungeon` · `GlowingCave` · `LavaCave` · `CursedLands` · `SkeletonPoison` · `SkyEndgame`
 
-- [ ] [Invite team members and collaborators](https://docs.gitlab.com/ee/user/project/members/)
-- [ ] [Create a new merge request](https://docs.gitlab.com/ee/user/project/merge_requests/creating_merge_requests.html)
-- [ ] [Automatically close issues from merge requests](https://docs.gitlab.com/ee/user/project/issues/managing_issues.html#closing-issues-automatically)
-- [ ] [Enable merge request approvals](https://docs.gitlab.com/ee/user/project/merge_requests/approvals/)
-- [ ] [Set auto-merge](https://docs.gitlab.com/user/project/merge_requests/auto_merge/)
+### 🐾 Mob-System (Basis)
+- Abstrakte `MobBase`-Klasse mit `MaxHealth`, `MoveSpeed`, `AttackDamage`
+- Kategorien vorbereitet: Monster, NPC, HuntAnimal, FarmAnimal, Human
 
-## Test and Deploy
+---
 
-Use the built-in continuous integration in GitLab.
+## 📋 To-Do / Roadmap
 
-- [ ] [Get started with GitLab CI/CD](https://docs.gitlab.com/ee/ci/quick_start/)
-- [ ] [Analyze your code for known vulnerabilities with Static Application Security Testing (SAST)](https://docs.gitlab.com/ee/user/application_security/sast/)
-- [ ] [Deploy to Kubernetes, Amazon EC2, or Amazon ECS using Auto Deploy](https://docs.gitlab.com/ee/topics/autodevops/requirements.html)
-- [ ] [Use pull-based deployments for improved Kubernetes management](https://docs.gitlab.com/ee/user/clusters/agent/)
-- [ ] [Set up protected environments](https://docs.gitlab.com/ee/ci/environments/protected_environments.html)
+### 🔧 Gameplay
+- [ ] Kampfsystem ausbauen (Hitbox, Schaden, Knockback)
+- [ ] Gegner-KI (Patrol, Chase, Angriff)
+- [ ] Inventar- und Item-System
+- [ ] Equipment / Waffen-System (Waffe am Spieler sichtbar)
+- [ ] Erfahrungspunkte & Level-Up System
+- [ ] Quests / Aufgaben-System
 
-***
+### 🌍 Welt
+- [ ] Weitere Zonen ausbauen und verbinden (Übergänge zwischen Biomen)
+- [ ] Dungeon-Layout
+- [ ] Interaktive Objekte (Truhen, Türen, NPCs)
+- [ ] Tag/Nacht-System
 
-# Editing this README
+### 🌐 Multiplayer
+- [ ] Über LAN hinaus (IP-Eingabe im Menü)
+- [ ] Spieler-Liste / HUD mit anderen Spielern
+- [ ] Synchronisierung von Mob-Positionen
+- [ ] Spieler-Tod & Respawn synchronisiert
 
-When you're ready to make this README your own, just edit this file and use the handy template below (or feel free to structure it however you want - this is just a starting point!). Thanks to [makeareadme.com](https://www.makeareadme.com/) for this template.
+### 🎨 UI / HUD
+- [ ] Health Bar
+- [ ] Inventar-Overlay
+- [ ] Minimap
+- [ ] Dialog-System für NPCs
 
-## Suggestions for a good README
+---
 
-Every project is different, so consider which of these sections apply to yours. The sections used in the template are suggestions for most open source projects. Also keep in mind that while a README can be too long and detailed, too long is better than too short. If you think your README is too long, consider utilizing another form of documentation rather than cutting out information.
+## 🚀 Projekt starten
 
-## Name
-Choose a self-explaining name for your project.
+**Voraussetzungen:**
+- Godot 4.6 (Mono) installiert
+- .NET SDK (für C#)
 
-## Description
-Let people know what your project can do specifically. Provide context and add a link to any reference visitors might be unfamiliar with. A list of Features or a Background subsection can also be added here. If there are alternatives to your project, this is a good place to list differentiating factors.
+**Schritte:**
+1. Repository klonen:
+   ```
+   git clone https://gitlab.hs-flensburg.de/roja6078/2drpg.git
+   ```
+2. Projekt in Godot öffnen (`project.godot` in `rpg-2d/`)
+3. `GameManager.tscn` als Autoload prüfen (Project → Globals → Autoload)
+4. Szene starten → **Host** oder **Join** im Hauptmenü
 
-## Badges
-On some READMEs, you may see small images that convey metadata, such as whether or not all the tests are passing for the project. You can use Shields to add some to your README. Many services also have instructions for adding a badge.
+---
 
-## Visuals
-Depending on what you are making, it can be a good idea to include screenshots or even a video (you'll frequently see GIFs rather than actual videos). Tools like ttygif can help, but check out Asciinema for a more sophisticated method.
+## 👥 Team
 
-## Installation
-Within a particular ecosystem, there may be a common way of installing things, such as using Yarn, NuGet, or Homebrew. However, consider the possibility that whoever is reading your README is a novice and would like more guidance. Listing specific steps helps remove ambiguity and gets people to using your project as quickly as possible. If it only runs in a specific context like a particular programming language version or operating system or has dependencies that have to be installed manually, also add a Requirements subsection.
-
-## Usage
-Use examples liberally, and show the expected output if you can. It's helpful to have inline the smallest example of usage that you can demonstrate, while providing links to more sophisticated examples if they are too long to reasonably include in the README.
-
-## Support
-Tell people where they can go to for help. It can be any combination of an issue tracker, a chat room, an email address, etc.
-
-## Roadmap
-If you have ideas for releases in the future, it is a good idea to list them in the README.
-
-## Contributing
-State if you are open to contributions and what your requirements are for accepting them.
-
-For people who want to make changes to your project, it's helpful to have some documentation on how to get started. Perhaps there is a script that they should run or some environment variables that they need to set. Make these steps explicit. These instructions could also be useful to your future self.
-
-You can also document commands to lint the code or run tests. These steps help to ensure high code quality and reduce the likelihood that the changes inadvertently break something. Having instructions for running tests is especially helpful if it requires external setup, such as starting a Selenium server for testing in a browser.
-
-## Authors and acknowledgment
-Show your appreciation to those who have contributed to the project.
-
-## License
-For open source projects, say how it is licensed.
-
-## Project status
-If you have run out of energy or time for your project, put a note at the top of the README saying that development has slowed down or stopped completely. Someone may choose to fork your project or volunteer to step in as a maintainer or owner, allowing your project to keep going. You can also make an explicit request for maintainers.
+Hochschulprojekt – HS Flensburg, 6. Semester
