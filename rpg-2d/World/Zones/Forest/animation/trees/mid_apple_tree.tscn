@@ -57,7 +57,7 @@ region = Rect2(192, 960, 64, 80)
 [sub_resource type="SpriteFrames" id="SpriteFrames_5yycs"]
 animations = [{
 "frames": [{
-"duration": 15.0,
+"duration": 30.0,
 "texture": SubResource("AtlasTexture_7jjcj")
 }, {
 "duration": 1.0,
@@ -101,10 +101,21 @@ animations = [{
 "speed": 5.0
 }]
 
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_s8r06"]
+height = 20.0
+
 [node name="MidAppleTree" type="Node2D" unique_id=656453699]
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=2042542939]
 y_sort_enabled = true
+position = Vector2(2, -24)
 sprite_frames = SubResource("SpriteFrames_5yycs")
 animation = &"big_apple_tree"
 autoplay = "big_apple_tree"
+
+[node name="StaticBody2D" type="StaticBody2D" parent="." unique_id=5968091]
+position = Vector2(1, -12)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="StaticBody2D" unique_id=1573029081]
+position = Vector2(0, 9)
+shape = SubResource("CapsuleShape2D_s8r06")

@@ -57,13 +57,13 @@ region = Rect2(128, 960, 64, 80)
 [sub_resource type="SpriteFrames" id="SpriteFrames_snjlt"]
 animations = [{
 "frames": [{
-"duration": 1.0,
+"duration": 10.0,
 "texture": SubResource("AtlasTexture_brorv")
 }, {
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_4nlbn")
 }, {
-"duration": 1.0,
+"duration": 22.0,
 "texture": SubResource("AtlasTexture_kvi6r")
 }, {
 "duration": 1.0,
@@ -101,8 +101,19 @@ animations = [{
 "speed": 5.0
 }]
 
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_6ljg6"]
+height = 20.0
+
 [node name="SmallNotmalTree" type="Node2D" unique_id=1098521451]
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=1172754663]
+position = Vector2(6, -29)
 sprite_frames = SubResource("SpriteFrames_snjlt")
 animation = &"liitle_normal_tree"
+
+[node name="StaticBody2D" type="StaticBody2D" parent="." unique_id=1555944763]
+position = Vector2(1, -12)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="StaticBody2D" unique_id=1771565]
+position = Vector2(0, 9)
+shape = SubResource("CapsuleShape2D_6ljg6")

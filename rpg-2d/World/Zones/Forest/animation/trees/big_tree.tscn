@@ -57,7 +57,7 @@ region = Rect2(360, 960, 72, 80)
 [sub_resource type="SpriteFrames" id="SpriteFrames_sw363"]
 animations = [{
 "frames": [{
-"duration": 1.0,
+"duration": 10.0,
 "texture": SubResource("AtlasTexture_76x7d")
 }, {
 "duration": 1.0,
@@ -101,9 +101,20 @@ animations = [{
 "speed": 5.0
 }]
 
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_gnm22"]
+height = 20.0
+
 [node name="BigTree" type="Node2D" unique_id=1692239075]
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=920598726]
+position = Vector2(1, -27)
 sprite_frames = SubResource("SpriteFrames_sw363")
 animation = &"big_tree"
 autoplay = "big_tree"
+
+[node name="StaticBody2D" type="StaticBody2D" parent="." unique_id=2091434955]
+position = Vector2(1, -12)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="StaticBody2D" unique_id=640661183]
+position = Vector2(0, 9)
+shape = SubResource("CapsuleShape2D_gnm22")

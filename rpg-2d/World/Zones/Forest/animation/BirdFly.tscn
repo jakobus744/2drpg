@@ -61,7 +61,7 @@ region = Rect2(144, 832, 144, 64)
 [sub_resource type="SpriteFrames" id="SF_BirdFly"]
 animations = [{
 "frames": [{
-"duration": 1.0,
+"duration": 40.0,
 "texture": SubResource("AtlasTexture_fckdk")
 }, {
 "duration": 1.0,
@@ -111,6 +111,9 @@ animations = [{
 [node name="BirdFly" type="Node2D" unique_id=1509683807]
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=928637589]
+z_index = 4
+position = Vector2(70, 3)
 sprite_frames = SubResource("SF_BirdFly")
 animation = &"fly"
-frame_progress = 0.95003116
+autoplay = "fly"
+frame_progress = 0.68269056

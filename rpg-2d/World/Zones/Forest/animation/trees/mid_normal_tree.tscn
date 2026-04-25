@@ -81,7 +81,7 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_1jo0h")
 }, {
-"duration": 1.0,
+"duration": 18.0,
 "texture": SubResource("AtlasTexture_vbof2")
 }, {
 "duration": 1.0,
@@ -101,9 +101,20 @@ animations = [{
 "speed": 5.0
 }]
 
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_p3yel"]
+height = 20.0
+
 [node name="NormalMiddleTree" type="Node2D" unique_id=475262072]
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=1199759099]
+position = Vector2(0, -29)
 sprite_frames = SubResource("SpriteFrames_ififh")
 animation = &"middle_normal_tree"
 autoplay = "middle_normal_tree"
+
+[node name="StaticBody2D" type="StaticBody2D" parent="." unique_id=1081768001]
+position = Vector2(1, -12)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="StaticBody2D" unique_id=283262038]
+position = Vector2(0, 9)
+shape = SubResource("CapsuleShape2D_p3yel")
