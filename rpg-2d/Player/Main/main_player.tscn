@@ -2,6 +2,7 @@
 
 [ext_resource type="Script" uid="uid://c0w5whv2syxu" path="res://Player/Player.cs" id="1_xiiv8"]
 [ext_resource type="Texture2D" uid="uid://3fql1mrkraxc" path="res://Assets/Charakter/Player/main/Swordsman_lvl2_attack_with_shadow.png" id="2_m5hx8"]
+[ext_resource type="Texture2D" uid="uid://j5nhm816exwl" path="res://Assets/Ui/Weapons/Weapons.png" id="2_rkm3v"]
 [ext_resource type="Texture2D" uid="uid://o0qcbehmepqj" path="res://Assets/Charakter/Player/main/Swordsman_lvl2_Death_with_shadow.png" id="3_bds80"]
 [ext_resource type="Texture2D" uid="uid://5dmu2swfxwtp" path="res://art/PNG/Swordsman_lvl1/With_shadow/Swordsman_lvl1_Hurt_with_shadow.png" id="4_r0eh7"]
 [ext_resource type="Texture2D" uid="uid://dvkpif1yfhc72" path="res://Assets/Charakter/Player/main/Swordsman_lvl2_Hurt_with_shadow.png" id="4_xiiv8"]
@@ -929,13 +930,13 @@ region = Rect2(0, 0, 64, 64)
 atlas = ExtResource("9_kesnb")
 region = Rect2(64, 0, 64, 64)
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_orcak"]
-atlas = ExtResource("9_kesnb")
-region = Rect2(128, 0, 64, 64)
-
 [sub_resource type="AtlasTexture" id="AtlasTexture_opggu"]
 atlas = ExtResource("9_kesnb")
 region = Rect2(192, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_orcak"]
+atlas = ExtResource("9_kesnb")
+region = Rect2(128, 0, 64, 64)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_ne1xg"]
 atlas = ExtResource("9_kesnb")
@@ -1142,7 +1143,7 @@ animations = [{
 }],
 "loop": false,
 "name": &"attack_down",
-"speed": 10.0
+"speed": 12.0
 }, {
 "frames": [{
 "duration": 1.0,
@@ -1171,7 +1172,7 @@ animations = [{
 }],
 "loop": false,
 "name": &"attack_left",
-"speed": 10.0
+"speed": 12.0
 }, {
 "frames": [{
 "duration": 1.0,
@@ -1200,7 +1201,7 @@ animations = [{
 }],
 "loop": false,
 "name": &"attack_right",
-"speed": 10.0
+"speed": 12.0
 }, {
 "frames": [{
 "duration": 1.0,
@@ -1229,7 +1230,7 @@ animations = [{
 }],
 "loop": false,
 "name": &"attack_up",
-"speed": 10.0
+"speed": 12.0
 }, {
 "frames": [{
 "duration": 1.0,
@@ -1941,10 +1942,10 @@ animations = [{
 "texture": SubResource("AtlasTexture_qxxpc")
 }, {
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_orcak")
+"texture": SubResource("AtlasTexture_opggu")
 }, {
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_opggu")
+"texture": SubResource("AtlasTexture_orcak")
 }, {
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_ne1xg")
@@ -1954,7 +1955,7 @@ animations = [{
 }],
 "loop": false,
 "name": &"walk_attack_down",
-"speed": 7.0
+"speed": 10.0
 }, {
 "frames": [{
 "duration": 1.0,
@@ -1977,7 +1978,7 @@ animations = [{
 }],
 "loop": false,
 "name": &"walk_attack_left",
-"speed": 7.0
+"speed": 10.0
 }, {
 "frames": [{
 "duration": 1.0,
@@ -2000,7 +2001,7 @@ animations = [{
 }],
 "loop": false,
 "name": &"walk_attack_right",
-"speed": 7.0
+"speed": 10.0
 }, {
 "frames": [{
 "duration": 1.0,
@@ -2023,7 +2024,7 @@ animations = [{
 }],
 "loop": false,
 "name": &"walk_attack_up",
-"speed": 6.0
+"speed": 10.0
 }, {
 "frames": [{
 "duration": 1.0,
@@ -2118,6 +2119,296 @@ animations = [{
 "speed": 5.0
 }]
 
+[sub_resource type="Animation" id="Animation_xiiv8"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("AnimatedSprite2D:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [1]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("WeaponPivot:rotation")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [-0.88792497]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("WeaponPivot:position")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(-1.0000001, 2.9999995)]
+}
+
+[sub_resource type="Animation" id="Animation_frpnd"]
+resource_name = "test"
+length = 1.2000201
+step = 0.125
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("AnimatedSprite2D:animation")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [&"run_attack_right"]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("AnimatedSprite2D:frame")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0, 0.2, 0.42717335, 0.6, 0.8, 1),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1),
+"update": 1,
+"values": [0, 1, 2, 3, 4, 5]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("WeaponPivot:position")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(-1, 7)]
+}
+
+[sub_resource type="Animation" id="Animation_rkm3v"]
+resource_name = "walk_down"
+length = 1.2000201
+step = 0.2
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("WeaponPivot:position")
+tracks/0/interp = 2
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.20674764, 0.41131896, 0.61153775, 0.8, 1.009799),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1),
+"update": 1,
+"values": [Vector2(-6, 6), Vector2(-6, 5), Vector2(-6, 6), Vector2(-5, 6), Vector2(-4, 5), Vector2(-4, 6)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("AnimatedSprite2D:animation")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [&"walk_down"]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("AnimatedSprite2D:frame")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0, 0.2, 0.4, 0.6, 0.8, 1),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1),
+"update": 1,
+"values": [0, 1, 2, 3, 4, 5]
+}
+tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("WeaponPivot:rotation")
+tracks/3/interp = 2
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [-0.89899635]
+}
+
+[sub_resource type="Animation" id="Animation_meyvx"]
+resource_name = "walk_left"
+length = 1.2000201
+step = 0.2
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("WeaponPivot:position")
+tracks/0/interp = 2
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.20219538, 0.20239505, 0.4069664, 0.61371404, 0.8095802, 1.009799),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1, 1),
+"update": 1,
+"values": [Vector2(-3, 7), Vector2(-1.0000001, 2.9999995), Vector2(-3, 5), Vector2(-4, 4), Vector2(-3, 5), Vector2(-3, 5), Vector2(-3, 5)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("AnimatedSprite2D:animation")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [&"walk_left"]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("AnimatedSprite2D:frame")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0, 0.2, 0.4, 0.6, 0.8, 1),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1),
+"update": 1,
+"values": [0, 1, 2, 3, 4, 5]
+}
+tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("WeaponPivot:rotation")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [-0.88792497]
+}
+
+[sub_resource type="Animation" id="Animation_auxe2"]
+resource_name = "walk_right"
+length = 1.2000201
+step = 0.2
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("WeaponPivot:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.22497796, 0.41862988, 0.6151296, 0.8201728, 1.025216),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1),
+"update": 1,
+"values": [Vector2(-5, 3), Vector2(-2.9999995, 1), Vector2(-2, 2), Vector2(-2.0000002, 2.0000002), Vector2(-2, 3), Vector2(-3, 2)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("WeaponPivot:rotation")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0, 0.22497796, 0.41862988, 0.6151296, 0.8201728, 1.0166726),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1),
+"update": 1,
+"values": [3.8655612, 3.912686, 3.966936, 3.966936, 4.008511, 3.874282]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("AnimatedSprite2D:animation")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [&"walk_right"]
+}
+tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("AnimatedSprite2D:frame")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0, 0.2, 0.4, 0.6, 0.8, 1),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1),
+"update": 1,
+"values": [0, 1, 2, 3, 4, 5]
+}
+
+[sub_resource type="Animation" id="Animation_kesnb"]
+resource_name = "walk_up"
+length = 1.2000201
+step = 0.2
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("WeaponPivot:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.20674764, 0.41131896, 0.61153775, 0.81610906, 1.009799),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1),
+"update": 1,
+"values": [Vector2(4, 6), Vector2(5, 6), Vector2(5, 6), Vector2(6, 6), Vector2(6, 5), Vector2(5, 6)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("AnimatedSprite2D:animation")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [&"walk_up"]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("AnimatedSprite2D:frame")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0, 0.2, 0.41578206, 0.6, 0.8, 1),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1),
+"update": 1,
+"values": [0, 1, 2, 3, 4, 5]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_meyvx"]
+_data = {
+&"RESET": SubResource("Animation_xiiv8"),
+&"test": SubResource("Animation_frpnd"),
+&"walk_down": SubResource("Animation_rkm3v"),
+&"walk_left": SubResource("Animation_meyvx"),
+&"walk_right": SubResource("Animation_auxe2"),
+&"walk_up": SubResource("Animation_kesnb")
+}
+
 [sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_xiiv8"]
 properties/0/path = NodePath(".:SyncPosition")
 properties/0/spawn = true
@@ -2135,12 +2426,27 @@ script = ExtResource("1_xiiv8")
 position = Vector2(0, 6)
 shape = SubResource("CapsuleShape2D_ur7pv")
 
-[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=782352616]
-sprite_frames = SubResource("SpriteFrames_sh265")
-animation = &"idle_left"
-
 [node name="Camera2D" type="Camera2D" parent="." unique_id=1319663386]
 zoom = Vector2(3.8, 3.8)
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=782352616]
+position = Vector2(-1, 0)
+sprite_frames = SubResource("SpriteFrames_sh265")
+animation = &"walk_right"
+frame = 1
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="." unique_id=810352454]
+libraries/ = SubResource("AnimationLibrary_meyvx")
+
+[node name="WeaponPivot" type="Sprite2D" parent="." unique_id=2134459550]
+position = Vector2(-1.0000001, 2.9999995)
+rotation = -0.88792497
+scale = Vector2(0.49999997, 0.49999997)
+texture = ExtResource("2_rkm3v")
+centered = false
+offset = Vector2(-30, -9)
+region_enabled = true
+region_rect = Rect2(65, 1, 31, 14)
 
 [node name="Input" type="Node" parent="." unique_id=2062619980]
 script = ExtResource("12_rkm3v")

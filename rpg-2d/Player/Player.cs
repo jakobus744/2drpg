@@ -8,17 +8,20 @@ public partial class Player : CharacterBody2D
 	private const float SpeedRun = 100f;
 
 	public enum MoveState { Idle, Walk, Run }
-	
+
 	private MoveState _moveState = MoveState.Idle;
 	private MoveState _lastMoveState = MoveState.Idle;
 	private Vector2 _facingDirection = Vector2.Down;
 	private bool _isAttacking = false;
 	private bool _isRolling = false;
-	
+
 	private bool IsActionLocked => _isAttacking || _isRolling;
 
 	private AnimatedSprite2D _anim;
-	
+	private AnimationPlayer _weaponAnim;
+	private Sprite2D _weaponPivot;
+	private bool _hasWeapon = false;
+
 	[Export] public Vector2 SyncPosition = Vector2.Zero;
 	[Export] public string SyncAnimation = "";
 
@@ -40,10 +43,17 @@ public partial class Player : CharacterBody2D
 		YSortEnabled = false;
 		_anim = GetNode<AnimatedSprite2D>("AnimatedSprite2D");
 		_anim.AnimationFinished += OnAnimationFinished;
-		
+
+		_weaponAnim = GetNodeOrNull<AnimationPlayer>("AnimationPlayer");
+		_weaponPivot = GetNodeOrNull<Sprite2D>("WeaponPivot");
+		if (_weaponPivot != null) _weaponPivot.Visible = false;
+
+		_anim.FrameChanged += SyncWeaponAnim;
+		_anim.AnimationChanged += () => SyncWeaponAnim();
+
 		var sync = GetNodeOrNull<MultiplayerSynchronizer>("ServerSynchronizer");
 		sync?.SetMultiplayerAuthority(1);
-		
+
 		var camera = GetNodeOrNull<Camera2D>("Camera2D");
 		if (camera != null)
 		{
@@ -60,7 +70,7 @@ public partial class Player : CharacterBody2D
 		}
 
 		if (IsMultiplayerAuthority()) return;
-		
+
 		Position = Position.Lerp(SyncPosition, (float)delta * 15f);
 
 		if (!string.IsNullOrEmpty(SyncAnimation))
@@ -106,7 +116,7 @@ public partial class Player : CharacterBody2D
 	{
 		string animName = "roll_" + dirName;
 		if (!_anim.SpriteFrames.HasAnimation(animName)) return;
-		
+
 		_isRolling = true;
 		_anim.Play(animName);
 	}
@@ -131,12 +141,20 @@ public partial class Player : CharacterBody2D
 	{
 		if (IsActionLocked) return;
 
+		UpdateWeaponZIndex(dirName);
+
 		switch (_moveState)
 		{
 			case MoveState.Idle: PlayIdleAnimation(dirName); break;
 			case MoveState.Walk: _anim.Play("walk_" + dirName); break;
 			case MoveState.Run: _anim.Play("run_" + dirName); break;
 		}
+	}
+
+	private void UpdateWeaponZIndex(string dir)
+	{
+		if (_weaponPivot == null) return;
+		_weaponPivot.ZIndex = (dir == "up" || dir == "left") ? -1 : 1;
 	}
 
 	private void PlayIdleAnimation(string dir)
@@ -167,10 +185,33 @@ public partial class Player : CharacterBody2D
 		if (finishedAnimation.Contains("attack")) _isAttacking = false;
 		if (finishedAnimation.Contains("roll")) _isRolling = false;
 	}
-	
+
 	public void ApplyState(PlayerState state)
 	{
 		Position = state.Position;
 		Velocity = state.Velocity;
+	}
+
+	public void EquipWeapon(Texture2D texture, Rect2 region)
+	{
+		_hasWeapon = true;
+		if (_weaponPivot == null) return;
+		_weaponPivot.Texture = texture;
+		_weaponPivot.RegionEnabled = true;
+		_weaponPivot.RegionRect = region;
+		_weaponPivot.Visible = true;
+	}
+
+	private void SyncWeaponAnim()
+	{
+		if (!_hasWeapon || _weaponAnim == null) return;
+		string animName = _anim.Animation;
+		if (_weaponAnim.HasAnimation(animName))
+		{
+			double fps = _anim.SpriteFrames.GetAnimationSpeed(animName);
+			double time = _anim.Frame / fps;
+			_weaponAnim.Play(animName);
+			_weaponAnim.Seek(time, true);
+		}
 	}
 }

@@ -1,0 +1,25 @@
+[gd_scene format=3 uid="uid://dh4pdkoc04kew"]
+
+[ext_resource type="Texture2D" uid="uid://j5nhm816exwl" path="res://Assets/Ui/Weapons/Weapons.png" id="1_7os7w"]
+[ext_resource type="Script" uid="uid://cllljvkvtjkks" path="res://World/Items/Weapons/TestItem.cs" id="2_script"]
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_frf72"]
+radius = 0.80178887
+height = 12.792683
+
+[node name="Test_item" type="Area2D" unique_id=275455072]
+scale = Vector2(0.5, 0.5)
+script = ExtResource("2_script")
+WeaponTexture = ExtResource("1_7os7w")
+WeaponRegion = Rect2(65, 1, 31, 14)
+
+[node name="Sprite2D" type="Sprite2D" parent="." unique_id=1738785669]
+scale = Vector2(0.5, 0.5)
+texture = ExtResource("1_7os7w")
+region_enabled = true
+region_rect = Rect2(65, 1, 31, 14)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1984111021]
+position = Vector2(2.9802322e-08, -5.9604645e-08)
+rotation = 1.5752885
+shape = SubResource("CapsuleShape2D_frf72")

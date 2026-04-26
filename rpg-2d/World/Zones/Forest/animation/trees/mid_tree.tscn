@@ -107,7 +107,7 @@ height = 20.0
 [node name="MidTree" type="Node2D" unique_id=211735143]
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=1679878976]
-position = Vector2(2, -28)
+position = Vector2(2, -20)
 sprite_frames = SubResource("SpriteFrames_f45ku")
 animation = &"middle_tree"
 autoplay = "middle_tree"
@@ -116,5 +116,5 @@ autoplay = "middle_tree"
 position = Vector2(1, -12)
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="StaticBody2D" unique_id=1920955613]
-position = Vector2(0, 9)
+position = Vector2(-1, 18)
 shape = SubResource("CapsuleShape2D_r1cwe")

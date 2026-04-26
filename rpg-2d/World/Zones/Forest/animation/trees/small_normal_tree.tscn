@@ -107,7 +107,7 @@ height = 20.0
 [node name="SmallNotmalTree" type="Node2D" unique_id=1098521451]
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=1172754663]
-position = Vector2(6, -29)
+position = Vector2(5, -23)
 sprite_frames = SubResource("SpriteFrames_snjlt")
 animation = &"liitle_normal_tree"
 
@@ -115,5 +115,5 @@ animation = &"liitle_normal_tree"
 position = Vector2(1, -12)
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="StaticBody2D" unique_id=1771565]
-position = Vector2(0, 9)
+position = Vector2(-2, 15)
 shape = SubResource("CapsuleShape2D_6ljg6")
