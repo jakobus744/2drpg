@@ -15,6 +15,18 @@ public partial class PlayerInput : Node
 	private readonly PlayerState[] _stateBuffer = new PlayerState[BufferSize];
 	
 	private readonly Queue<PlayerCmd> _serverCommandQueue = new Queue<PlayerCmd>();
+	
+	private PredictionDebug _debugDrawer;
+	
+	public override void _Ready()
+	{
+		if (IsMultiplayerAuthority())
+		{
+			_debugDrawer = new PredictionDebug();
+			AddChild(_debugDrawer);
+		}
+	}
+	
 	public override void _PhysicsProcess(double delta)
 	{
 		if (IsMultiplayerAuthority())
@@ -130,6 +142,17 @@ public partial class PlayerInput : Node
 		
 		// Vergleichen mit dem Server
 		var predictedState = _stateBuffer[tickAcknowledged % BufferSize];
+
+		var unacknowledgedPath = new List<Vector2>();
+		for (var i = tickAcknowledged + 1; i <= _currentTick; i++)
+		{
+			if (_stateBuffer[i % BufferSize] != null) 
+			{
+				unacknowledgedPath.Add(_stateBuffer[i % BufferSize].Position);
+			}
+		}
+
+		_debugDrawer?.UpdateDebugData(state.Position, state.Velocity, predictedState.Position, unacknowledgedPath);
 		if(state.Position.DistanceSquaredTo(predictedState.Position) < 1f && state.Velocity.DistanceSquaredTo(predictedState.Velocity)  < 1f)
 		{
 			return;
