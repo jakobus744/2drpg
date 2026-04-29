@@ -5,236 +5,258 @@ namespace RPG2d.Player;
 
 public partial class Player : CharacterBody2D
 {
-	private const float SpeedWalk = 70f;
-	private const float SpeedRun = 100f;
+    private const float SpeedWalk = 70f;
+    private const float SpeedRun = 100f;
 
-	private const float MaxHealth = 100f;
-	private const float HealthRecovery = 1f;
-	
-	private const float MaxStamina = 100f;
-	private const float StaminaRecovery = .5f;
-	private const float MovingStaminaRecovery = .25f;
-	private const float RollCost = 30f;
-	private const float SprintCost = .25f;
-	
-	// Ab wann Sprint Speed weniger wird, evtl renamen?
-	private const float SprintFalloff = 30f;
+    private const float MaxHealth = 100f;
+    private const float HealthRecovery = 1f;
 
-	public enum MoveState { Idle, Walk, Run }
-	
-	private MoveState _moveState = MoveState.Idle;
-	private MoveState _lastMoveState = MoveState.Idle;
-	private Vector2 _facingDirection = Vector2.Down;
-	private bool _isAttacking = false;
-	private bool _isRolling = false;
-	
-	private bool IsActionLocked => _isAttacking || _isRolling;
+    private const float MaxStamina = 100f;
+    private const float StaminaRecovery = .5f;
+    private const float MovingStaminaRecovery = .25f;
+    private const float RollCost = 30f;
+    private const float SprintCost = .25f;
 
-	private AnimatedSprite2D _anim;
-	
-	[Export] public Vector2 SyncPosition = Vector2.Zero;
-	[Export] public string SyncAnimation = "";
+    // Ab wann Sprint Speed weniger wird, evtl renamen?
+    private const float SprintFalloff = 30f;
 
-	public override void _EnterTree()
-	{
-		// Sollte immer der Fall sein, außer wir testen etwas spezifisches wo wir die Node manuell hinzufügen
-		if (int.TryParse(Name, out int peerId))
-		{
-			SetMultiplayerAuthority(peerId);
-		}
-		else
-		{
-			SetMultiplayerAuthority(1);
-		}
-	}
+    public enum MoveState
+    {
+        Idle,
+        Walk,
+        Run
+    }
 
-	public override void _Ready()
-	{
-		YSortEnabled = false;
-		_anim = GetNode<AnimatedSprite2D>("AnimatedSprite2D");
-		_anim.AnimationFinished += OnAnimationFinished;
-		
-		var sync = GetNodeOrNull<MultiplayerSynchronizer>("ServerSynchronizer");
-		sync?.SetMultiplayerAuthority(1);
-		
-		var camera = GetNodeOrNull<Camera2D>("Camera2D");
-		if (camera != null)
-		{
-			camera.Enabled = IsMultiplayerAuthority();
-		}
-	}
+    private MoveState _moveState = MoveState.Idle;
+    private MoveState _lastMoveState = MoveState.Idle;
+    private Vector2 _facingDirection = Vector2.Down;
+    private bool _isAttacking = false;
+    private bool _isRolling = false;
 
-	public override void _PhysicsProcess(double delta)
-	{
-		if (Multiplayer.IsServer())
-		{
-			SyncPosition = Position;
-			SyncAnimation = _anim.Animation;
-		}
+    private bool IsActionLocked => _isAttacking || _isRolling;
 
-		if (IsMultiplayerAuthority()) return;
-		
-		Position = Position.Lerp(SyncPosition, (float)delta * 15f);
+    private AnimatedSprite2D _anim;
 
-		if (!string.IsNullOrEmpty(SyncAnimation))
-		{
-			_anim.Play(SyncAnimation);
-		}
-	}
+    [Export] public Vector2 SyncPosition = Vector2.Zero;
+    [Export] public string SyncAnimation = "";
 
-	// Player Input verarbeiten, sowohl auf dem Server als auch auf dem Client
-	public PlayerState ProcessCommand(PlayerState previousState, PlayerCmd cmd)
-	{
-		// Initial state holen setzen falls nicht vorhanden, sonst clonen
-		var state = previousState?.Clone() ?? new PlayerState
-		{
-			Position = Position,
-			Velocity = Velocity,
-			Stamina = MaxStamina,
-			Health = MaxHealth,
-			LastHurtTime = 0f
-		};
-		
-		// 1. Aktionen verarbeiten
-		if (cmd.IsAttackPressed && !IsActionLocked) StartAttack(cmd.FacingDirection);
-		if (cmd.IsRollPressed && !IsActionLocked)
-		{
-			if (state.Stamina >= RollCost)
-			{
-				StartRoll(cmd.FacingDirection);
-				state.Stamina = Math.Max(state.Stamina - RollCost, 0f);
-			}
-		}
-		
-		// 2. Bewegung verarbeiten
-		if (cmd.MovementVector == Vector2.Zero)
-		{
-			_lastMoveState = _moveState;
-			_moveState = MoveState.Idle;
-			Velocity = Vector2.Zero;
-			state.Stamina += StaminaRecovery;
-		}
-		else
-		{
-			_facingDirection = DirectionStringToVector(cmd.FacingDirection);
-			_moveState = cmd.IsRunPressed ? MoveState.Run : MoveState.Walk;
+    public static Player LocalPlayer { get; private set; }
+    
+    public PlayerInput Input { get; private set; }
 
-			var wishSpeed = SpeedWalk;
-			if (cmd.IsRunPressed && state.Stamina > SprintCost)
-			{
-				// Speed increase ist stamina basiert
-				if (state.Stamina <= SprintFalloff)
-				{
-					wishSpeed += (SpeedRun - SpeedWalk) * (state.Stamina / SprintFalloff);
-				}
-				else
-				{
-					wishSpeed = SpeedRun;
-				}
+    public override void _EnterTree()
+    {
+        // Sollte immer der Fall sein, außer wir testen etwas spezifisches wo wir die Node manuell hinzufügen
+        if (int.TryParse(Name, out int peerId))
+        {
+            SetMultiplayerAuthority(peerId);
+        }
+        else
+        {
+            SetMultiplayerAuthority(1);
+        }
+    }
 
-				state.Stamina -= SprintCost;
-			}
-			else
-			{
-				state.Stamina += MovingStaminaRecovery;
-			}
-			
-			Velocity = cmd.MovementVector * wishSpeed;
-		}
-		
-		// @todo: Tod verarbeiten
-		if (state.Health < 0)
-		{
-			
-		}
-		else
-		{
-			state.Health += HealthRecovery;
-		}
-		
-		state.Stamina = Math.Clamp(state.Stamina, 0f, MaxStamina);
-		state.Health = Math.Clamp(state.Health, 0f, MaxHealth);
-		
-		// 3. Animation updaten und bewegen
-		UpdateAnimation(cmd.FacingDirection);
-		MoveAndSlide();
+    public override void _Ready()
+    {
+        YSortEnabled = false;
+        _anim = GetNode<AnimatedSprite2D>("AnimatedSprite2D");
+        _anim.AnimationFinished += OnAnimationFinished;
 
-		state.Position = Position;
-		state.Velocity = Velocity;
-		
-		// 4. State zurück geben
-		return state;
-	}
+        var sync = GetNodeOrNull<MultiplayerSynchronizer>("ServerSynchronizer");
+        sync?.SetMultiplayerAuthority(1);
 
-	private void StartRoll(string dirName)
-	{
-		string animName = "roll_" + dirName;
-		if (!_anim.SpriteFrames.HasAnimation(animName)) return;
-		
-		_isRolling = true;
-		_anim.Play(animName);
-	}
+        var camera = GetNodeOrNull<Camera2D>("Camera2D");
+        if (camera != null)
+        {
+            camera.Enabled = IsMultiplayerAuthority();
+        }
+        
+        Input = GetNode<PlayerInput>("Input");
+        if (IsMultiplayerAuthority())
+        {
+            LocalPlayer = this;
+        }
+    }
 
-	private void StartAttack(string dirName)
-	{
-		string animName = GetAttackAnimationName(dirName);
-		if (!_anim.SpriteFrames.HasAnimation(animName)) return;
+    public override void _ExitTree()
+    {
+        if (LocalPlayer == this)
+        {
+            LocalPlayer = null;
+        }
+    }
 
-		_isAttacking = true;
-		_anim.Play(animName);
-	}
+    public override void _PhysicsProcess(double delta)
+    {
+        if (Multiplayer.IsServer())
+        {
+            SyncPosition = Position;
+            SyncAnimation = _anim.Animation;
+        }
 
-	private string GetAttackAnimationName(string dir) => _moveState switch
-	{
-		MoveState.Run => "run_attack_" + dir,
-		MoveState.Walk => "walk_attack_" + dir,
-		_ => "attack_" + dir,
-	};
+        if (IsMultiplayerAuthority()) return;
 
-	private void UpdateAnimation(string dirName)
-	{
-		if (IsActionLocked) return;
+        Position = Position.Lerp(SyncPosition, (float)delta * 15f);
 
-		switch (_moveState)
-		{
-			case MoveState.Idle: PlayIdleAnimation(dirName); break;
-			case MoveState.Walk: _anim.Play("walk_" + dirName); break;
-			case MoveState.Run: _anim.Play("run_" + dirName); break;
-		}
-	}
+        if (!string.IsNullOrEmpty(SyncAnimation))
+        {
+            _anim.Play(SyncAnimation);
+        }
+    }
 
-	private void PlayIdleAnimation(string dir)
-	{
-		string anim = _lastMoveState == MoveState.Run
-			? "idle_" + dir + ".2"
-			: "idle_" + dir + ".1";
+    // Player Input verarbeiten, sowohl auf dem Server als auch auf dem Client
+    public PlayerState ProcessCommand(PlayerState previousState, PlayerCmd cmd)
+    {
+        // Initial state holen setzen falls nicht vorhanden, sonst clonen
+        var state = previousState?.Clone() ?? new PlayerState
+        {
+            Position = Position,
+            Velocity = Velocity,
+            Stamina = MaxStamina,
+            Health = MaxHealth,
+            LastHurtTime = 0f
+        };
 
-		if (!_anim.SpriteFrames.HasAnimation(anim))
-			anim = "idle_" + dir;
+        // 1. Aktionen verarbeiten
+        if (cmd.IsAttackPressed && !IsActionLocked) StartAttack(cmd.FacingDirection);
+        if (cmd.IsRollPressed && !IsActionLocked)
+        {
+            if (state.Stamina >= RollCost)
+            {
+                StartRoll(cmd.FacingDirection);
+                state.Stamina = Math.Max(state.Stamina - RollCost, 0f);
+            }
+        }
 
-		_anim.Play(anim);
-	}
+        // 2. Bewegung verarbeiten
+        if (cmd.MovementVector == Vector2.Zero)
+        {
+            _lastMoveState = _moveState;
+            _moveState = MoveState.Idle;
+            Velocity = Vector2.Zero;
+            state.Stamina += StaminaRecovery;
+        }
+        else
+        {
+            _facingDirection = DirectionStringToVector(cmd.FacingDirection);
+            _moveState = cmd.IsRunPressed ? MoveState.Run : MoveState.Walk;
 
-	private Vector2 DirectionStringToVector(string dir) => dir switch
-	{
-		"up" => Vector2.Up,
-		"down" => Vector2.Down,
-		"left" => Vector2.Left,
-		"right" => Vector2.Right,
-		_ => Vector2.Zero,
-	};
+            var wishSpeed = SpeedWalk;
+            if (cmd.IsRunPressed && state.Stamina > SprintCost)
+            {
+                // Speed increase ist stamina basiert
+                if (state.Stamina <= SprintFalloff)
+                {
+                    wishSpeed += (SpeedRun - SpeedWalk) * (state.Stamina / SprintFalloff);
+                }
+                else
+                {
+                    wishSpeed = SpeedRun;
+                }
 
-	private void OnAnimationFinished()
-	{
-		string finishedAnimation = _anim.Animation.ToString();
+                state.Stamina -= SprintCost;
+            }
+            else
+            {
+                state.Stamina += MovingStaminaRecovery;
+            }
 
-		if (finishedAnimation.Contains("attack")) _isAttacking = false;
-		if (finishedAnimation.Contains("roll")) _isRolling = false;
-	}
-	
-	public void ApplyState(PlayerState state)
-	{
-		Position = state.Position;
-		Velocity = state.Velocity;
-	}
+            Velocity = cmd.MovementVector * wishSpeed;
+        }
+
+        // @todo: Tod verarbeiten
+        if (state.Health < 0)
+        {
+        }
+        else
+        {
+            state.Health += HealthRecovery;
+        }
+
+        state.Stamina = Math.Clamp(state.Stamina, 0f, MaxStamina);
+        state.Health = Math.Clamp(state.Health, 0f, MaxHealth);
+
+        // 3. Animation updaten und bewegen
+        UpdateAnimation(cmd.FacingDirection);
+        MoveAndSlide();
+
+        state.Position = Position;
+        state.Velocity = Velocity;
+
+        // 4. State zurück geben
+        return state;
+    }
+
+    private void StartRoll(string dirName)
+    {
+        string animName = "roll_" + dirName;
+        if (!_anim.SpriteFrames.HasAnimation(animName)) return;
+
+        _isRolling = true;
+        _anim.Play(animName);
+    }
+
+    private void StartAttack(string dirName)
+    {
+        string animName = GetAttackAnimationName(dirName);
+        if (!_anim.SpriteFrames.HasAnimation(animName)) return;
+
+        _isAttacking = true;
+        _anim.Play(animName);
+    }
+
+    private string GetAttackAnimationName(string dir) => _moveState switch
+    {
+        MoveState.Run => "run_attack_" + dir,
+        MoveState.Walk => "walk_attack_" + dir,
+        _ => "attack_" + dir,
+    };
+
+    private void UpdateAnimation(string dirName)
+    {
+        if (IsActionLocked) return;
+
+        switch (_moveState)
+        {
+            case MoveState.Idle: PlayIdleAnimation(dirName); break;
+            case MoveState.Walk: _anim.Play("walk_" + dirName); break;
+            case MoveState.Run: _anim.Play("run_" + dirName); break;
+        }
+    }
+
+    private void PlayIdleAnimation(string dir)
+    {
+        string anim = _lastMoveState == MoveState.Run
+            ? "idle_" + dir + ".2"
+            : "idle_" + dir + ".1";
+
+        if (!_anim.SpriteFrames.HasAnimation(anim))
+            anim = "idle_" + dir;
+
+        _anim.Play(anim);
+    }
+
+    private Vector2 DirectionStringToVector(string dir) => dir switch
+    {
+        "up" => Vector2.Up,
+        "down" => Vector2.Down,
+        "left" => Vector2.Left,
+        "right" => Vector2.Right,
+        _ => Vector2.Zero,
+    };
+
+    private void OnAnimationFinished()
+    {
+        string finishedAnimation = _anim.Animation.ToString();
+
+        if (finishedAnimation.Contains("attack")) _isAttacking = false;
+        if (finishedAnimation.Contains("roll")) _isRolling = false;
+    }
+
+    public void ApplyState(PlayerState state)
+    {
+        Position = state.Position;
+        Velocity = state.Velocity;
+    }
 }

@@ -8,8 +8,6 @@ namespace RPG2d.Player;
 public partial class PlayerInput : Node
 {
     private readonly List<string> _pressedDirections = [];
-    private uint _currentTick = 0;
-    private uint _lastTickAcknowledged = 0;
     private const int BufferSize = 128;
     private readonly PlayerCmd[] _commandBuffer = new PlayerCmd[BufferSize];
     private readonly PlayerState[] _stateBuffer = new PlayerState[BufferSize];
@@ -17,6 +15,9 @@ public partial class PlayerInput : Node
     private readonly Queue<PlayerCmd> _serverCommandQueue = new Queue<PlayerCmd>();
 
     private PredictionDebug _debugDrawer;
+    
+    public uint CurrentTick = 0;
+    public uint LastTickAcknowledged = 0;
 
     public override void _Ready()
     {
@@ -31,15 +32,15 @@ public partial class PlayerInput : Node
     {
         if (IsMultiplayerAuthority())
         {
-            ++_currentTick;
+            ++CurrentTick;
 
             var cmd = BuildPlayerCommand();
-            cmd.Tick = _currentTick;
+            cmd.Tick = CurrentTick;
 
             // Command speichern, Verarbeiten und Ergebnis speichern.
             SetCommand(cmd.Tick, cmd);
-            var state = GetParent<Player>().ProcessCommand(GetState(_currentTick - 1), cmd);
-            SetState(_currentTick, state);
+            var state = GetParent<Player>().ProcessCommand(GetState(CurrentTick - 1), cmd);
+            SetState(CurrentTick, state);
             
             if (!Multiplayer.IsServer())
                 RpcId(1, MethodName.ReceiveCommand, cmd.ToBytes());
@@ -50,15 +51,15 @@ public partial class PlayerInput : Node
             while (_serverCommandQueue.Count > 0)
             {
                 var cmd = _serverCommandQueue.Dequeue();
-                _currentTick = cmd.Tick;
+                CurrentTick = cmd.Tick;
 
-                state = GetParent<Player>().ProcessCommand(GetState(_currentTick - 1), cmd);
-                SetState(_currentTick, state);
+                state = GetParent<Player>().ProcessCommand(GetState(CurrentTick - 1), cmd);
+                SetState(CurrentTick, state);
             }
 
             if (state != null)
             {
-                RpcId(Multiplayer.GetRemoteSenderId(), MethodName.ReceivePlayerState, _currentTick, state.ToBytes());
+                RpcId(Multiplayer.GetRemoteSenderId(), MethodName.ReceivePlayerState, CurrentTick, state.ToBytes());
             }
         }
     }
@@ -101,7 +102,7 @@ public partial class PlayerInput : Node
         playerCmd.MovementVector = GetCombinedMovementVector();
 
         // wir starten down
-        if (_currentTick == 1)
+        if (CurrentTick == 1)
         {
             playerCmd.FacingDirection = "down";
         }
@@ -109,7 +110,7 @@ public partial class PlayerInput : Node
         {
             playerCmd.FacingDirection = _pressedDirections.Count > 0
                 ? _pressedDirections.Last()
-                : GetCommand(_currentTick - 1).FacingDirection;
+                : GetCommand(CurrentTick - 1).FacingDirection;
         }
 
         playerCmd.IsRunPressed = Input.IsActionPressed("run");
@@ -155,14 +156,14 @@ public partial class PlayerInput : Node
         var state = PlayerState.FromBytes(stateData);
 
         // Wir haben bereits einen neueren State verarbeitet
-        if (tickAcknowledged < _lastTickAcknowledged)
+        if (tickAcknowledged < LastTickAcknowledged)
             return;
 
         // Vergleichen mit dem Server
         var predictedState = GetState(tickAcknowledged);
 
         var unacknowledgedPath = new List<Vector2>();
-        for (var i = tickAcknowledged + 1; i <= _currentTick; i++)
+        for (var i = tickAcknowledged + 1; i <= CurrentTick; i++)
         {
             if (GetState(i) != null)
             {
@@ -177,13 +178,13 @@ public partial class PlayerInput : Node
         GD.Print($"Reprediction nötig! Server State weicht von Prediction ab. Tick: {tickAcknowledged}");
         GD.Print($"Server State: Pos({state.Position}), Vel({state.Velocity})");
         GD.Print($"Predicted State: Pos({predictedState.Position}), Vel({predictedState.Velocity})");
-        _lastTickAcknowledged = tickAcknowledged;
+        LastTickAcknowledged = tickAcknowledged;
 
         var player = GetParent<Player>();
         player.ApplyState(state);
         SetState(tickAcknowledged, state);
         
-        for (var tick = tickAcknowledged + 1; tick <= _currentTick; ++tick)
+        for (var tick = tickAcknowledged + 1; tick <= CurrentTick; ++tick)
         {
             var previousState = GetState(tick - 1);
             var cmd = GetCommand(tick);
