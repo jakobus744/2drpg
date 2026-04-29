@@ -1,3 +1,4 @@
+using System;
 using Godot;
 
 namespace RPG2d.Player;
@@ -6,6 +7,14 @@ public partial class Player : CharacterBody2D
 {
 	private const float SpeedWalk = 70f;
 	private const float SpeedRun = 100f;
+	private const float MaxStamina = 100f;
+	private const float StaminaRecovery = 7.5f;
+	private const float MovingStaminaRecovery = 5f;
+	private const float RollCost = 50f;
+	private const float SprintCost = 2.5f;
+	
+	// Ab wann Sprint Speed weniger wird, evtl renamen?
+	private const float SprintFalloff = 30f;
 
 	public enum MoveState { Idle, Walk, Run }
 	
@@ -70,8 +79,18 @@ public partial class Player : CharacterBody2D
 	}
 
 	// Player Input verarbeiten, sowohl auf dem Server als auch auf dem Client
-	public PlayerState ProcessCommand(PlayerCmd cmd)
+	public PlayerState ProcessCommand(PlayerState from, PlayerCmd cmd)
 	{
+		// Initial state setzen
+		from ??= new PlayerState
+		{
+			Position = Position,
+			Velocity = Velocity,
+			Stamina = MaxStamina
+		};
+		
+		var stamina = from.Stamina;
+		
 		// 1. Aktionen verarbeiten
 		if (cmd.IsAttackPressed && !IsActionLocked) StartAttack(cmd.FacingDirection);
 		if (cmd.IsRollPressed && !IsActionLocked) StartRoll(cmd.FacingDirection);
@@ -82,12 +101,34 @@ public partial class Player : CharacterBody2D
 			_lastMoveState = _moveState;
 			_moveState = MoveState.Idle;
 			Velocity = Vector2.Zero;
+			stamina += StaminaRecovery;
 		}
 		else
 		{
 			_facingDirection = DirectionStringToVector(cmd.FacingDirection);
 			_moveState = cmd.IsRunPressed ? MoveState.Run : MoveState.Walk;
-			Velocity = cmd.MovementVector * (cmd.IsRunPressed ? SpeedRun : SpeedWalk);
+
+			var wishSpeed = SpeedWalk;
+			if (cmd.IsRunPressed && stamina > SprintCost)
+			{
+				// Speed increase ist stamina basiert
+				if (stamina <= SprintFalloff)
+				{
+					wishSpeed += (SpeedRun - SpeedWalk) * (stamina / SprintFalloff);
+				}
+				else
+				{
+					wishSpeed = SpeedRun;
+				}
+
+				stamina -= SprintCost;
+			}
+			else
+			{
+				stamina += MovingStaminaRecovery;
+			}
+			
+			Velocity = cmd.MovementVector * wishSpeed;
 		}
 
 		// 3. Animation updaten und bewegen
@@ -98,7 +139,8 @@ public partial class Player : CharacterBody2D
 		return new PlayerState
 		{
 			Position = Position,
-			Velocity = Velocity
+			Velocity = Velocity,
+			Stamina = stamina
 		};
 	}
 

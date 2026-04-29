@@ -7,168 +7,187 @@ namespace RPG2d.Player;
 
 public partial class PlayerInput : Node
 {
-	private readonly List<string> _pressedDirections = [];
-	private uint _currentTick = 0;
-	private uint _lastTickAcknowledged = 0;
-	private const int BufferSize = 128;
-	private readonly PlayerCmd[] _commandBuffer = new PlayerCmd[BufferSize];
-	private readonly PlayerState[] _stateBuffer = new PlayerState[BufferSize];
-	
-	private readonly Queue<PlayerCmd> _serverCommandQueue = new Queue<PlayerCmd>();
-	
-	private PredictionDebug _debugDrawer;
-	
-	public override void _Ready()
-	{
-		if (IsMultiplayerAuthority())
-		{
-			_debugDrawer = new PredictionDebug();
-			AddChild(_debugDrawer);
-		}
-	}
-	
-	public override void _PhysicsProcess(double delta)
-	{
-		if (IsMultiplayerAuthority())
-		{
+    private readonly List<string> _pressedDirections = [];
+    private uint _currentTick = 0;
+    private uint _lastTickAcknowledged = 0;
+    private const int BufferSize = 128;
+    private readonly PlayerCmd[] _commandBuffer = new PlayerCmd[BufferSize];
+    private readonly PlayerState[] _stateBuffer = new PlayerState[BufferSize];
 
-			++_currentTick;
+    private readonly Queue<PlayerCmd> _serverCommandQueue = new Queue<PlayerCmd>();
 
-			var cmd = BuildPlayerCommand();
-			cmd.Tick = _currentTick;
+    private PredictionDebug _debugDrawer;
 
-			_commandBuffer[_currentTick % BufferSize] = cmd;
-			_stateBuffer[_currentTick % BufferSize] = GetParent<Player>().ProcessCommand(cmd);
+    public override void _Ready()
+    {
+        if (IsMultiplayerAuthority())
+        {
+            _debugDrawer = new PredictionDebug();
+            AddChild(_debugDrawer);
+        }
+    }
 
-			if (!Multiplayer.IsServer())
-				RpcId(1, MethodName.ReceiveCommand, cmd.ToBytes());
-		} else if (Multiplayer.IsServer())
-		{
-			PlayerState state = null;
-			while (_serverCommandQueue.Count > 0)
-			{
-				var cmd = _serverCommandQueue.Dequeue();
-				_currentTick = cmd.Tick;
-				
-				state = GetParent<Player>().ProcessCommand(cmd);
-			}
+    public override void _PhysicsProcess(double delta)
+    {
+        if (IsMultiplayerAuthority())
+        {
+            ++_currentTick;
 
-			if (state != null)
-			{
-				RpcId(Multiplayer.GetRemoteSenderId(), MethodName.ReceivePlayerState, _currentTick, state.ToBytes());
-			}
-		}
-	}
+            var cmd = BuildPlayerCommand();
+            cmd.Tick = _currentTick;
 
-	public PlayerCmd GetCommand(uint tick)
-	{
-		return _commandBuffer[tick % BufferSize];
-	}
+            // Command speichern, Verarbeiten und Ergebnis speichern.
+            SetCommand(cmd.Tick, cmd);
+            var state = GetParent<Player>().ProcessCommand(GetState(_currentTick - 1), cmd);
+            SetState(_currentTick, state);
+            
+            if (!Multiplayer.IsServer())
+                RpcId(1, MethodName.ReceiveCommand, cmd.ToBytes());
+        }
+        else if (Multiplayer.IsServer())
+        {
+            PlayerState state = null;
+            while (_serverCommandQueue.Count > 0)
+            {
+                var cmd = _serverCommandQueue.Dequeue();
+                _currentTick = cmd.Tick;
 
-	private PlayerCmd BuildPlayerCommand()
-	{
-		var playerCmd = new PlayerCmd();
+                state = GetParent<Player>().ProcessCommand(GetState(_currentTick - 1), cmd);
+            }
 
-		if (Input.IsActionJustPressed("up")) AddDirection("up");
-		if (Input.IsActionJustPressed("down")) AddDirection("down");
-		if (Input.IsActionJustPressed("left")) AddDirection("left");
-		if (Input.IsActionJustPressed("right")) AddDirection("right");
+            if (state != null)
+            {
+                RpcId(Multiplayer.GetRemoteSenderId(), MethodName.ReceivePlayerState, _currentTick, state.ToBytes());
+            }
+        }
+    }
 
-		if (Input.IsActionJustReleased("up")) RemoveDirection("up");
-		if (Input.IsActionJustReleased("down")) RemoveDirection("down");
-		if (Input.IsActionJustReleased("left")) RemoveDirection("left");
-		if (Input.IsActionJustReleased("right")) RemoveDirection("right");
+    public PlayerState GetState(uint tick)
+    {
+        return _stateBuffer[tick % BufferSize];
+    }
 
-		// Combined für diagonales laufen
-		playerCmd.MovementVector = GetCombinedMovementVector();
+    public void SetState(uint tick, PlayerState state)
+    {
+        _stateBuffer[tick % BufferSize] = state;
+    }
+    
+    public PlayerCmd GetCommand(uint tick)
+    {
+        return _commandBuffer[tick % BufferSize];
+    }
 
-		// wir starten down
-		if (_currentTick == 1)
-		{
-			playerCmd.FacingDirection = "down";
-		}
-		else
-		{
-			playerCmd.FacingDirection = _pressedDirections.Count > 0
-				? _pressedDirections.Last()
-				: GetCommand(_currentTick - 1).FacingDirection;
-		}
+    public void SetCommand(uint tick, PlayerCmd cmd)
+    {
+        _commandBuffer[tick % BufferSize] = cmd;
+    }
 
-		playerCmd.IsRunPressed = Input.IsActionPressed("run");
-		playerCmd.IsRollPressed = Input.IsActionJustPressed("roll");
-		playerCmd.IsAttackPressed = Input.IsActionJustPressed("attack");
+    private PlayerCmd BuildPlayerCommand()
+    {
+        var playerCmd = new PlayerCmd();
 
-		return playerCmd;
-	}
+        if (Input.IsActionJustPressed("up")) AddDirection("up");
+        if (Input.IsActionJustPressed("down")) AddDirection("down");
+        if (Input.IsActionJustPressed("left")) AddDirection("left");
+        if (Input.IsActionJustPressed("right")) AddDirection("right");
 
-	private void AddDirection(string dir)
-	{
-		if (!_pressedDirections.Contains(dir)) _pressedDirections.Add(dir);
-	}
+        if (Input.IsActionJustReleased("up")) RemoveDirection("up");
+        if (Input.IsActionJustReleased("down")) RemoveDirection("down");
+        if (Input.IsActionJustReleased("left")) RemoveDirection("left");
+        if (Input.IsActionJustReleased("right")) RemoveDirection("right");
 
-	private void RemoveDirection(string dir) => _pressedDirections.Remove(dir);
+        // Combined für diagonales laufen
+        playerCmd.MovementVector = GetCombinedMovementVector();
 
-	private Vector2 GetCombinedMovementVector()
-	{
-		var combined = _pressedDirections.Aggregate(Vector2.Zero, (current, dir) => current + dir switch
-		{
-			"up" => Vector2.Up,
-			"down" => Vector2.Down,
-			"left" => Vector2.Left,
-			"right" => Vector2.Right,
-			_ => Vector2.Zero,
-		});
-		return combined == Vector2.Zero ? Vector2.Zero : combined.Normalized();
-	}
+        // wir starten down
+        if (_currentTick == 1)
+        {
+            playerCmd.FacingDirection = "down";
+        }
+        else
+        {
+            playerCmd.FacingDirection = _pressedDirections.Count > 0
+                ? _pressedDirections.Last()
+                : GetCommand(_currentTick - 1).FacingDirection;
+        }
 
-	[Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = false, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
-	private void ReceiveCommand(byte[] cmdData)
-	{
-		if (Multiplayer.GetRemoteSenderId() != int.Parse(GetParent().Name))
-			return;
+        playerCmd.IsRunPressed = Input.IsActionPressed("run");
+        playerCmd.IsRollPressed = Input.IsActionJustPressed("roll");
+        playerCmd.IsAttackPressed = Input.IsActionJustPressed("attack");
 
-		var cmd = PlayerCmd.FromBytes(cmdData);
-		_serverCommandQueue.Enqueue(cmd);
-	}
+        return playerCmd;
+    }
 
-	[Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = false, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
-	private void ReceivePlayerState(uint tickAcknowledged, byte[] stateData)
-	{
-		var state = PlayerState.FromBytes(stateData);
-		
-		// Wir haben bereits einen neueren State verarbeitet
-		if (tickAcknowledged < _lastTickAcknowledged)
-			return;
-		
-		// Vergleichen mit dem Server
-		var predictedState = _stateBuffer[tickAcknowledged % BufferSize];
+    private void AddDirection(string dir)
+    {
+        if (!_pressedDirections.Contains(dir)) _pressedDirections.Add(dir);
+    }
 
-		var unacknowledgedPath = new List<Vector2>();
-		for (var i = tickAcknowledged + 1; i <= _currentTick; i++)
-		{
-			if (_stateBuffer[i % BufferSize] != null) 
-			{
-				unacknowledgedPath.Add(_stateBuffer[i % BufferSize].Position);
-			}
-		}
+    private void RemoveDirection(string dir) => _pressedDirections.Remove(dir);
 
-		_debugDrawer?.UpdateDebugData(state.Position, state.Velocity, predictedState.Position, unacknowledgedPath);
-		if(state.Position.DistanceSquaredTo(predictedState.Position) < 1f && state.Velocity.DistanceSquaredTo(predictedState.Velocity)  < 1f)
-		{
-			return;
-		}
-		
-		GD.Print($"Reprediction nötig! Server State weicht von Prediction ab. Tick: {tickAcknowledged}");
-		GD.Print($"Server State: Pos({state.Position}), Vel({state.Velocity})");
-		GD.Print($"Predicted State: Pos({predictedState.Position}), Vel({predictedState.Velocity})");
-		_lastTickAcknowledged = tickAcknowledged;
-		
-		var player = GetParent<Player>();
-		player.ApplyState(state);
-		for(var tick = tickAcknowledged + 1; tick <= _currentTick; ++tick)
-		{
-			var cmd = GetCommand(tick);
-			_stateBuffer[tick % BufferSize] = player.ProcessCommand(cmd);
-		}
-	}
+    private Vector2 GetCombinedMovementVector()
+    {
+        var combined = _pressedDirections.Aggregate(Vector2.Zero, (current, dir) => current + dir switch
+        {
+            "up" => Vector2.Up,
+            "down" => Vector2.Down,
+            "left" => Vector2.Left,
+            "right" => Vector2.Right,
+            _ => Vector2.Zero,
+        });
+        return combined == Vector2.Zero ? Vector2.Zero : combined.Normalized();
+    }
+
+    [Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = false, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
+    private void ReceiveCommand(byte[] cmdData)
+    {
+        if (Multiplayer.GetRemoteSenderId() != int.Parse(GetParent().Name))
+            return;
+
+        var cmd = PlayerCmd.FromBytes(cmdData);
+        _serverCommandQueue.Enqueue(cmd);
+    }
+
+    [Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = false, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
+    private void ReceivePlayerState(uint tickAcknowledged, byte[] stateData)
+    {
+        var state = PlayerState.FromBytes(stateData);
+
+        // Wir haben bereits einen neueren State verarbeitet
+        if (tickAcknowledged < _lastTickAcknowledged)
+            return;
+
+        // Vergleichen mit dem Server
+        var predictedState = _stateBuffer[tickAcknowledged % BufferSize];
+
+        var unacknowledgedPath = new List<Vector2>();
+        for (var i = tickAcknowledged + 1; i <= _currentTick; i++)
+        {
+            if (_stateBuffer[i % BufferSize] != null)
+            {
+                unacknowledgedPath.Add(_stateBuffer[i % BufferSize].Position);
+            }
+        }
+
+        _debugDrawer?.UpdateDebugData(state.Position, state.Velocity, predictedState.Position, unacknowledgedPath);
+        if (state.Position.DistanceSquaredTo(predictedState.Position) < 1f &&
+            state.Velocity.DistanceSquaredTo(predictedState.Velocity) < 1f)
+        {
+            return;
+        }
+
+        GD.Print($"Reprediction nötig! Server State weicht von Prediction ab. Tick: {tickAcknowledged}");
+        GD.Print($"Server State: Pos({state.Position}), Vel({state.Velocity})");
+        GD.Print($"Predicted State: Pos({predictedState.Position}), Vel({predictedState.Velocity})");
+        _lastTickAcknowledged = tickAcknowledged;
+
+        var player = GetParent<Player>();
+        player.ApplyState(state);
+        for (var tick = tickAcknowledged + 1; tick <= _currentTick; ++tick)
+        {
+            var previousState = GetState(tick - 1);
+            var cmd = GetCommand(tick);
+            _stateBuffer[tick % BufferSize] = player.ProcessCommand(previousState, cmd);
+        }
+    }
 }

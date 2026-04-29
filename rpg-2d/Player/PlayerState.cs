@@ -7,6 +7,7 @@ public class PlayerState
 {
     public Vector2 Position;
     public Vector2 Velocity;
+    public float Stamina;
     
     public byte[] ToBytes()
     {
@@ -17,6 +18,7 @@ public class PlayerState
         writer.Write(Position.Y);
         writer.Write(Velocity.X);
         writer.Write(Velocity.Y);
+        writer.Write(Stamina);
 
         return stream.ToArray();
     }
@@ -30,6 +32,7 @@ public class PlayerState
         {
             Position = new Vector2(reader.ReadSingle(), reader.ReadSingle()),
             Velocity = new Vector2(reader.ReadSingle(), reader.ReadSingle()),
+            Stamina = reader.ReadSingle()
         };
     }
 }
