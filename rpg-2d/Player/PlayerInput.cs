@@ -40,8 +40,6 @@ public partial class PlayerInput : Node
             SetCommand(cmd.Tick, cmd);
             var state = GetParent<Player>().ProcessCommand(GetState(_currentTick - 1), cmd);
             SetState(_currentTick, state);
-
-            GD.Print(state.Stamina);
             
             if (!Multiplayer.IsServer())
                 RpcId(1, MethodName.ReceiveCommand, cmd.ToBytes());

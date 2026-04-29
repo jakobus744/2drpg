@@ -7,10 +7,14 @@ public partial class Player : CharacterBody2D
 {
 	private const float SpeedWalk = 70f;
 	private const float SpeedRun = 100f;
+
+	private const float MaxHealth = 100f;
+	private const float HealthRecovery = 1f;
+	
 	private const float MaxStamina = 100f;
 	private const float StaminaRecovery = .5f;
 	private const float MovingStaminaRecovery = .25f;
-	private const float RollCost = 25f;
+	private const float RollCost = 30f;
 	private const float SprintCost = .25f;
 	
 	// Ab wann Sprint Speed weniger wird, evtl renamen?
@@ -79,26 +83,26 @@ public partial class Player : CharacterBody2D
 	}
 
 	// Player Input verarbeiten, sowohl auf dem Server als auch auf dem Client
-	public PlayerState ProcessCommand(PlayerState from, PlayerCmd cmd)
+	public PlayerState ProcessCommand(PlayerState previousState, PlayerCmd cmd)
 	{
-		// Initial state setzen
-		from ??= new PlayerState
+		// Initial state holen setzen falls nicht vorhanden, sonst clonen
+		var state = previousState?.Clone() ?? new PlayerState
 		{
 			Position = Position,
 			Velocity = Velocity,
-			Stamina = MaxStamina
+			Stamina = MaxStamina,
+			Health = MaxHealth,
+			LastHurtTime = 0f
 		};
-		
-		var stamina = from.Stamina;
 		
 		// 1. Aktionen verarbeiten
 		if (cmd.IsAttackPressed && !IsActionLocked) StartAttack(cmd.FacingDirection);
 		if (cmd.IsRollPressed && !IsActionLocked)
 		{
-			if (stamina >= RollCost)
+			if (state.Stamina >= RollCost)
 			{
 				StartRoll(cmd.FacingDirection);
-				stamina = Math.Max(stamina - RollCost, 0f);
+				state.Stamina = Math.Max(state.Stamina - RollCost, 0f);
 			}
 		}
 		
@@ -108,7 +112,7 @@ public partial class Player : CharacterBody2D
 			_lastMoveState = _moveState;
 			_moveState = MoveState.Idle;
 			Velocity = Vector2.Zero;
-			stamina += StaminaRecovery;
+			state.Stamina += StaminaRecovery;
 		}
 		else
 		{
@@ -116,42 +120,50 @@ public partial class Player : CharacterBody2D
 			_moveState = cmd.IsRunPressed ? MoveState.Run : MoveState.Walk;
 
 			var wishSpeed = SpeedWalk;
-			if (cmd.IsRunPressed && stamina > SprintCost)
+			if (cmd.IsRunPressed && state.Stamina > SprintCost)
 			{
 				// Speed increase ist stamina basiert
-				if (stamina <= SprintFalloff)
+				if (state.Stamina <= SprintFalloff)
 				{
-					wishSpeed += (SpeedRun - SpeedWalk) * (stamina / SprintFalloff);
+					wishSpeed += (SpeedRun - SpeedWalk) * (state.Stamina / SprintFalloff);
 				}
 				else
 				{
 					wishSpeed = SpeedRun;
 				}
 
-				stamina -= SprintCost;
+				state.Stamina -= SprintCost;
 			}
 			else
 			{
-				stamina += MovingStaminaRecovery;
+				state.Stamina += MovingStaminaRecovery;
 			}
 			
 			Velocity = cmd.MovementVector * wishSpeed;
 		}
 		
+		// @todo: Tod verarbeiten
+		if (state.Health < 0)
+		{
+			
+		}
+		else
+		{
+			state.Health += HealthRecovery;
+		}
 		
-		stamina = Math.Clamp(stamina, 0f, MaxStamina);
-
+		state.Stamina = Math.Clamp(state.Stamina, 0f, MaxStamina);
+		state.Health = Math.Clamp(state.Health, 0f, MaxHealth);
+		
 		// 3. Animation updaten und bewegen
 		UpdateAnimation(cmd.FacingDirection);
 		MoveAndSlide();
 
+		state.Position = Position;
+		state.Velocity = Velocity;
+		
 		// 4. State zurück geben
-		return new PlayerState
-		{
-			Position = Position,
-			Velocity = Velocity,
-			Stamina = stamina
-		};
+		return state;
 	}
 
 	private void StartRoll(string dirName)
