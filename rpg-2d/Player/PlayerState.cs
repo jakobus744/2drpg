@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using Godot;
 
 namespace RPG2d.Player;
@@ -8,7 +9,9 @@ public class PlayerState
     public Vector2 Position;
     public Vector2 Velocity;
     public float Stamina;
-    
+
+    private const float MaxError = 1f;
+
     public byte[] ToBytes()
     {
         using var stream = new MemoryStream();
@@ -34,5 +37,12 @@ public class PlayerState
             Velocity = new Vector2(reader.ReadSingle(), reader.ReadSingle()),
             Stamina = reader.ReadSingle()
         };
+    }
+
+    public bool Equals(PlayerState other)
+    {
+        return Position.DistanceSquaredTo(other.Position) <= MaxError * MaxError &&
+               Velocity.DistanceSquaredTo(other.Velocity) <= MaxError * MaxError &&
+               Math.Abs(Stamina - other.Stamina) < MaxError;
     }
 }

@@ -40,6 +40,8 @@ public partial class PlayerInput : Node
             SetCommand(cmd.Tick, cmd);
             var state = GetParent<Player>().ProcessCommand(GetState(_currentTick - 1), cmd);
             SetState(_currentTick, state);
+
+            GD.Print(state.Stamina);
             
             if (!Multiplayer.IsServer())
                 RpcId(1, MethodName.ReceiveCommand, cmd.ToBytes());
@@ -53,6 +55,7 @@ public partial class PlayerInput : Node
                 _currentTick = cmd.Tick;
 
                 state = GetParent<Player>().ProcessCommand(GetState(_currentTick - 1), cmd);
+                SetState(_currentTick, state);
             }
 
             if (state != null)
@@ -158,23 +161,20 @@ public partial class PlayerInput : Node
             return;
 
         // Vergleichen mit dem Server
-        var predictedState = _stateBuffer[tickAcknowledged % BufferSize];
+        var predictedState = GetState(tickAcknowledged);
 
         var unacknowledgedPath = new List<Vector2>();
         for (var i = tickAcknowledged + 1; i <= _currentTick; i++)
         {
-            if (_stateBuffer[i % BufferSize] != null)
+            if (GetState(i) != null)
             {
-                unacknowledgedPath.Add(_stateBuffer[i % BufferSize].Position);
+                unacknowledgedPath.Add(GetState(i).Position);
             }
         }
 
         _debugDrawer?.UpdateDebugData(state.Position, state.Velocity, predictedState.Position, unacknowledgedPath);
-        if (state.Position.DistanceSquaredTo(predictedState.Position) < 1f &&
-            state.Velocity.DistanceSquaredTo(predictedState.Velocity) < 1f)
-        {
+        if (state.Equals(predictedState))
             return;
-        }
 
         GD.Print($"Reprediction nötig! Server State weicht von Prediction ab. Tick: {tickAcknowledged}");
         GD.Print($"Server State: Pos({state.Position}), Vel({state.Velocity})");
@@ -183,11 +183,13 @@ public partial class PlayerInput : Node
 
         var player = GetParent<Player>();
         player.ApplyState(state);
+        SetState(tickAcknowledged, state);
+        
         for (var tick = tickAcknowledged + 1; tick <= _currentTick; ++tick)
         {
             var previousState = GetState(tick - 1);
             var cmd = GetCommand(tick);
-            _stateBuffer[tick % BufferSize] = player.ProcessCommand(previousState, cmd);
+            SetState(tick, player.ProcessCommand(previousState, cmd));
         }
     }
 }

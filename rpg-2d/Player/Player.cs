@@ -8,10 +8,10 @@ public partial class Player : CharacterBody2D
 	private const float SpeedWalk = 70f;
 	private const float SpeedRun = 100f;
 	private const float MaxStamina = 100f;
-	private const float StaminaRecovery = 7.5f;
-	private const float MovingStaminaRecovery = 5f;
-	private const float RollCost = 50f;
-	private const float SprintCost = 2.5f;
+	private const float StaminaRecovery = .5f;
+	private const float MovingStaminaRecovery = .25f;
+	private const float RollCost = 25f;
+	private const float SprintCost = .25f;
 	
 	// Ab wann Sprint Speed weniger wird, evtl renamen?
 	private const float SprintFalloff = 30f;
@@ -93,8 +93,15 @@ public partial class Player : CharacterBody2D
 		
 		// 1. Aktionen verarbeiten
 		if (cmd.IsAttackPressed && !IsActionLocked) StartAttack(cmd.FacingDirection);
-		if (cmd.IsRollPressed && !IsActionLocked) StartRoll(cmd.FacingDirection);
-
+		if (cmd.IsRollPressed && !IsActionLocked)
+		{
+			if (stamina >= RollCost)
+			{
+				StartRoll(cmd.FacingDirection);
+				stamina = Math.Max(stamina - RollCost, 0f);
+			}
+		}
+		
 		// 2. Bewegung verarbeiten
 		if (cmd.MovementVector == Vector2.Zero)
 		{
@@ -130,6 +137,9 @@ public partial class Player : CharacterBody2D
 			
 			Velocity = cmd.MovementVector * wishSpeed;
 		}
+		
+		
+		stamina = Math.Clamp(stamina, 0f, MaxStamina);
 
 		// 3. Animation updaten und bewegen
 		UpdateAnimation(cmd.FacingDirection);
