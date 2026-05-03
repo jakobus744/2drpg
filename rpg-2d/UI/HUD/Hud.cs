@@ -4,17 +4,19 @@ namespace RPG2d.UI.HUD;
 
 public partial class Hud : CanvasLayer
 {
+    [Export]
     private TextureProgressBar _healthBar;
+    [Export]
     private TextureProgressBar _staminaBar;
+    [Export]
+    private TextureProgressBar _expBar;
 
     // Called when the node enters the scene tree for the first time.
     public override void _Ready()
     {
-        _healthBar = GetNode<TextureProgressBar>("MarginContainer/VBoxContainer/HealthBar");
-        _staminaBar = GetNode<TextureProgressBar>("MarginContainer/VBoxContainer/StaminaBar");
-
         _healthBar.MaxValue = 100f;
         _staminaBar.MaxValue = 100f;
+        _expBar.MaxValue = 100f;
     }
 
     // Called every frame. 'delta' is the elapsed time since the previous frame.

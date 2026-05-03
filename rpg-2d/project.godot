@@ -18,6 +18,10 @@ config/features=PackedStringArray("4.6", "C#", "Forward Plus")
 
 GameManager="*uid://bnvy32tti6o44"
 
+[display]
+
+window/stretch/mode="viewport"
+
 [dotnet]
 
 project/assembly_name="RPG 2d"
