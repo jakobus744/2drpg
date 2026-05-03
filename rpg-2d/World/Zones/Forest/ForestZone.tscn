@@ -23,6 +23,8 @@
 [ext_resource type="PackedScene" uid="uid://b21mnkq0pocf1" path="res://World/Zones/Forest/animation/ForestCat.tscn" id="21_mx6up"]
 [ext_resource type="PackedScene" uid="uid://dsarnlr7wvq3h" path="res://World/Zones/Forest/animation/BirdFly.tscn" id="22_rsq5a"]
 [ext_resource type="PackedScene" uid="uid://dh4pdkoc04kew" path="res://World/Items/Weapons/test_item.tscn" id="23_v25ht"]
+[ext_resource type="PackedScene" uid="uid://dguvoym7d7wtj" path="res://World/Items/Weapons/Test2.tscn" id="24_2few0"]
+[ext_resource type="PackedScene" uid="uid://bpns7mlagug71" path="res://World/Items/Weapons/axt.tscn" id="25_6fk55"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_v5eci"]
 texture = ExtResource("2_vho18")
@@ -6720,6 +6722,17 @@ position = Vector2(184, 592)
 position = Vector2(-710, 24)
 
 [node name="Test_item" parent="TileMap" unique_id=275455072 instance=ExtResource("23_v25ht")]
-position = Vector2(-20, -15)
-rotation = 0.567232
+position = Vector2(66, -18)
+rotation = 1.6688077
 scale = Vector2(1, 1)
+ItemRotation = -50.0
+
+[node name="Test2" parent="TileMap" unique_id=213293813 instance=ExtResource("24_2few0")]
+position = Vector2(45, 12)
+scale = Vector2(1, 1)
+
+[node name="Axt" parent="TileMap" unique_id=1225248469 instance=ExtResource("25_6fk55")]
+position = Vector2(14, -21)
+rotation = -2.104867
+scale = Vector2(1, 1)
+ItemRotation = 150.0
