@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://c2kkp7moa2uqn"
-path="res://.godot/imported/Swordsman_lvl2_Hurt_with_shadow.png-735d94e99bbaf066c19ae094ece5df37.ctex"
+uid="uid://82vj0lbyyghx"
+path="res://.godot/imported/man_lvl2_attack_with_shadow.png-33f494de8e4e586221f6611a62943bb3.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Assets/Charakter/Player/main/Swordsman_lvl2_Hurt_with_shadow.png"
-dest_files=["res://.godot/imported/Swordsman_lvl2_Hurt_with_shadow.png-735d94e99bbaf066c19ae094ece5df37.ctex"]
+source_file="res://Assets/Charakter/Player/new/man_lvl2_attack_with_shadow.png"
+dest_files=["res://.godot/imported/man_lvl2_attack_with_shadow.png-33f494de8e4e586221f6611a62943bb3.ctex"]
 
 [params]
 

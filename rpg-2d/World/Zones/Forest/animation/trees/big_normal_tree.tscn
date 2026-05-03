@@ -57,7 +57,7 @@ region = Rect2(0, 960, 64, 80)
 [sub_resource type="SpriteFrames" id="SpriteFrames_xdhrg"]
 animations = [{
 "frames": [{
-"duration": 1.0,
+"duration": 30.0,
 "texture": SubResource("AtlasTexture_5daln")
 }, {
 "duration": 1.0,
@@ -107,7 +107,7 @@ height = 20.0
 [node name="TreeBigNormal" type="Node2D" unique_id=1798803888]
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=2037413623]
-position = Vector2(0, -23)
+position = Vector2(1, -17)
 sprite_frames = SubResource("SpriteFrames_xdhrg")
 animation = &"big_normal_tree"
 autoplay = "big_normal_tree"
@@ -117,5 +117,5 @@ frame_progress = 0.4577169
 position = Vector2(1, -12)
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="StaticBody2D" unique_id=1547245818]
-position = Vector2(0, 9)
+position = Vector2(0, 20)
 shape = SubResource("CapsuleShape2D_5daln")
