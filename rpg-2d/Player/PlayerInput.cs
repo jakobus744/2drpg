@@ -27,6 +27,8 @@ public partial class PlayerInput : Node
         }
     }
 
+
+
     public override void _PhysicsProcess(double delta)
     {
         if (IsMultiplayerAuthority())
@@ -42,7 +44,7 @@ public partial class PlayerInput : Node
             SetState(_currentTick, state);
 
             GD.Print(state.Stamina);
-            
+
             if (!Multiplayer.IsServer())
                 RpcId(1, MethodName.ReceiveCommand, cmd.ToBytes());
         }
@@ -74,7 +76,7 @@ public partial class PlayerInput : Node
     {
         _stateBuffer[tick % BufferSize] = state;
     }
-    
+
     public PlayerCmd GetCommand(uint tick)
     {
         return _commandBuffer[tick % BufferSize];
@@ -184,7 +186,7 @@ public partial class PlayerInput : Node
         var player = GetParent<Player>();
         player.ApplyState(state);
         SetState(tickAcknowledged, state);
-        
+
         for (var tick = tickAcknowledged + 1; tick <= _currentTick; ++tick)
         {
             var previousState = GetState(tick - 1);

@@ -37,6 +37,9 @@ public partial class Player : CharacterBody2D
 	[Export] public Vector2 SyncPosition = Vector2.Zero;
 	[Export] public string SyncAnimation = "";
 
+
+
+
 	public override void _EnterTree()
 	{
 		if (int.TryParse(Name, out int peerId))
@@ -108,8 +111,11 @@ public partial class Player : CharacterBody2D
 			_anim.Play(animName);
 	}
 
-	public PlayerState ProcessCommand(PlayerCmd cmd)
+	public PlayerState ProcessCommand(PlayerState previousState, PlayerCmd cmd)
 	{
+		if (previousState != null)
+			ApplyState(previousState);
+
 		if (_moveState == MoveState.Dead)
 			return new PlayerState { Position = Position, Velocity = Vector2.Zero, Stamina = stamina };
 

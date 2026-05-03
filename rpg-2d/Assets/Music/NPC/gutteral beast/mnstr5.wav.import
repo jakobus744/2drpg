@@ -1,0 +1,24 @@
+[remap]
+
+importer="wav"
+type="AudioStreamWAV"
+uid="uid://bw4q7svkl1fx1"
+path="res://.godot/imported/mnstr5.wav-bd6685d06c19adc480fcb2a1de37e2ae.sample"
+
+[deps]
+
+source_file="res://Assets/Music/NPC/gutteral beast/mnstr5.wav"
+dest_files=["res://.godot/imported/mnstr5.wav-bd6685d06c19adc480fcb2a1de37e2ae.sample"]
+
+[params]
+
+force/8_bit=false
+force/mono=false
+force/max_rate=false
+force/max_rate_hz=44100
+edit/trim=false
+edit/normalize=false
+edit/loop_mode=0
+edit/loop_begin=0
+edit/loop_end=-1
+compress/mode=2
