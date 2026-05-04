@@ -7,6 +7,7 @@
 [ext_resource type="AudioStream" uid="uid://dwkspppd4ha8a" path="res://Assets/Music/NPC/male-death.mp3" id="3_dwpxe"]
 [ext_resource type="AudioStream" uid="uid://biw7pq21xk3ko" path="res://Assets/Music/NPC/hurt2.wav" id="3_frpnd"]
 [ext_resource type="AudioStream" uid="uid://djb7amc0yfnbv" path="res://Assets/Music/battle/swing2.wav" id="4_kesnb"]
+[ext_resource type="AudioStream" uid="uid://d2a0yffjluxwd" path="res://Assets/Music/NPC/rolling.mp3" id="5_wbh1o"]
 [ext_resource type="AudioStream" uid="uid://dqai7l1b872gx" path="res://Assets/Music/NPC/walking_5.wav" id="6_dwpxe"]
 [ext_resource type="Script" uid="uid://cg1uqlqcfps31" path="res://Player/PlayerInput.cs" id="12_rkm3v"]
 [ext_resource type="Texture2D" uid="uid://82vj0lbyyghx" path="res://Assets/Charakter/Player/new/man_lvl2_attack_with_shadow.png" id="new_attack"]
@@ -1920,6 +1921,45 @@ tracks/6/keys = {
 "update": 0,
 "values": [1.5]
 }
+tracks/7/type = "audio"
+tracks/7/imported = false
+tracks/7/enabled = true
+tracks/7/path = NodePath("AudioStreamPlayer2D")
+tracks/7/interp = 1
+tracks/7/loop_wrap = true
+tracks/7/keys = {
+"clips": [{
+"end_offset": 0.48711044,
+"start_offset": 0.16653362,
+"stream": ExtResource("5_wbh1o")
+}],
+"times": PackedFloat32Array(0.14285715)
+}
+tracks/7/use_blend = true
+tracks/8/type = "value"
+tracks/8/imported = false
+tracks/8/enabled = true
+tracks/8/path = NodePath("AudioStreamPlayer2D:pitch_scale")
+tracks/8/interp = 1
+tracks/8/loop_wrap = true
+tracks/8/keys = {
+"times": PackedFloat32Array(1.1428715),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [0.8]
+}
+tracks/9/type = "value"
+tracks/9/imported = false
+tracks/9/enabled = true
+tracks/9/path = NodePath("AudioStreamPlayer2D:volume_db")
+tracks/9/interp = 1
+tracks/9/loop_wrap = true
+tracks/9/keys = {
+"times": PackedFloat32Array(1.1428715),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [0.0]
+}
 
 [sub_resource type="Animation" id="Animation_m5a0b"]
 resource_name = "roll_left"
@@ -1996,6 +2036,45 @@ tracks/5/keys = {
 "transitions": PackedFloat32Array(1),
 "update": 0,
 "values": [1.5]
+}
+tracks/6/type = "audio"
+tracks/6/imported = false
+tracks/6/enabled = true
+tracks/6/path = NodePath("AudioStreamPlayer2D")
+tracks/6/interp = 1
+tracks/6/loop_wrap = true
+tracks/6/keys = {
+"clips": [{
+"end_offset": 0.48711044,
+"start_offset": 0.16653362,
+"stream": ExtResource("5_wbh1o")
+}],
+"times": PackedFloat32Array(0.11918068)
+}
+tracks/6/use_blend = true
+tracks/7/type = "value"
+tracks/7/imported = false
+tracks/7/enabled = true
+tracks/7/path = NodePath("AudioStreamPlayer2D:volume_db")
+tracks/7/interp = 1
+tracks/7/loop_wrap = true
+tracks/7/keys = {
+"times": PackedFloat32Array(1.1428715),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [0.0]
+}
+tracks/8/type = "value"
+tracks/8/imported = false
+tracks/8/enabled = true
+tracks/8/path = NodePath("AudioStreamPlayer2D:pitch_scale")
+tracks/8/interp = 1
+tracks/8/loop_wrap = true
+tracks/8/keys = {
+"times": PackedFloat32Array(1.1428715),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [0.8]
 }
 
 [sub_resource type="Animation" id="Animation_fduv2"]
@@ -2074,6 +2153,45 @@ tracks/5/keys = {
 "update": 0,
 "values": [1.5]
 }
+tracks/6/type = "audio"
+tracks/6/imported = false
+tracks/6/enabled = true
+tracks/6/path = NodePath("AudioStreamPlayer2D")
+tracks/6/interp = 1
+tracks/6/loop_wrap = true
+tracks/6/keys = {
+"clips": [{
+"end_offset": 0.48711044,
+"start_offset": 0.16653362,
+"stream": ExtResource("5_wbh1o")
+}],
+"times": PackedFloat32Array(0.14285715)
+}
+tracks/6/use_blend = true
+tracks/7/type = "value"
+tracks/7/imported = false
+tracks/7/enabled = true
+tracks/7/path = NodePath("AudioStreamPlayer2D:pitch_scale")
+tracks/7/interp = 1
+tracks/7/loop_wrap = true
+tracks/7/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [0.8]
+}
+tracks/8/type = "value"
+tracks/8/imported = false
+tracks/8/enabled = true
+tracks/8/path = NodePath("AudioStreamPlayer2D:volume_db")
+tracks/8/interp = 1
+tracks/8/loop_wrap = true
+tracks/8/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [0.0]
+}
 
 [sub_resource type="Animation" id="Animation_e0h3r"]
 resource_name = "roll_up"
@@ -2150,6 +2268,45 @@ tracks/5/keys = {
 "transitions": PackedFloat32Array(1),
 "update": 0,
 "values": [1.5]
+}
+tracks/6/type = "audio"
+tracks/6/imported = false
+tracks/6/enabled = true
+tracks/6/path = NodePath("AudioStreamPlayer2D")
+tracks/6/interp = 1
+tracks/6/loop_wrap = true
+tracks/6/keys = {
+"clips": [{
+"end_offset": 0.48711044,
+"start_offset": 0.16653362,
+"stream": ExtResource("5_wbh1o")
+}],
+"times": PackedFloat32Array(0.14285715)
+}
+tracks/6/use_blend = true
+tracks/7/type = "value"
+tracks/7/imported = false
+tracks/7/enabled = true
+tracks/7/path = NodePath("AudioStreamPlayer2D:pitch_scale")
+tracks/7/interp = 1
+tracks/7/loop_wrap = true
+tracks/7/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [0.8]
+}
+tracks/8/type = "value"
+tracks/8/imported = false
+tracks/8/enabled = true
+tracks/8/path = NodePath("AudioStreamPlayer2D:volume_db")
+tracks/8/interp = 1
+tracks/8/loop_wrap = true
+tracks/8/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [0.0]
 }
 
 [sub_resource type="Animation" id="Animation_clso7"]
@@ -6134,6 +6291,7 @@ zoom = Vector2(3.8, 3.8)
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="." unique_id=810352454]
 libraries/ = SubResource("AnimationLibrary_meyvx")
+speed_scale = 1.5
 
 [node name="WeaponPivot" type="Node2D" parent="." unique_id=1074649464]
 z_index = 1
