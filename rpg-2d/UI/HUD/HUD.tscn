@@ -40,14 +40,6 @@ offset_right = 80.0
 offset_bottom = 10.0
 texture_progress = ExtResource("3_vb885")
 
-[node name="HealthBar2" type="TextureProgressBar" parent="HudWrapper/Background" unique_id=353635361]
-layout_mode = 0
-offset_left = 28.0
-offset_top = 8.0
-offset_right = 80.0
-offset_bottom = 10.0
-texture_progress = ExtResource("3_vb885")
-
 [node name="StaminaBar" type="TextureProgressBar" parent="HudWrapper/Background" unique_id=1354857673]
 layout_mode = 0
 offset_left = 30.0
