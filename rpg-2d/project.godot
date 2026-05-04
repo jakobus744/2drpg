@@ -22,6 +22,10 @@ buses/default_bus_layout=""
 
 GameManager="*uid://bnvy32tti6o44"
 
+[display]
+
+window/stretch/mode="viewport"
+
 [dotnet]
 
 project/assembly_name="RPG 2d"

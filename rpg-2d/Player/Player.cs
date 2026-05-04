@@ -5,303 +5,387 @@ namespace RPG2d.Player;
 
 public partial class Player : CharacterBody2D
 {
-	private const float SpeedWalk = 70f;
-	private const float SpeedRun = 100f;
-	private const float MaxStamina = 100f;
-	private const float StaminaRecovery = .5f;
-	private const float MovingStaminaRecovery = .25f;
-	private const float RollCost = 25f;
-	private const float SprintCost = .25f;
-	private const float SprintFalloff = 30f;
+    private const float SpeedWalk = 70f;
+    private const float SpeedRun = 100f;
 
-	public enum MoveState { Idle, Walk, Run, Dead }
+    private const float MaxHealth = 100f;
+    private const float HealthRecovery = 1f;
 
-	private MoveState _moveState = MoveState.Idle;
-	private MoveState _lastMoveState = MoveState.Idle;
-	private float stamina = MaxStamina;
+    private const float MaxStamina = 100f;
+    private const float StaminaRecovery = .5f;
+    private const float MovingStaminaRecovery = .25f;
+    private const float RollCost = 30f;
+    private const float SprintCost = .25f;
 
-	private bool _isAttacking = false;
-	private bool _isRolling = false;
-	private bool _isHurt = false;
-	private bool IsActionLocked => _isAttacking || _isRolling || _isHurt || _moveState == MoveState.Dead;
+    // Ab wann Sprint Speed weniger wird, evtl renamen?
+    private const float SprintFalloff = 30f;
 
-	private Node2D _weaponPivotNode;
-	private AnimatedSprite2D _anim;
-	private AnimationPlayer _weaponAnim;
-	private Sprite2D _weaponPivot;
-	private Sprite2D _shieldPivot;
+    public enum MoveState
+    {
+        Idle,
+        Walk,
+        Run,
+        Dead
+    }
 
-	private PackedScene _currentWeaponScene;
-	private PackedScene _currentOffhandScene;
+    private MoveState _moveState = MoveState.Idle;
+    private MoveState _lastMoveState = MoveState.Idle;
+    private Vector2 _facingDirection = Vector2.Down;
 
-	[Export] public Vector2 SyncPosition = Vector2.Zero;
-	[Export] public string SyncAnimation = "";
+    private bool _isAttacking = false;
+    private bool _isRolling = false;
+    private bool _isHurt = false;
+    private bool IsActionLocked => _isAttacking || _isRolling || _isHurt || _moveState == MoveState.Dead;
 
+    private Node2D _weaponPivotNode;
+    private AnimatedSprite2D _anim;
+    private AnimationPlayer _weaponAnim;
+    private Sprite2D _weaponPivot;
+    private Sprite2D _shieldPivot;
 
+    private PackedScene _currentWeaponScene;
+    private PackedScene _currentOffhandScene;
 
+    [Export] public Vector2 SyncPosition = Vector2.Zero;
+    [Export] public string SyncAnimation = "";
 
-	public override void _EnterTree()
-	{
-		if (int.TryParse(Name, out int peerId))
-			SetMultiplayerAuthority(peerId);
-		else
-			SetMultiplayerAuthority(1);
-	}
+    public static Player LocalPlayer { get; private set; }
+    
+    public PlayerInput Input { get; private set; }
 
-	public override void _Ready()
-	{
-		YSortEnabled = false;
+    public override void _EnterTree()
+    {
+        // Sollte immer der Fall sein, außer wir testen etwas spezifisches wo wir die Node manuell hinzufügen
+        if (int.TryParse(Name, out int peerId))
+        {
+            SetMultiplayerAuthority(peerId);
+        }
+        else
+        {
+            SetMultiplayerAuthority(1);
+        }
+    }
 
-		_anim = GetNode<AnimatedSprite2D>("Base Animation");
-		_anim.AnimationFinished += OnAnimationFinished;
+    public override void _Ready()
+    {
+        YSortEnabled = false;
 
-		GetNodeOrNull<AnimatedSprite2D>("AnimatedSprite2D")?.Hide();
+        _anim = GetNode<AnimatedSprite2D>("Base Animation");
+        _anim.AnimationFinished += OnAnimationFinished;
 
-		_weaponAnim = GetNodeOrNull<AnimationPlayer>("AnimationPlayer");
+        GetNodeOrNull<AnimatedSprite2D>("AnimatedSprite2D")?.Hide();
 
-		_weaponPivotNode = GetNodeOrNull<Node2D>("WeaponPivot");
-		_weaponPivot = GetNodeOrNull<Sprite2D>("WeaponPivot/WeaponSprite");
-		_shieldPivot = GetNodeOrNull<Sprite2D>("OffhandPivot/OffhandSprite");
-		if (_weaponPivot != null) _weaponPivot.Visible = false;
-		if (_shieldPivot != null) _shieldPivot.Visible = false;
+        _weaponAnim = GetNodeOrNull<AnimationPlayer>("AnimationPlayer");
 
-		var sync = GetNodeOrNull<MultiplayerSynchronizer>("ServerSynchronizer");
-		sync?.SetMultiplayerAuthority(1);
+        _weaponPivotNode = GetNodeOrNull<Node2D>("WeaponPivot");
+        _weaponPivot = GetNodeOrNull<Sprite2D>("WeaponPivot/WeaponSprite");
+        _shieldPivot = GetNodeOrNull<Sprite2D>("OffhandPivot/OffhandSprite");
+        if (_weaponPivot != null) _weaponPivot.Visible = false;
+        if (_shieldPivot != null) _shieldPivot.Visible = false;
 
-		var camera = GetNodeOrNull<Camera2D>("Camera2D");
-		if (camera != null)
-			camera.Enabled = IsMultiplayerAuthority();
-	}
+        var sync = GetNodeOrNull<MultiplayerSynchronizer>("ServerSynchronizer");
+        sync?.SetMultiplayerAuthority(1);
 
-	public override void _PhysicsProcess(double delta)
-	{
-		if (Multiplayer.IsServer())
-		{
-			SyncPosition = Position;
-			SyncAnimation = _anim.Animation;
-		}
+        var camera = GetNodeOrNull<Camera2D>("Camera2D");
+        if (camera != null)
+        {
+            camera.Enabled = IsMultiplayerAuthority();
+        }
+        
+        Input = GetNodeOrNull<PlayerInput>("Input");
+        if (IsMultiplayerAuthority())
+        {
+            LocalPlayer = this;
+        }
+    }
 
-		if (IsMultiplayerAuthority()) return;
+    public override void _ExitTree()
+    {
+        if (LocalPlayer == this)
+        {
+            LocalPlayer = null;
+        }
+    }
 
-		Position = Position.Lerp(SyncPosition, (float)delta * 15f);
+    public override void _PhysicsProcess(double delta)
+    {
+        if (Multiplayer.IsServer())
+        {
+            SyncPosition = Position;
+            SyncAnimation = _anim.Animation;
+        }
 
-		if (!string.IsNullOrEmpty(SyncAnimation))
-			_anim.Play(SyncAnimation);
-	}
+        if (IsMultiplayerAuthority()) return;
 
-	public void Hurt(string dirName)
-	{
-		if (_moveState == MoveState.Dead) return;
+        Position = Position.Lerp(SyncPosition, (float)delta * 15f);
 
-		string animName = "hurt_" + dirName;
-		if (!_anim.SpriteFrames.HasAnimation(animName)) return;
+        if (!string.IsNullOrEmpty(SyncAnimation))
+        {
+            _anim.Play(SyncAnimation);
+        }
+    }
 
-		_isHurt = true;
-		_anim.Play(animName);
-	}
+    public void Hurt(string dirName)
+    {
+        if (_moveState == MoveState.Dead) return;
 
-	public void Die(string dirName)
-	{
-		if (_moveState == MoveState.Dead) return;
-		_moveState = MoveState.Dead;
-		Velocity = Vector2.Zero;
+        string animName = "hurt_" + dirName;
+        if (!_anim.SpriteFrames.HasAnimation(animName)) return;
 
-		string animName = "death_" + dirName;
-		if (_anim.SpriteFrames.HasAnimation(animName))
-			_anim.Play(animName);
-	}
+        _isHurt = true;
+        _anim.Play(animName);
+    }
 
-	public PlayerState ProcessCommand(PlayerState previousState, PlayerCmd cmd)
-	{
-		if (previousState != null)
-			ApplyState(previousState);
+    public void Die(string dirName)
+    {
+        if (_moveState == MoveState.Dead) return;
+        _moveState = MoveState.Dead;
+        Velocity = Vector2.Zero;
 
-		if (_moveState == MoveState.Dead)
-			return new PlayerState { Position = Position, Velocity = Vector2.Zero, Stamina = stamina };
+        string animName = "death_" + dirName;
+        if (_anim.SpriteFrames.HasAnimation(animName))
+            _anim.Play(animName);
+    }
 
-		if (cmd.IsAttackPressed && !IsActionLocked) StartAttack(cmd.FacingDirection);
-		if (cmd.IsRollPressed && !IsActionLocked) StartRoll(cmd.FacingDirection);
+    // Player Input verarbeiten, sowohl auf dem Server als auch auf dem Client
+    public PlayerState ProcessCommand(PlayerState previousState, PlayerCmd cmd)
+    {
+        // Initial state holen setzen falls nicht vorhanden, sonst clonen
+        var state = previousState?.Clone() ?? new PlayerState
+        {
+            Position = Position,
+            Velocity = Velocity,
+            Stamina = MaxStamina,
+            Health = MaxHealth,
+            LastHurtTime = 0f
+        };
 
-		if (cmd.MovementVector == Vector2.Zero)
-		{
-			_lastMoveState = _moveState;
-			_moveState = MoveState.Idle;
-			Velocity = Vector2.Zero;
-			stamina += StaminaRecovery;
-		}
-		else
-		{
-			_moveState = cmd.IsRunPressed ? MoveState.Run : MoveState.Walk;
+        if (_moveState == MoveState.Dead)
+        {
+            state.Velocity = Vector2.Zero;
+            return state;
+        }
 
-			var wishSpeed = SpeedWalk;
-			if (cmd.IsRunPressed && stamina > SprintCost)
-			{
-				wishSpeed = stamina <= SprintFalloff
-					? SpeedWalk + (SpeedRun - SpeedWalk) * (stamina / SprintFalloff)
-					: SpeedRun;
-				stamina -= SprintCost;
-			}
-			else
-			{
-				stamina += MovingStaminaRecovery;
-			}
+        // 1. Aktionen verarbeiten
+        if (cmd.IsAttackPressed && !IsActionLocked) StartAttack(cmd.FacingDirection);
+        if (cmd.IsRollPressed && !IsActionLocked)
+        {
+            if (state.Stamina >= RollCost)
+            {
+                StartRoll(cmd.FacingDirection);
+                state.Stamina = Math.Max(state.Stamina - RollCost, 0f);
+            }
+        }
 
-			Velocity = cmd.MovementVector * wishSpeed;
-		}
+        // 2. Bewegung verarbeiten
+        if (cmd.MovementVector == Vector2.Zero)
+        {
+            _lastMoveState = _moveState;
+            _moveState = MoveState.Idle;
+            Velocity = Vector2.Zero;
+            state.Stamina += StaminaRecovery;
+        }
+        else
+        {
+            _facingDirection = DirectionStringToVector(cmd.FacingDirection);
+            _moveState = cmd.IsRunPressed ? MoveState.Run : MoveState.Walk;
 
-		stamina = Math.Clamp(stamina, 0f, MaxStamina);
+            var wishSpeed = SpeedWalk;
+            if (cmd.IsRunPressed && state.Stamina > SprintCost)
+            {
+                // Speed increase ist stamina basiert
+                if (state.Stamina <= SprintFalloff)
+                {
+                    wishSpeed += (SpeedRun - SpeedWalk) * (state.Stamina / SprintFalloff);
+                }
+                else
+                {
+                    wishSpeed = SpeedRun;
+                }
 
-		UpdateAnimation(cmd.FacingDirection);
-		MoveAndSlide();
+                state.Stamina -= SprintCost;
+            }
+            else
+            {
+                state.Stamina += MovingStaminaRecovery;
+            }
 
-		return new PlayerState
-		{
-			Position = Position,
-			Velocity = Velocity,
-			Stamina = stamina
-		};
-	}
+            Velocity = cmd.MovementVector * wishSpeed;
+        }
 
-	private void StartRoll(string dirName)
-	{
-		string animName = "roll_" + dirName;
-		if (!_anim.SpriteFrames.HasAnimation(animName)) return;
+        // @todo: Tod verarbeiten
+        if (state.Health <= 0)
+        {
+            Die(cmd.FacingDirection);
+        }
+        else
+        {
+            state.Health += HealthRecovery;
+        }
 
-		_isRolling = true;
-		_anim.Play(animName);
-		PlayWeaponAnim(animName);
-	}
+        state.Stamina = Math.Clamp(state.Stamina, 0f, MaxStamina);
+        state.Health = Math.Clamp(state.Health, 0f, MaxHealth);
 
-	private void StartAttack(string dirName)
-	{
-		if (_weaponPivot == null || !_weaponPivot.Visible) return;
-		string animName = GetAttackAnimationName(dirName);
-		if (!_anim.SpriteFrames.HasAnimation(animName)) return;
+        // 3. Animation updaten und bewegen
+        UpdateAnimation(cmd.FacingDirection);
+        MoveAndSlide();
 
-		_isAttacking = true;
-		_anim.Play(animName);
-		PlayWeaponAnim(animName);
-	}
+        state.Position = Position;
+        state.Velocity = Velocity;
 
-	private string GetAttackAnimationName(string dir) => _moveState switch
-	{
-		MoveState.Run => "run_attack_" + dir,
-		MoveState.Walk => "walk_attack_" + dir,
-		_ => "attack_" + dir,
-	};
+        // 4. State zurück geben
+        return state;
+    }
 
-	private void UpdateAnimation(string dirName)
-	{
-		if (IsActionLocked) return;
+    private void StartRoll(string dirName)
+    {
+        string animName = "roll_" + dirName;
+        if (!_anim.SpriteFrames.HasAnimation(animName)) return;
 
-		switch (_moveState)
-		{
-			case MoveState.Idle:
-				PlayIdleAnimation(dirName);
-				PlayWeaponAnim("idle_" + dirName);
-				break;
-			case MoveState.Walk:
-				_anim.Play("walk_" + dirName);
-				PlayWeaponAnim("walk_" + dirName);
-				break;
-			case MoveState.Run:
-				_anim.Play("run_" + dirName);
-				PlayWeaponAnim("run_" + dirName);
-				break;
-		}
+        _isRolling = true;
+        _anim.Play(animName);
+        PlayWeaponAnim(animName);
+    }
 
-		UpdateWeaponZIndex(dirName);
-	}
+    private void StartAttack(string dirName)
+    {
+        if (_weaponPivot == null || !_weaponPivot.Visible) return;
+        string animName = GetAttackAnimationName(dirName);
+        if (!_anim.SpriteFrames.HasAnimation(animName)) return;
 
-	private void PlayIdleAnimation(string dir)
-	{
-		string anim = _lastMoveState == MoveState.Run
-			? "idle_" + dir + ".2"
-			: "idle_" + dir + ".1";
+        _isAttacking = true;
+        _anim.Play(animName);
+        PlayWeaponAnim(animName);
+    }
 
-		if (!_anim.SpriteFrames.HasAnimation(anim))
-			anim = "idle_" + dir;
+    private string GetAttackAnimationName(string dir) => _moveState switch
+    {
+        MoveState.Run => "run_attack_" + dir,
+        MoveState.Walk => "walk_attack_" + dir,
+        _ => "attack_" + dir,
+    };
 
-		_anim.Play(anim);
-	}
+    private void UpdateAnimation(string dirName)
+    {
+        if (IsActionLocked) return;
 
-	private void OnAnimationFinished()
-	{
-		string name = _anim.Animation.ToString();
-		if (name.Contains("attack")) _isAttacking = false;
-		if (name.Contains("roll")) _isRolling = false;
-		if (name.Contains("hurt")) _isHurt = false;
-	}
+        switch (_moveState)
+        {
+            case MoveState.Idle: 
+                PlayIdleAnimation(dirName); 
+                PlayWeaponAnim("idle_" + dirName);
+                break;
+            case MoveState.Walk: 
+                _anim.Play("walk_" + dirName); 
+                PlayWeaponAnim("walk_" + dirName);
+                break;
+            case MoveState.Run: 
+                _anim.Play("run_" + dirName); 
+                PlayWeaponAnim("run_" + dirName);
+                break;
+        }
 
-	public void ApplyState(PlayerState state)
-	{
-		Position = state.Position;
-		Velocity = state.Velocity;
-		stamina = state.Stamina;
-	}
+        UpdateWeaponZIndex(dirName);
+    }
 
-	public void EquipWeapon(PackedScene droppedScene, Texture2D texture, Rect2 region,
-		Vector2 scale, Vector2 offset, float rotation = 0f)
-	{
-		if (_currentWeaponScene != null)
-			DropItem(_currentWeaponScene);
+    private void PlayIdleAnimation(string dir)
+    {
+        string anim = _lastMoveState == MoveState.Run
+            ? "idle_" + dir + ".2"
+            : "idle_" + dir + ".1";
 
-		_currentWeaponScene = droppedScene;
+        if (!_anim.SpriteFrames.HasAnimation(anim))
+            anim = "idle_" + dir;
 
-		if (_weaponPivot == null) return;
-		_weaponPivot.Texture = texture;
-		_weaponPivot.RegionEnabled = true;
-		_weaponPivot.RegionRect = region;
-		_weaponPivot.Rotation = Mathf.DegToRad(rotation);
-		_weaponPivot.Scale = scale;
-		_weaponPivot.Offset = offset;
-		_weaponPivot.Visible = true;
-	}
+        _anim.Play(anim);
+    }
 
-	public void EquipOffhand(PackedScene droppedScene, Texture2D texture, Rect2 region,
-		Vector2 scale, Vector2 offset, float rotation = 0f)
-	{
-		if (_currentOffhandScene != null)
-			DropItem(_currentOffhandScene);
+    private Vector2 DirectionStringToVector(string dir) => dir switch
+    {
+        "up" => Vector2.Up,
+        "down" => Vector2.Down,
+        "left" => Vector2.Left,
+        "right" => Vector2.Right,
+        _ => Vector2.Zero,
+    };
 
-		_currentOffhandScene = droppedScene;
+    private void OnAnimationFinished()
+    {
+        string finishedAnimation = _anim.Animation.ToString();
 
-		if (_shieldPivot == null) return;
-		_shieldPivot.Texture = texture;
-		_shieldPivot.RegionEnabled = true;
-		_shieldPivot.RegionRect = region;
-		_shieldPivot.Scale = scale;
-		_shieldPivot.Offset = offset;
-		_shieldPivot.Visible = true;
-	}
+        if (finishedAnimation.Contains("attack")) _isAttacking = false;
+        if (finishedAnimation.Contains("roll")) _isRolling = false;
+        if (finishedAnimation.Contains("hurt")) _isHurt = false;
+    }
 
-	private void DropItem(PackedScene scene)
-	{
-		if (scene == null) return;
-		var instance = scene.Instantiate<Node2D>();
-		instance.Scale = Vector2.One;
-		instance.Position = GlobalPosition;
-		GetParent().AddChild(instance);
-	}
+    public void ApplyState(PlayerState state)
+    {
+        Position = state.Position;
+        Velocity = state.Velocity;
+    }
 
-	private void UpdateWeaponZIndex(string dirName)
-	{
-		if (_weaponPivotNode == null) return;
+    public void EquipWeapon(PackedScene droppedScene, Texture2D texture, Rect2 region,
+        Vector2 scale, Vector2 offset, float rotation = 0f)
+    {
+        if (_currentWeaponScene != null)
+            DropItem(_currentWeaponScene);
 
-		bool inFront = _moveState == MoveState.Idle && dirName == "down" || dirName == "right";
-		bool currentlyInFront = _weaponPivotNode.GetIndex() > _anim.GetIndex();
+        _currentWeaponScene = droppedScene;
 
-		if (inFront == currentlyInFront) return;
+        if (_weaponPivot == null) return;
+        _weaponPivot.Texture = texture;
+        _weaponPivot.RegionEnabled = true;
+        _weaponPivot.RegionRect = region;
+        _weaponPivot.Rotation = Mathf.DegToRad(rotation);
+        _weaponPivot.Scale = scale;
+        _weaponPivot.Offset = offset;
+        _weaponPivot.Visible = true;
+    }
 
-		_weaponPivotNode.GetParent().MoveChild(_weaponPivotNode, _anim.GetIndex());
-		_weaponPivotNode.ZIndex = 0;
-	}
+    public void EquipOffhand(PackedScene droppedScene, Texture2D texture, Rect2 region,
+        Vector2 scale, Vector2 offset, float rotation = 0f)
+    {
+        if (_currentOffhandScene != null)
+            DropItem(_currentOffhandScene);
 
-	private void PlayWeaponAnim(string animName)
-	{
-		if (_weaponAnim == null) return;
-		if (_weaponAnim.CurrentAnimation == animName) return;
-		if (_weaponAnim.HasAnimation(animName))
-			_weaponAnim.Play(animName);
-	}
+        _currentOffhandScene = droppedScene;
+
+        if (_shieldPivot == null) return;
+        _shieldPivot.Texture = texture;
+        _shieldPivot.RegionEnabled = true;
+        _shieldPivot.RegionRect = region;
+        _shieldPivot.Scale = scale;
+        _shieldPivot.Offset = offset;
+        _shieldPivot.Visible = true;
+    }
+
+    private void DropItem(PackedScene scene)
+    {
+        if (scene == null) return;
+        var instance = scene.Instantiate<Node2D>();
+        instance.Scale = Vector2.One;
+        instance.Position = GlobalPosition;
+        GetParent().AddChild(instance);
+    }
+
+    private void UpdateWeaponZIndex(string dirName)
+    {
+        if (_weaponPivotNode == null) return;
+
+        bool inFront = _moveState == MoveState.Idle && dirName == "down" || dirName == "right";
+        bool currentlyInFront = _weaponPivotNode.GetIndex() > _anim.GetIndex();
+
+        if (inFront == currentlyInFront) return;
+
+        _weaponPivotNode.GetParent().MoveChild(_weaponPivotNode, _anim.GetIndex());
+        _weaponPivotNode.ZIndex = 0;
+    }
+
+    private void PlayWeaponAnim(string animName)
+    {
+        if (_weaponAnim == null) return;
+        if (_weaponAnim.CurrentAnimation == animName) return;
+        if (_weaponAnim.HasAnimation(animName))
+            _weaponAnim.Play(animName);
+    }
 }

@@ -8,6 +8,8 @@ public partial class GameManager : Node
 	private PackedScene _playerScene;
 	[Export]
 	private PackedScene _mainLevelScene;
+	[Export]
+	private PackedScene _hudScene;
 
 	private const int Port = 8910;
 
@@ -37,6 +39,8 @@ public partial class GameManager : Node
 		GetTree().Root.AddChild(newLevel);
 		GetTree().CurrentScene = newLevel;
 
+		SpawnHud(newLevel);
+		
 		AddPlayer(1);
 	}
 
@@ -52,6 +56,8 @@ public partial class GameManager : Node
 		Node newLevel = _mainLevelScene.Instantiate();
 		GetTree().Root.AddChild(newLevel);
 		GetTree().CurrentScene = newLevel;
+		
+		SpawnHud(newLevel);
 	}
 
 	private void AddPlayer(long id)
@@ -75,5 +81,11 @@ public partial class GameManager : Node
 		GD.Print($"Spieler {id} hat das Spiel verlassen.");
 		var playerNode = GetTree().CurrentScene.GetNodeOrNull(id.ToString());
 		playerNode?.QueueFree();
+	}
+
+	private void SpawnHud(Node level)
+	{
+		var hudInstance = _hudScene.Instantiate();
+		level.AddChild(hudInstance);
 	}
 }

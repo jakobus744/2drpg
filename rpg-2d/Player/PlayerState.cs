@@ -9,6 +9,8 @@ public class PlayerState
     public Vector2 Position;
     public Vector2 Velocity;
     public float Stamina;
+    public float Health;
+    public float LastHurtTime;
 
     private const float MaxError = 1f;
 
@@ -22,6 +24,8 @@ public class PlayerState
         writer.Write(Velocity.X);
         writer.Write(Velocity.Y);
         writer.Write(Stamina);
+        writer.Write(Health);
+        writer.Write(LastHurtTime);
 
         return stream.ToArray();
     }
@@ -35,7 +39,9 @@ public class PlayerState
         {
             Position = new Vector2(reader.ReadSingle(), reader.ReadSingle()),
             Velocity = new Vector2(reader.ReadSingle(), reader.ReadSingle()),
-            Stamina = reader.ReadSingle()
+            Stamina = reader.ReadSingle(),
+            Health = reader.ReadSingle(),
+            LastHurtTime = reader.ReadSingle()
         };
     }
 
@@ -43,6 +49,20 @@ public class PlayerState
     {
         return Position.DistanceSquaredTo(other.Position) <= MaxError * MaxError &&
                Velocity.DistanceSquaredTo(other.Velocity) <= MaxError * MaxError &&
-               Math.Abs(Stamina - other.Stamina) < MaxError;
+               Math.Abs(Stamina - other.Stamina) < MaxError &&  Math.Abs(Health - other.Health) < MaxError && 
+               Math.Abs(LastHurtTime - other.LastHurtTime) < MaxError;
+    }
+
+    public PlayerState Clone()
+    {
+
+        return new PlayerState
+        {
+            Position = Position,
+            Velocity = Velocity,
+            Stamina = Stamina,
+            Health = Health,
+            LastHurtTime = LastHurtTime
+        };
     }
 }
