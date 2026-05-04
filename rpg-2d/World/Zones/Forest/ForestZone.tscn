@@ -6719,7 +6719,7 @@ z_index = 3
 position = Vector2(-112, -78)
 
 [node name="BirdFly2" parent="TileMap/Y-sort/extra_animation/Bird" unique_id=623886293 instance=ExtResource("22_rsq5a")]
-position = Vector2(184, 592)
+position = Vector2(109, 581)
 
 [node name="BirdFly3" parent="TileMap/Y-sort/extra_animation/Bird" unique_id=1488190801 instance=ExtResource("22_rsq5a")]
 position = Vector2(-710, 24)
@@ -6742,6 +6742,6 @@ ItemRotation = 150.0
 
 [node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="." unique_id=772117944]
 stream = SubResource("AudioStreamMP3_6fk55")
-volume_db = -16.0
+volume_db = -30.0
 autoplay = true
 parameters/looping = true
