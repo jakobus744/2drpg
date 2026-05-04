@@ -1,6 +1,8 @@
 [gd_scene format=3 uid="uid://ch002pri6psr4"]
 
 [ext_resource type="Script" uid="uid://srmqmg7bmtpx" path="res://UI/MainMenu/MainMenu.cs" id="1_fw0vt"]
+[ext_resource type="Texture2D" uid="uid://cclcvefbevqlf" path="res://Assets/Ui/Menü/Main_Menü.png" id="2_fw0vt"]
+[ext_resource type="Texture2D" uid="uid://c2jn840l0ixn" path="res://Assets/Ui/Menü/Button.png" id="3_8x0bb"]
 
 [node name="MainMenu" type="Control" unique_id=1418235620 node_paths=PackedStringArray("_hostButton", "_joinButton")]
 layout_mode = 3
@@ -9,10 +11,23 @@ script = ExtResource("1_fw0vt")
 _hostButton = NodePath("CenterContainer/VBoxContainer/HostButton")
 _joinButton = NodePath("CenterContainer/VBoxContainer/JoinButton")
 
+[node name="TextureRect" type="TextureRect" parent="." unique_id=1833414343]
+layout_mode = 0
+offset_left = -47.0
+offset_top = 1.0
+offset_right = 449.0
+offset_bottom = 177.0
+scale = Vector2(2.5656512, 3.8624816)
+texture = ExtResource("2_fw0vt")
+expand_mode = 3
+
 [node name="CenterContainer" type="CenterContainer" parent="." unique_id=1791165293]
 layout_mode = 0
-offset_right = 40.0
-offset_bottom = 40.0
+offset_left = 445.0
+offset_top = 153.0
+offset_right = 548.0
+offset_bottom = 254.0
+scale = Vector2(2.5112486, 2.4753132)
 
 [node name="VBoxContainer" type="VBoxContainer" parent="CenterContainer" unique_id=909897577]
 layout_mode = 2
@@ -20,6 +35,7 @@ layout_mode = 2
 [node name="Label" type="Label" parent="CenterContainer/VBoxContainer" unique_id=1058595189]
 layout_mode = 2
 text = "2D RPG"
+horizontal_alignment = 1
 
 [node name="HSeparator" type="HSeparator" parent="CenterContainer/VBoxContainer" unique_id=1713948163]
 layout_mode = 2
@@ -27,7 +43,16 @@ layout_mode = 2
 [node name="HostButton" type="Button" parent="CenterContainer/VBoxContainer" unique_id=1725167753]
 layout_mode = 2
 text = "Host"
+icon = ExtResource("3_8x0bb")
+flat = true
+icon_alignment = 1
+expand_icon = true
 
 [node name="JoinButton" type="Button" parent="CenterContainer/VBoxContainer" unique_id=1403196705]
 layout_mode = 2
-text = "Join"
+text = "Beitreten"
+icon = ExtResource("3_8x0bb")
+flat = true
+autowrap_trim_flags = 0
+icon_alignment = 1
+expand_icon = true

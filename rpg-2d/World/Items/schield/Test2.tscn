@@ -1,0 +1,28 @@
+[gd_scene format=3 uid="uid://dguvoym7d7wtj"]
+
+[ext_resource type="Script" uid="uid://dulamppfi7d3u" path="res://World/Items/OffhandItem.cs" id="1_cpma0"]
+[ext_resource type="Texture2D" uid="uid://j5nhm816exwl" path="res://Assets/Ui/Weapons/Weapons.png" id="2_86yxr"]
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_frf72"]
+radius = 3.9999568
+height = 7.9999137
+
+[node name="Test2" type="Area2D" unique_id=275455072]
+rotation = -1.5706586
+scale = Vector2(0.5, 0.5)
+script = ExtResource("1_cpma0")
+DroppedScenePath = "res://World/Items/Weapons/Test2.tscn"
+ItemTexture = ExtResource("2_86yxr")
+ItemRegion = Rect2(36, 82, 9, 13)
+ItemOffset = Vector2(0, 1.5)
+
+[node name="Sprite2D" type="Sprite2D" parent="." unique_id=1738785669]
+texture = ExtResource("2_86yxr")
+offset = Vector2(0, 1.5)
+region_enabled = true
+region_rect = Rect2(36, 82, 9, 13)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1984111021]
+position = Vector2(2.9802322e-08, -5.9604645e-08)
+rotation = 1.5752885
+shape = SubResource("CapsuleShape2D_frf72")
