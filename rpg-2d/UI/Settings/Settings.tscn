@@ -1,0 +1,106 @@
+[gd_scene format=3 uid="uid://dh4iimgw5jbi1"]
+
+[ext_resource type="Texture2D" uid="uid://b58yrsmr7mopa" path="res://Assets/Ui/Menü/ESCP.png" id="1_mvx1u"]
+[ext_resource type="Script" uid="uid://c3juhj5oe4cpd" path="res://UI/Settings/SettingsMenu.cs" id="2_f2j7s"]
+[ext_resource type="Texture2D" uid="uid://c2jn840l0ixn" path="res://Assets/Ui/Menü/Button.png" id="3_f2j7s"]
+[ext_resource type="Texture2D" uid="uid://diwcm1gi8i342" path="res://Assets/Ui/Menü/Music/fullWindow.png" id="4_n5ubh"]
+
+[node name="Control" type="Control" unique_id=382723438 node_paths=PackedStringArray("_musicSlider", "_sfxSlider", "_fullscreenToggle", "_saveButton", "_declineButton", "_closeButton")]
+layout_mode = 3
+anchors_preset = 0
+script = ExtResource("2_f2j7s")
+_musicSlider = NodePath("Musik")
+_sfxSlider = NodePath("SFX")
+_fullscreenToggle = NodePath("Window")
+_saveButton = NodePath("Save")
+_declineButton = NodePath("Decline")
+_closeButton = NodePath("Back")
+
+[node name="TextureRect" type="TextureRect" parent="." unique_id=1640181925]
+layout_mode = 0
+offset_left = 415.0
+offset_top = 116.999985
+offset_right = 517.0
+offset_bottom = 267.0
+scale = Vector2(3.9375696, 3.1204336)
+texture = ExtResource("1_mvx1u")
+script = ExtResource("2_f2j7s")
+
+[node name="Back" type="Button" parent="." unique_id=138777156]
+layout_mode = 0
+offset_left = 716.0
+offset_top = 160.0
+offset_right = 788.0
+offset_bottom = 187.99998
+scale = Vector2(1.1036323, 1.7723311)
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_colors/font_hover_color = Color(0.44705883, 0.09803922, 0, 1)
+theme_override_colors/icon_pressed_color = Color(0.3224729, 0.73715657, 0.14578187, 1)
+theme_override_font_sizes/font_size = 12
+text = "Back
+"
+icon = ExtResource("3_f2j7s")
+flat = true
+icon_alignment = 1
+expand_icon = true
+
+[node name="Musik" type="HSlider" parent="." unique_id=683817811]
+layout_mode = 0
+offset_left = 602.0
+offset_top = 239.0
+offset_right = 627.0
+offset_bottom = 265.0
+
+[node name="Window" type="CheckButton" parent="." unique_id=492045076]
+layout_mode = 0
+offset_left = 592.0
+offset_top = 307.0
+offset_right = 656.0
+offset_bottom = 331.0
+icon = ExtResource("4_n5ubh")
+flat = true
+
+[node name="Save" type="Button" parent="." unique_id=305536819]
+layout_mode = 0
+offset_left = 595.0
+offset_top = 368.00003
+offset_right = 667.0
+offset_bottom = 396.00003
+scale = Vector2(1.1036323, 1.7723311)
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_colors/font_hover_color = Color(0.44705883, 0.09803922, 0, 1)
+theme_override_colors/icon_pressed_color = Color(0.3224729, 0.73715657, 0.14578187, 1)
+theme_override_font_sizes/font_size = 12
+text = "Save
+
+"
+icon = ExtResource("3_f2j7s")
+flat = true
+icon_alignment = 1
+expand_icon = true
+
+[node name="Decline" type="Button" parent="." unique_id=433107465]
+layout_mode = 0
+offset_left = 596.0
+offset_top = 406.00003
+offset_right = 668.0
+offset_bottom = 434.00003
+scale = Vector2(1.1036323, 1.7723311)
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_colors/font_hover_color = Color(0.44705883, 0.09803922, 0, 1)
+theme_override_colors/icon_pressed_color = Color(0.3224729, 0.73715657, 0.14578187, 1)
+theme_override_font_sizes/font_size = 12
+text = "Decline
+
+"
+icon = ExtResource("3_f2j7s")
+flat = true
+icon_alignment = 1
+expand_icon = true
+
+[node name="SFX" type="HSlider" parent="." unique_id=368457476]
+layout_mode = 0
+offset_left = 603.0
+offset_top = 260.0
+offset_right = 628.0
+offset_bottom = 286.0

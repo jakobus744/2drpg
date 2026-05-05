@@ -2,7 +2,7 @@ using Godot;
 
 namespace RPG2d.UI.EscapeMenu;
 
-public partial class EscapeMenu : Control
+public partial class EscapeMenu : CanvasLayer
 {
     [Export] private Button _resumeButton;
     [Export] private Button _settingsButton;
@@ -14,24 +14,29 @@ public partial class EscapeMenu : Control
     {
         Visible = false;
 
-        _resumeButton.Pressed += () => Visible = false;
+        _resumeButton.Pressed += () =>
+        {
+            Visible = false;
+            GetTree().Paused = false;
+        };
         _settingsButton.Pressed += OpenSettings;
         _mainMenuButton.Pressed += () =>
             GetTree().ChangeSceneToFile("res://UI/MainMenu/MainMenu.tscn");
     }
 
-    // public override void _UnhandledInput(InputEvent e)
-    // {
-    //     if (!e.IsActionJustPressed("ui_cancel")) return;
+    public override void _UnhandledInput(InputEvent e)
+    {
+        if (!Input.IsActionJustPressed("ui_cancel")) return;
 
-    //     Visible = !Visible;
-    //     GetViewport().SetInputAsHandled();
-    // }
+        Visible = !Visible;
+        GetTree().Paused = Visible;
+        GetViewport().SetInputAsHandled();
+    }
 
     private void OpenSettings()
     {
         if (_settingsMenu != null) return;
-        var scene = GD.Load<PackedScene>("res://UI/Settings/SettingsMenu.tscn");
+        var scene = GD.Load<PackedScene>("res://UI/Settings/Settings.tscn");
         _settingsMenu = scene.Instantiate<Control>();
         _settingsMenu.TreeExited += () => _settingsMenu = null;
         AddChild(_settingsMenu);

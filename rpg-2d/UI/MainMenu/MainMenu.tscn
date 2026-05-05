@@ -4,12 +4,14 @@
 [ext_resource type="Texture2D" uid="uid://cclcvefbevqlf" path="res://Assets/Ui/Menü/Main_Menü.png" id="2_fw0vt"]
 [ext_resource type="Texture2D" uid="uid://c2jn840l0ixn" path="res://Assets/Ui/Menü/Button.png" id="3_8x0bb"]
 
-[node name="MainMenu" type="Control" unique_id=1418235620 node_paths=PackedStringArray("_hostButton", "_joinButton")]
+[node name="MainMenu" type="Control" unique_id=1418235620 node_paths=PackedStringArray("_hostButton", "_joinButton", "_settingsButton", "_quitButton")]
 layout_mode = 3
 anchors_preset = 0
 script = ExtResource("1_fw0vt")
-_hostButton = NodePath("CenterContainer/VBoxContainer/HostButton")
-_joinButton = NodePath("CenterContainer/VBoxContainer/JoinButton")
+_hostButton = NodePath("HostButton")
+_joinButton = NodePath("JoinButton")
+_settingsButton = NodePath("Settings")
+_quitButton = NodePath("Close")
 
 [node name="TextureRect" type="TextureRect" parent="." unique_id=1833414343]
 layout_mode = 0
@@ -21,38 +23,87 @@ scale = Vector2(2.5656512, 3.8624816)
 texture = ExtResource("2_fw0vt")
 expand_mode = 3
 
-[node name="CenterContainer" type="CenterContainer" parent="." unique_id=1791165293]
+[node name="Label" type="Label" parent="." unique_id=1058595189]
 layout_mode = 0
-offset_left = 445.0
-offset_top = 153.0
-offset_right = 548.0
-offset_bottom = 254.0
-scale = Vector2(2.5112486, 2.4753132)
-
-[node name="VBoxContainer" type="VBoxContainer" parent="CenterContainer" unique_id=909897577]
-layout_mode = 2
-
-[node name="Label" type="Label" parent="CenterContainer/VBoxContainer" unique_id=1058595189]
-layout_mode = 2
+offset_left = 393.0
+offset_top = 133.0
+offset_right = 465.0
+offset_bottom = 156.0
+scale = Vector2(5.361624, 3.85942)
+theme_override_colors/font_color = Color(0.38524932, 0.5463259, 0.9244405, 1)
+theme_override_colors/font_shadow_color = Color(0.4937405, 0.1542494, 0.71952933, 0.8352941)
 text = "2D RPG"
 horizontal_alignment = 1
 
-[node name="HSeparator" type="HSeparator" parent="CenterContainer/VBoxContainer" unique_id=1713948163]
-layout_mode = 2
-
-[node name="HostButton" type="Button" parent="CenterContainer/VBoxContainer" unique_id=1725167753]
-layout_mode = 2
+[node name="HostButton" type="Button" parent="." unique_id=1725167753]
+layout_mode = 0
+offset_left = 492.00003
+offset_top = 281.0
+offset_right = 564.0
+offset_bottom = 309.0
+scale = Vector2(2.2465754, 2.25)
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_colors/font_hover_color = Color(0.44705883, 0.09803922, 0, 1)
+theme_override_colors/icon_pressed_color = Color(0.3224729, 0.73715657, 0.14578187, 1)
+theme_override_font_sizes/font_size = 12
 text = "Host"
 icon = ExtResource("3_8x0bb")
 flat = true
 icon_alignment = 1
 expand_icon = true
 
-[node name="JoinButton" type="Button" parent="CenterContainer/VBoxContainer" unique_id=1403196705]
-layout_mode = 2
-text = "Beitreten"
+[node name="JoinButton" type="Button" parent="." unique_id=1403196705]
+layout_mode = 0
+offset_left = 489.0
+offset_top = 346.00003
+offset_right = 561.0
+offset_bottom = 374.00003
+scale = Vector2(2.2107124, 2.3248928)
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_colors/font_hover_color = Color(0.44705883, 0.09803922, 0, 1)
+theme_override_colors/icon_pressed_color = Color(0.32156864, 0.7372549, 0.14509805, 1)
+theme_override_font_sizes/font_size = 10
+text = "Join
+"
 icon = ExtResource("3_8x0bb")
 flat = true
 autowrap_trim_flags = 0
+icon_alignment = 1
+expand_icon = true
+
+[node name="Settings" type="Button" parent="." unique_id=1658359044]
+layout_mode = 0
+offset_left = 485.00006
+offset_top = 399.0
+offset_right = 557.00006
+offset_bottom = 427.0
+scale = Vector2(2.2465754, 2.25)
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_colors/font_hover_color = Color(0.44705883, 0.09803922, 0, 1)
+theme_override_colors/icon_pressed_color = Color(0.3224729, 0.73715657, 0.14578187, 1)
+theme_override_font_sizes/font_size = 12
+text = "Settings
+"
+icon = ExtResource("3_8x0bb")
+flat = true
+icon_alignment = 1
+expand_icon = true
+
+[node name="Close" type="Button" parent="." unique_id=2036010511]
+layout_mode = 0
+offset_left = 101.0
+offset_top = 187.0
+offset_right = 172.99997
+offset_bottom = 215.0
+scale = Vector2(1.1036323, 1.7723311)
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_colors/font_hover_color = Color(0.44705883, 0.09803922, 0, 1)
+theme_override_colors/icon_pressed_color = Color(0.3224729, 0.73715657, 0.14578187, 1)
+theme_override_font_sizes/font_size = 12
+text = "Close
+
+"
+icon = ExtResource("3_8x0bb")
+flat = true
 icon_alignment = 1
 expand_icon = true

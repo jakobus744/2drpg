@@ -27,7 +27,7 @@ public partial class MainMenu : Control
     private void OpenSettings()
     {
         if (_settingsMenu != null) return;
-        var scene = GD.Load<PackedScene>("res://UI/Settings/SettingsMenu.tscn");
+        var scene = GD.Load<PackedScene>("res://UI/Settings/Settings.tscn");
         _settingsMenu = scene.Instantiate<Control>();
         _settingsMenu.TreeExited += () => _settingsMenu = null;
         AddChild(_settingsMenu);

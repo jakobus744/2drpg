@@ -10,6 +10,8 @@ public partial class SettingsMenu : Control
     [Export] private Button _saveButton;
     [Export] private Button _declineButton;
 
+    [Export] private Button _closeButton;
+
     private int _musicBus;
     private int _sfxBus;
 
@@ -32,6 +34,11 @@ public partial class SettingsMenu : Control
         _musicSlider.Value = _savedMusicVolume;
         _sfxSlider.Value = _savedSfxVolume;
         _fullscreenToggle.ButtonPressed = _savedFullscreen;
+
+
+
+        if (_closeButton != null)
+            _closeButton.Pressed += () => Hide();
 
         // Live-Preview beim Schieben
         _musicSlider.ValueChanged += v =>

@@ -27,6 +27,7 @@
 [ext_resource type="PackedScene" uid="uid://dguvoym7d7wtj" path="res://World/Items/schield/Test2.tscn" id="24_2few0"]
 [ext_resource type="PackedScene" uid="uid://bpns7mlagug71" path="res://World/Items/Weapons/axt.tscn" id="25_6fk55"]
 [ext_resource type="AudioStream" uid="uid://rr2s8vlw0ahm" path="res://Assets/Music/freesound_community-clouds-29191.mp3" id="26_cbare"]
+[ext_resource type="PackedScene" uid="uid://b2rwvtixqikfg" path="res://UI/EscapeMenu/EscapeMenu.tscn" id="28_s0288"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_v5eci"]
 texture = ExtResource("2_vho18")
@@ -6747,3 +6748,5 @@ stream = ExtResource("26_cbare")
 volume_db = -30.0
 autoplay = true
 parameters/looping = true
+
+[node name="Control" parent="." unique_id=1616275335 instance=ExtResource("28_s0288")]
