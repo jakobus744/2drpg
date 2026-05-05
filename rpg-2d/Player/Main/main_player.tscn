@@ -3743,7 +3743,7 @@ tracks/9/keys = {
 "times": PackedFloat32Array(0, 0.71428573),
 "transitions": PackedFloat32Array(1, 1),
 "update": 1,
-"values": [Vector2(1e-05, 1e-05), Vector2(1, 1)]
+"values": [Vector2(1e-05, 1e-05), Vector2(0.8, 0.8)]
 }
 tracks/10/type = "value"
 tracks/10/imported = false
@@ -3754,7 +3754,7 @@ tracks/10/loop_wrap = true
 tracks/10/keys = {
 "times": PackedFloat32Array(0.71428573, 0.8571429, 1),
 "transitions": PackedFloat32Array(1, 1, 1),
-"update": 0,
+"update": 1,
 "values": [Vector2(1.0000005, 8.000001), Vector2(1, 6), Vector2(2, 3.0000005)]
 }
 tracks/11/type = "value"
@@ -3766,7 +3766,7 @@ tracks/11/loop_wrap = true
 tracks/11/keys = {
 "times": PackedFloat32Array(0.71428573, 0.8571429, 1),
 "transitions": PackedFloat32Array(1, 1, 1),
-"update": 0,
+"update": 1,
 "values": [-0.55331635, -0.55331635, -0.55331635]
 }
 
@@ -4924,10 +4924,10 @@ tracks/9/path = NodePath("OffHandPivot:scale")
 tracks/9/interp = 1
 tracks/9/loop_wrap = true
 tracks/9/keys = {
-"times": PackedFloat32Array(0, 0.2, 0.4, 0.6, 0.8, 1),
-"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1),
+"times": PackedFloat32Array(0, 0.2, 0.4, 0.8, 1),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1),
 "update": 1,
-"values": [Vector2(1e-05, 1e-05), Vector2(1e-05, 1e-05), Vector2(1e-05, 1e-05), Vector2(1, 1), Vector2(1e-05, 1e-05), Vector2(1e-05, 1e-05)]
+"values": [Vector2(1e-05, 1e-05), Vector2(1e-05, 1e-05), Vector2(1e-05, 1e-05), Vector2(1e-05, 1e-05), Vector2(0.8, 0.8)]
 }
 tracks/10/type = "value"
 tracks/10/imported = false
@@ -4936,10 +4936,10 @@ tracks/10/path = NodePath("OffHandPivot:position")
 tracks/10/interp = 1
 tracks/10/loop_wrap = true
 tracks/10/keys = {
-"times": PackedFloat32Array(0.6),
+"times": PackedFloat32Array(1),
 "transitions": PackedFloat32Array(1),
 "update": 1,
-"values": [Vector2(-7, 4)]
+"values": [Vector2(1.9999996, 5)]
 }
 tracks/11/type = "value"
 tracks/11/imported = false
@@ -4948,10 +4948,10 @@ tracks/11/path = NodePath("OffHandPivot:rotation")
 tracks/11/interp = 1
 tracks/11/loop_wrap = true
 tracks/11/keys = {
-"times": PackedFloat32Array(0.6),
+"times": PackedFloat32Array(1),
 "transitions": PackedFloat32Array(1),
 "update": 1,
-"values": [0.4675223]
+"values": [-0.5972825]
 }
 
 [sub_resource type="Animation" id="Animation_kesnb"]
@@ -7224,7 +7224,6 @@ position = Vector2(18, -14.000002)
 rotation = -1.1358825
 
 [node name="OffHandSprite" type="Sprite2D" parent="OffHandPivot" unique_id=1917610893]
-z_index = 1
 position = Vector2(3.315, 2.452)
 scale = Vector2(0.4, 0.4)
 texture = ExtResource("20_8ota3")
