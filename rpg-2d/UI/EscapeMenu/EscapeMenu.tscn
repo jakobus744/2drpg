@@ -27,11 +27,11 @@ pivot_offset = Vector2(43.5, 90)
 texture = ExtResource("1_u21q0")
 
 [node name="Resume" type="Button" parent="." unique_id=1384167870]
-offset_left = 554.0
-offset_top = 269.0
-offset_right = 626.0
-offset_bottom = 297.0
-scale = Vector2(0.805722, 0.945219)
+offset_left = 555.0
+offset_top = 299.0
+offset_right = 627.0
+offset_bottom = 327.0
+scale = Vector2(0.55513144, 0.62951034)
 theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_colors/font_hover_color = Color(0.44705883, 0.09803922, 0, 1)
 theme_override_colors/icon_pressed_color = Color(0.3224729, 0.73715657, 0.14578187, 1)
@@ -44,11 +44,11 @@ icon_alignment = 1
 expand_icon = true
 
 [node name="Menü" type="Button" parent="." unique_id=749881026]
-offset_left = 543.0
-offset_top = 292.99997
-offset_right = 615.0
-offset_bottom = 320.99997
-scale = Vector2(0.9084095, 1.159083)
+offset_left = 555.00006
+offset_top = 318.0
+offset_right = 627.00006
+offset_bottom = 346.0
+scale = Vector2(0.56144065, 0.6824896)
 theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_colors/font_hover_color = Color(0.44705883, 0.09803922, 0, 1)
 theme_override_colors/icon_pressed_color = Color(0.3224729, 0.73715657, 0.14578187, 1)
@@ -62,11 +62,11 @@ icon_alignment = 1
 expand_icon = true
 
 [node name="Settings" type="Button" parent="." unique_id=991796136]
-offset_left = 541.0
-offset_top = 317.00003
-offset_right = 613.0
-offset_bottom = 345.00003
-scale = Vector2(0.88917196, 1.2214719)
+offset_left = 555.0
+offset_top = 333.0
+offset_right = 627.0
+offset_bottom = 361.0
+scale = Vector2(0.58027154, 0.74745524)
 theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_colors/font_hover_color = Color(0.44705883, 0.09803922, 0, 1)
 theme_override_colors/icon_pressed_color = Color(0.3224729, 0.73715657, 0.14578187, 1)
@@ -79,11 +79,11 @@ icon_alignment = 1
 expand_icon = true
 
 [node name="Back" type="Button" parent="." unique_id=814242290]
-offset_left = 555.99994
-offset_top = 357.0
-offset_right = 627.9999
-offset_bottom = 385.0
-scale = Vector2(0.6432017, 0.9982339)
+offset_left = 576.0
+offset_top = 245.99998
+offset_right = 647.99994
+offset_bottom = 274.0
+scale = Vector2(0.557364, 0.6070396)
 theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_colors/font_hover_color = Color(0.44705883, 0.09803922, 0, 1)
 theme_override_colors/icon_pressed_color = Color(0.3224729, 0.73715657, 0.14578187, 1)

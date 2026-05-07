@@ -11,6 +11,7 @@
 [ext_resource type="AudioStream" uid="uid://dqai7l1b872gx" path="res://Assets/Music/NPC/walking_5.wav" id="6_dwpxe"]
 [ext_resource type="Script" uid="uid://cg1uqlqcfps31" path="res://Player/PlayerInput.cs" id="12_rkm3v"]
 [ext_resource type="Texture2D" uid="uid://co03y2si1klg8" path="res://Assets/Ui/magic/Bottles_icons.png" id="20_8ota3"]
+[ext_resource type="Texture2D" uid="uid://cvhg01km0cxe3" path="res://Assets/Ui/Weapons/Icons.png" id="21_htby4"]
 [ext_resource type="Texture2D" uid="uid://82vj0lbyyghx" path="res://Assets/Charakter/Player/new/man_lvl2_attack_with_shadow.png" id="new_attack"]
 [ext_resource type="Texture2D" uid="uid://d1dxcyvcrmtpn" path="res://Assets/Charakter/Player/new/man_lvl2_Death_with_shadow.png" id="new_death"]
 [ext_resource type="Texture2D" uid="uid://cdagiag3ea10s" path="res://Assets/Charakter/Player/new/man_lvl2_Hurt_with_shadow.png" id="new_hurt"]
@@ -7427,3 +7428,16 @@ region_rect = Rect2(195, 50, 9, 12)
 volume_db = -30.0
 pitch_scale = 0.9
 attenuation = 0.14358763
+
+[node name="AmorPivot2" type="Node2D" parent="." unique_id=1631551285]
+visible = false
+position = Vector2(-8, 4)
+rotation = 0.5374678
+
+[node name="AmorSprite" type="Sprite2D" parent="AmorPivot2" unique_id=991929877]
+position = Vector2(3.315, 2.452)
+scale = Vector2(0.4, 0.4)
+texture = ExtResource("21_htby4")
+offset = Vector2(0, -1)
+region_enabled = true
+region_rect = Rect2(69.513565, 36.73933, 20.566177, 20.276516)

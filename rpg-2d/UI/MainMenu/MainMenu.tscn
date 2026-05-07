@@ -91,13 +91,14 @@ expand_icon = true
 
 [node name="Close" type="Button" parent="." unique_id=2036010511]
 layout_mode = 0
-offset_left = 101.0
-offset_top = 187.0
-offset_right = 172.99997
-offset_bottom = 215.0
-scale = Vector2(1.1036323, 1.7723311)
+offset_left = 497.0
+offset_top = 448.99997
+offset_right = 569.0
+offset_bottom = 476.99997
+scale = Vector2(1.9626931, 2.3065925)
 theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_colors/font_hover_color = Color(0.44705883, 0.09803922, 0, 1)
+theme_override_colors/icon_normal_color = Color(0.9137255, 0.007843138, 0.2, 0.6431373)
 theme_override_colors/icon_pressed_color = Color(0.3224729, 0.73715657, 0.14578187, 1)
 theme_override_font_sizes/font_size = 12
 text = "Close
