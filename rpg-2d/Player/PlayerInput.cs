@@ -173,7 +173,7 @@ public partial class PlayerInput : Node
             }
         }
 
-        _debugDrawer?.UpdateDebugData(state.Position, state.Velocity, predictedState.Position, unacknowledgedPath);
+        _debugDrawer?.UpdateDebugData(state.Position, state.Velocity,  predictedState.Position, predictedState.Velocity, unacknowledgedPath);
         if (state.Equals(predictedState))
             return;
 

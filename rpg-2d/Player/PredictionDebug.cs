@@ -8,6 +8,7 @@ public partial class PredictionDebug : Node2D
     private Vector2 _serverPosition;
     private Vector2 _serverVelocity;
     private Vector2 _historicalPredictedPosition;
+    private Vector2 _predictedVel;
     private readonly List<Vector2> _unacknowledgedPath = new();
     
     private bool _hasData = false;
@@ -32,11 +33,12 @@ public partial class PredictionDebug : Node2D
         }
     }
 
-    public void UpdateDebugData(Vector2 serverPos, Vector2 serverVel, Vector2 historicalPos, IEnumerable<Vector2> path)
+    public void UpdateDebugData(Vector2 serverPos, Vector2 serverVel, Vector2 historicalPos, Vector2 predictedVel, IEnumerable<Vector2> path)
     {
         _serverPosition = serverPos;
         _serverVelocity = serverVel;
         _historicalPredictedPosition = historicalPos;
+        _predictedVel = predictedVel;
         
         _unacknowledgedPath.Clear();
         _unacknowledgedPath.AddRange(path);
@@ -52,7 +54,8 @@ public partial class PredictionDebug : Node2D
 
         // Magenta Fehler Linie
         DrawLine(_historicalPredictedPosition, _serverPosition, new Color(1f, 0f, 1f, 1f), 2f);
-        DrawCircle(_historicalPredictedPosition, 4f, new Color(1f, 0f, 1f, 1f));
+        
+        DrawCircle(_historicalPredictedPosition, 4f, new Color(1f, 1f, 0f, 1f));
 
         // Predicted Pfad 
         if (_unacknowledgedPath.Count > 1)
@@ -62,15 +65,19 @@ public partial class PredictionDebug : Node2D
                 DrawLine(_unacknowledgedPath[i], _unacknowledgedPath[i + 1], new Color(1f, 1f, 0f, 0.5f), 2f);
             }
         }
+        
+        // Pred Vel
+        if (_predictedVel != Vector2.Zero)
+        {
+            DrawLine(_historicalPredictedPosition, _historicalPredictedPosition + _predictedVel * 0.2f, new Color(1f, 1f, 0f, 0.5f), 2f);
+        }        
 
         // Server Pos
-        DrawCircle(_serverPosition, 12f, new Color(1f, 0f, 0f, 0.5f));
-        DrawArc(_serverPosition, 12f, 0, Mathf.Tau, 32, new Color(1f, 0f, 0f, 1f), 2f);
-
+        DrawCircle(_serverPosition, 12f, new Color(0f, 1f, 0f, 0.5f));
         // Server Vel
         if (_serverVelocity != Vector2.Zero)
         {
-            DrawLine(_serverPosition, _serverPosition + _serverVelocity * 0.2f, new Color(1f, 0.5f, 0f, 1f), 2f);
+            DrawLine(_serverPosition, _serverPosition + _serverVelocity * 0.2f, new Color(0f, 1f, 0f, 0.5f), 2f);
         }
     }
 }
