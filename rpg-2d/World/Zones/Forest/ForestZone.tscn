@@ -6724,24 +6724,26 @@ position = Vector2(109, 581)
 [node name="BirdFly3" parent="TileMap/Y-sort/extra_animation/Bird" unique_id=1488190801 instance=ExtResource("22_rsq5a")]
 position = Vector2(-710, 24)
 
-[node name="magic_drank" parent="TileMap" unique_id=275455072 instance=ExtResource("23_l7okb")]
+[node name="Items" type="Node" parent="TileMap" unique_id=838755462]
+
+[node name="magic_drank" parent="TileMap/Items" unique_id=275455072 instance=ExtResource("23_l7okb")]
 rotation = -0.22188103
 
-[node name="Test_item" parent="TileMap" unique_id=1912393927 instance=ExtResource("23_v25ht")]
-position = Vector2(66, -18)
-rotation = 1.6688077
-scale = Vector2(1, 1)
-ItemRotation = -50.0
-
-[node name="Test2" parent="TileMap" unique_id=213293813 instance=ExtResource("24_2few0")]
-position = Vector2(45, 12)
-scale = Vector2(1, 1)
-
-[node name="Axt" parent="TileMap" unique_id=1225248469 instance=ExtResource("25_6fk55")]
+[node name="Axt" parent="TileMap/Items" unique_id=1225248469 instance=ExtResource("25_6fk55")]
 position = Vector2(14, -21)
 rotation = -2.104867
 scale = Vector2(1, 1)
 ItemRotation = 150.0
+
+[node name="Test2" parent="TileMap/Items" unique_id=213293813 instance=ExtResource("24_2few0")]
+position = Vector2(45, 12)
+scale = Vector2(1, 1)
+
+[node name="Test_item" parent="TileMap/Items" unique_id=1912393927 instance=ExtResource("23_v25ht")]
+position = Vector2(66, -18)
+rotation = 1.6688077
+scale = Vector2(1, 1)
+ItemRotation = -50.0
 
 [node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="." unique_id=772117944]
 stream = ExtResource("26_cbare")

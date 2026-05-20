@@ -3,11 +3,17 @@
 [ext_resource type="Script" uid="uid://36uj6mx42hrd" path="res://UI/EscapeMenu/EscapeMenu.cs" id="1_516t3"]
 [ext_resource type="Texture2D" uid="uid://c36rwbtoixtda" path="res://Assets/Ui/Menü/Escp2.png" id="1_u21q0"]
 [ext_resource type="Texture2D" uid="uid://c2jn840l0ixn" path="res://Assets/Ui/Menü/Button.png" id="3_gqeqr"]
+[ext_resource type="Texture2D" uid="uid://dqo7ij017m2fh" path="res://Assets/Ui/Menü/close.png" id="4_jrtpi"]
 
-[node name="Control" type="CanvasLayer" unique_id=2113493916 node_paths=PackedStringArray("_resumeButton", "_settingsButton", "_mainMenuButton")]
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_jrtpi"]
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_jrtpi"]
+
+[node name="Control" type="CanvasLayer" unique_id=2113493916 node_paths=PackedStringArray("_resumeButton", "_backButton", "_settingsButton", "_mainMenuButton")]
 process_mode = 3
 script = ExtResource("1_516t3")
 _resumeButton = NodePath("Resume")
+_backButton = NodePath("Back")
 _settingsButton = NodePath("Settings")
 _mainMenuButton = NodePath("Menü")
 
@@ -17,61 +23,37 @@ anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -43.5
-offset_top = -90.0
-offset_right = 43.5
-offset_bottom = 90.0
+offset_left = -126.0
+offset_top = -244.0
+offset_right = 174.0
+offset_bottom = 256.0
 grow_horizontal = 2
 grow_vertical = 2
 pivot_offset = Vector2(43.5, 90)
 texture = ExtResource("1_u21q0")
 
 [node name="Resume" type="Button" parent="." unique_id=1384167870]
-offset_left = 555.0
-offset_top = 299.0
-offset_right = 627.0
-offset_bottom = 327.0
-scale = Vector2(0.55513144, 0.62951034)
-theme_override_colors/font_color = Color(0, 0, 0, 1)
-theme_override_colors/font_hover_color = Color(0.44705883, 0.09803922, 0, 1)
-theme_override_colors/icon_pressed_color = Color(0.3224729, 0.73715657, 0.14578187, 1)
-theme_override_font_sizes/font_size = 12
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -36.0
+offset_top = -124.0
+offset_right = 84.0
+offset_bottom = -24.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(0.06666667, 1, 1, 1)
+theme_override_colors/font_hover_color = Color(0.44705883, 0.9882353, 0, 1)
+theme_override_colors/icon_pressed_color = Color(0.32156864, 0.7372549, 0.9843137, 1)
+theme_override_constants/outline_size = 2
+theme_override_font_sizes/font_size = 17
+theme_override_styles/normal = SubResource("StyleBoxFlat_jrtpi")
+theme_override_styles/pressed = SubResource("StyleBoxTexture_jrtpi")
 text = "Resume
-"
-icon = ExtResource("3_gqeqr")
-flat = true
-icon_alignment = 1
-expand_icon = true
 
-[node name="Menü" type="Button" parent="." unique_id=749881026]
-offset_left = 555.00006
-offset_top = 318.0
-offset_right = 627.00006
-offset_bottom = 346.0
-scale = Vector2(0.56144065, 0.6824896)
-theme_override_colors/font_color = Color(0, 0, 0, 1)
-theme_override_colors/font_hover_color = Color(0.44705883, 0.09803922, 0, 1)
-theme_override_colors/icon_pressed_color = Color(0.3224729, 0.73715657, 0.14578187, 1)
-theme_override_font_sizes/font_size = 12
-text = "Menü
 
-"
-icon = ExtResource("3_gqeqr")
-flat = true
-icon_alignment = 1
-expand_icon = true
-
-[node name="Settings" type="Button" parent="." unique_id=991796136]
-offset_left = 555.0
-offset_top = 333.0
-offset_right = 627.0
-offset_bottom = 361.0
-scale = Vector2(0.58027154, 0.74745524)
-theme_override_colors/font_color = Color(0, 0, 0, 1)
-theme_override_colors/font_hover_color = Color(0.44705883, 0.09803922, 0, 1)
-theme_override_colors/icon_pressed_color = Color(0.3224729, 0.73715657, 0.14578187, 1)
-theme_override_font_sizes/font_size = 12
-text = "Settings
 "
 icon = ExtResource("3_gqeqr")
 flat = true
@@ -79,16 +61,71 @@ icon_alignment = 1
 expand_icon = true
 
 [node name="Back" type="Button" parent="." unique_id=814242290]
-offset_left = 576.0
-offset_top = 245.99998
-offset_right = 647.99994
-offset_bottom = 274.0
-scale = Vector2(0.557364, 0.6070396)
+offset_left = 671.0
+offset_top = 94.0
+offset_right = 751.0
+offset_bottom = 134.0
 theme_override_colors/font_color = Color(0, 0, 0, 1)
-theme_override_colors/font_hover_color = Color(0.44705883, 0.09803922, 0, 1)
-theme_override_colors/icon_pressed_color = Color(0.3224729, 0.73715657, 0.14578187, 1)
+theme_override_colors/font_hover_color = Color(0.6392157, 0.09803922, 0, 1)
+theme_override_colors/icon_pressed_color = Color(0.95686275, 0.047058824, 0.08627451, 1)
 theme_override_font_sizes/font_size = 12
-text = "Back
+text = "
+"
+icon = ExtResource("4_jrtpi")
+flat = true
+icon_alignment = 1
+expand_icon = true
+
+[node name="Settings" type="Button" parent="." unique_id=991679698]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -36.0
+offset_top = -44.0
+offset_right = 84.0
+offset_bottom = 56.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(0.06666667, 1, 1, 1)
+theme_override_colors/font_hover_color = Color(0.44705883, 0.9882353, 0, 1)
+theme_override_colors/icon_pressed_color = Color(0.32156864, 0.7372549, 0.9843137, 1)
+theme_override_constants/outline_size = 2
+theme_override_font_sizes/font_size = 17
+theme_override_styles/normal = SubResource("StyleBoxFlat_jrtpi")
+theme_override_styles/pressed = SubResource("StyleBoxTexture_jrtpi")
+text = "Settings
+
+
+"
+icon = ExtResource("3_gqeqr")
+flat = true
+icon_alignment = 1
+expand_icon = true
+
+[node name="Menü" type="Button" parent="." unique_id=1804092935]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -36.0
+offset_top = 36.0
+offset_right = 84.0
+offset_bottom = 136.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(0.06666667, 1, 1, 1)
+theme_override_colors/font_hover_color = Color(0.44705883, 0.9882353, 0, 1)
+theme_override_colors/icon_pressed_color = Color(0.32156864, 0.7372549, 0.9843137, 1)
+theme_override_constants/outline_size = 2
+theme_override_font_sizes/font_size = 17
+theme_override_styles/normal = SubResource("StyleBoxFlat_jrtpi")
+theme_override_styles/pressed = SubResource("StyleBoxTexture_jrtpi")
+text = "Menü
+
+
 "
 icon = ExtResource("3_gqeqr")
 flat = true

@@ -5,6 +5,7 @@ namespace RPG2d.UI.EscapeMenu;
 public partial class EscapeMenu : CanvasLayer
 {
     [Export] private Button _resumeButton;
+    [Export] private Button _backButton;
     [Export] private Button _settingsButton;
     [Export] private Button _mainMenuButton;
 
@@ -15,6 +16,15 @@ public partial class EscapeMenu : CanvasLayer
         Visible = false;
 
         _resumeButton.Pressed += () =>
+        {
+            Visible = false;
+            GetTree().Paused = false;
+        };
+        _settingsButton.Pressed += OpenSettings;
+        _mainMenuButton.Pressed += () =>
+            GetTree().ChangeSceneToFile("res://UI/MainMenu/MainMenu.tscn");
+
+        _backButton.Pressed += () =>
         {
             Visible = false;
             GetTree().Paused = false;
