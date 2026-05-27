@@ -8,7 +8,6 @@ radius = 3.9999568
 height = 7.9999137
 
 [node name="magic_drank" type="Area2D" unique_id=275455072]
-z_index = 1
 position = Vector2(-3, 0)
 rotation = -1.5706586
 scale = Vector2(0.6, 0.6)
