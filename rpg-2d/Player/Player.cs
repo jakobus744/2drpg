@@ -13,11 +13,11 @@ public partial class Player : CharacterBody2D
 	private const float HealthRecovery = 1f;
 
 	private const float MaxStamina = 100f;
-	private const float StaminaRecovery = .5f;
-	private const float MovingStaminaRecovery = .25f;
-	private const float RollCost = 30f;
-	private const float SprintCost = .25f;
-	private const float SprintFalloff = 30f;
+	private const float StaminaRecovery = .8f;
+	private const float MovingStaminaRecovery = .2f;
+	private const float RollCost = 20f;
+	private const float SprintCost = .10f;
+	private const float SprintFalloff = 33f;
 
 	public enum MoveState
 	{
@@ -180,10 +180,12 @@ public partial class Player : CharacterBody2D
 		// 1. Aktionen verarbeiten
 		if (cmd.IsAttackPressed && !IsActionLocked && _currentWeapon != null)
 		{
-			if (cmd.Tick >= state.NextAttackTick)
+			float attackCost = GetAttackStaminaCost();
+			if (cmd.Tick >= state.NextAttackTick && state.Stamina >= attackCost)
 			{
 				StartAttack(cmd.FacingDirection);
 				state.NextAttackTick += _currentWeapon.Stats.AttackCooldownTicks;
+				state.Stamina -= attackCost;
 			}
 		}
 
@@ -274,6 +276,18 @@ public partial class Player : CharacterBody2D
 
 		_anim.Play(animName);
 		PlayWeaponAnim(animName);
+	}
+
+	// Stamina-Kosten pro Angriff: Basis aus WeaponData × Bewegungs-Multiplikator
+	private float GetAttackStaminaCost()
+	{
+		var stats = _currentWeapon.Stats;
+		return _moveState switch
+		{
+			MoveState.Run => stats.AttackStaminaCost * stats.RunAttackMultiplier,
+			MoveState.Walk => stats.AttackStaminaCost * stats.WalkAttackMultiplier,
+			_ => stats.AttackStaminaCost, // Idle = Basis-Kosten
+		};
 	}
 
 	private string GetAttackAnimationName(string dir) => _moveState switch
