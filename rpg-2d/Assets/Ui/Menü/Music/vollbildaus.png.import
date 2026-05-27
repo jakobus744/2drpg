@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://btj82orqiwx0r"
-path="res://.godot/imported/brau_music.png-bfe23ec1c380a85be2d6f16d925216fa.ctex"
+uid="uid://c2xjedxftulhf"
+path="res://.godot/imported/vollbildaus.png-a5777b83d50ab6fedbbd6b7df3215248.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Assets/Ui/Menü/Music/brau_music.png"
-dest_files=["res://.godot/imported/brau_music.png-bfe23ec1c380a85be2d6f16d925216fa.ctex"]
+source_file="res://Assets/Ui/Menü/Music/vollbildaus.png"
+dest_files=["res://.godot/imported/vollbildaus.png-a5777b83d50ab6fedbbd6b7df3215248.ctex"]
 
 [params]
 

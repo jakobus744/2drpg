@@ -2,19 +2,31 @@
 
 [ext_resource type="Texture2D" uid="uid://j5nhm816exwl" path="res://Assets/Ui/Weapons/Weapons.png" id="1_7os7w"]
 [ext_resource type="Script" uid="uid://c48fg20oicm5r" path="res://World/Items/WeaponItem.cs" id="1_cnvmk"]
+[ext_resource type="Script" uid="uid://c4rd17rbw62vc" path="res://World/Items/WeaponData.cs" id="2_cnvmk"]
+
+[sub_resource type="Resource" id="Resource_frf72"]
+script = ExtResource("2_cnvmk")
+WeaponName = "Sword"
+AttackCooldownTicks = 25
+metadata/_custom_type_script = "uid://c4rd17rbw62vc"
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_frf72"]
 radius = 1.9997358
 height = 11.984236
 
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_cnvmk"]
+size = Vector2(8.285717, 4.0000024)
+
 [node name="Test_item" type="Area2D" unique_id=275455072]
-scale = Vector2(0.5, 0.5)
+z_index = 1
 script = ExtResource("1_cnvmk")
+Stats = SubResource("Resource_frf72")
 DroppedScenePath = "res://World/Items/Weapons/test_item.tscn"
 ItemTexture = ExtResource("1_7os7w")
 ItemRegion = Rect2(65, 1, 31, 14)
 ItemScale = Vector2(0.5, 0.5)
 ItemOffset = Vector2(-15.5, -0.5)
+ItemRotation = -50.0
 
 [node name="Sprite2D" type="Sprite2D" parent="." unique_id=1738785669]
 scale = Vector2(0.5, 0.5)
@@ -27,3 +39,11 @@ region_rect = Rect2(65, 1, 31, 14)
 position = Vector2(-8, 0)
 rotation = 1.5738213
 shape = SubResource("CapsuleShape2D_frf72")
+
+[node name="HitboxArea" type="Area2D" parent="." unique_id=1534745643]
+monitoring = false
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="HitboxArea" unique_id=837364362]
+position = Vector2(-10.142857, -1.1920929e-07)
+scale = Vector2(0.99999934, 0.99999934)
+shape = SubResource("RectangleShape2D_cnvmk")

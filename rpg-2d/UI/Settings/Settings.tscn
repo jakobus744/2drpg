@@ -3,93 +3,98 @@
 [ext_resource type="Texture2D" uid="uid://b58yrsmr7mopa" path="res://Assets/Ui/Menü/ESCP.png" id="1_mvx1u"]
 [ext_resource type="Script" uid="uid://c3juhj5oe4cpd" path="res://UI/Settings/SettingsMenu.cs" id="2_f2j7s"]
 [ext_resource type="Texture2D" uid="uid://c2jn840l0ixn" path="res://Assets/Ui/Menü/Button.png" id="3_f2j7s"]
-[ext_resource type="Texture2D" uid="uid://diwcm1gi8i342" path="res://Assets/Ui/Menü/Music/fullWindow.png" id="4_n5ubh"]
+[ext_resource type="Texture2D" uid="uid://c2xjedxftulhf" path="res://Assets/Ui/Menü/Music/vollbildaus.png" id="3_hoi7o"]
+[ext_resource type="Texture2D" uid="uid://dgvup14rmvfye" path="res://Assets/Ui/Menü/Music/Vollbildan.png" id="4_ihd64"]
+[ext_resource type="Texture2D" uid="uid://dqo7ij017m2fh" path="res://Assets/Ui/Menü/close.png" id="5_6kgid"]
+[ext_resource type="Texture2D" uid="uid://be2iwmify48ws" path="res://Assets/Ui/Menü/Music/braun_scale.png" id="6_hbvkj"]
+[ext_resource type="Texture2D" uid="uid://dmtg6v0cbwk8p" path="res://Assets/Ui/Menü/Music/grün_scale.png" id="7_1l8yp"]
+[ext_resource type="Script" uid="uid://ca16eawyjxh3r" path="res://UI/Settings/BarSlider.cs" id="8_1l8yp"]
+[ext_resource type="Texture2D" uid="uid://c0e2ahe3d5iaw" path="res://Assets/Ui/Menü/Music/test.png" id="9_tj17v"]
+[ext_resource type="Texture2D" uid="uid://dgu6k5ltvmmq6" path="res://Assets/Ui/Menü/Music/grün_Button.png" id="10_hoi7o"]
 
-[node name="Control" type="Control" unique_id=382723438 node_paths=PackedStringArray("_musicSlider", "_sfxSlider", "_fullscreenToggle", "_saveButton", "_declineButton", "_closeButton")]
+[node name="Control" type="Control" unique_id=382723438 node_paths=PackedStringArray("_musicSlider", "_sfxSlider", "_fullscreenToggle", "_saveButton", "_backButton", "_declineButton", "_closeButton")]
 layout_mode = 3
 anchors_preset = 0
+offset_top = -1.0
+offset_bottom = -1.0
 script = ExtResource("2_f2j7s")
 _musicSlider = NodePath("Musik")
 _sfxSlider = NodePath("SFX")
-_fullscreenToggle = NodePath("Window")
+_fullscreenToggle = NodePath("Full_Scrreen")
 _saveButton = NodePath("Save")
+_backButton = NodePath("Back")
 _declineButton = NodePath("Decline")
-_closeButton = NodePath("Back")
+_closeButton = NodePath("Quit")
 
 [node name="TextureRect" type="TextureRect" parent="." unique_id=1640181925]
 layout_mode = 0
-offset_left = 415.0
-offset_top = 116.999985
-offset_right = 517.0
-offset_bottom = 267.0
-scale = Vector2(3.9375696, 3.1204336)
+offset_left = 374.0
+offset_top = 82.0
+offset_right = 774.0
+offset_bottom = 582.0
 texture = ExtResource("1_mvx1u")
-script = ExtResource("2_f2j7s")
 
-[node name="Back" type="Button" parent="." unique_id=138777156]
-layout_mode = 0
-offset_left = 716.0
-offset_top = 160.0
-offset_right = 788.0
-offset_bottom = 187.99998
-scale = Vector2(1.1036323, 1.7723311)
-theme_override_colors/font_color = Color(0, 0, 0, 1)
-theme_override_colors/font_hover_color = Color(0.44705883, 0.09803922, 0, 1)
-theme_override_colors/icon_pressed_color = Color(0.3224729, 0.73715657, 0.14578187, 1)
-theme_override_font_sizes/font_size = 12
-text = "Back
-"
-icon = ExtResource("3_f2j7s")
-flat = true
-icon_alignment = 1
-expand_icon = true
+[node name="Full_Scrreen" type="TextureButton" parent="." unique_id=1001016111]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 555.0
+offset_top = 320.0
+offset_right = 573.0
+offset_bottom = 334.0
+grow_horizontal = 2
+grow_vertical = 2
+scale = Vector2(2.5, 2.5)
+toggle_mode = true
+texture_normal = ExtResource("3_hoi7o")
+texture_pressed = ExtResource("4_ihd64")
 
-[node name="Musik" type="HSlider" parent="." unique_id=683817811]
+[node name="Save" type="Button" parent="." unique_id=2098588624]
 layout_mode = 0
-offset_left = 602.0
-offset_top = 239.0
-offset_right = 627.0
-offset_bottom = 265.0
-
-[node name="Window" type="CheckButton" parent="." unique_id=492045076]
-layout_mode = 0
-offset_left = 592.0
-offset_top = 307.0
-offset_right = 656.0
-offset_bottom = 331.0
-icon = ExtResource("4_n5ubh")
-flat = true
-
-[node name="Save" type="Button" parent="." unique_id=305536819]
-layout_mode = 0
-offset_left = 595.0
-offset_top = 368.00003
-offset_right = 667.0
-offset_bottom = 396.00003
-scale = Vector2(1.1036323, 1.7723311)
-theme_override_colors/font_color = Color(0, 0, 0, 1)
-theme_override_colors/font_hover_color = Color(0.44705883, 0.09803922, 0, 1)
-theme_override_colors/icon_pressed_color = Color(0.3224729, 0.73715657, 0.14578187, 1)
-theme_override_font_sizes/font_size = 12
+offset_left = 470.0
+offset_top = 360.0
+offset_right = 690.0
+offset_bottom = 430.0
+theme_override_colors/font_color = Color(0.13407923, 3.7327433, 2.988455, 1)
+theme_override_colors/font_hover_color = Color(0.05490196, 0.9882353, 0.24705882, 1)
+theme_override_colors/icon_pressed_color = Color(0.2517353, 0.5681205, 0.5034173, 1)
+theme_override_constants/outline_size = 4
+theme_override_font_sizes/font_size = 25
 text = "Save
-
 "
 icon = ExtResource("3_f2j7s")
 flat = true
 icon_alignment = 1
 expand_icon = true
 
-[node name="Decline" type="Button" parent="." unique_id=433107465]
+[node name="Back" type="Button" parent="." unique_id=922449675]
 layout_mode = 0
-offset_left = 596.0
-offset_top = 406.00003
-offset_right = 668.0
-offset_bottom = 434.00003
-scale = Vector2(1.1036323, 1.7723311)
+offset_left = 716.99994
+offset_top = 78.0
+offset_right = 756.99994
+offset_bottom = 118.0
+scale = Vector2(1.4008592, 1.3643656)
 theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_colors/font_hover_color = Color(0.44705883, 0.09803922, 0, 1)
-theme_override_colors/icon_pressed_color = Color(0.3224729, 0.73715657, 0.14578187, 1)
+theme_override_colors/icon_pressed_color = Color(0.60784316, 0.03529412, 0.05882353, 1)
 theme_override_font_sizes/font_size = 12
+icon = ExtResource("5_6kgid")
+flat = true
+icon_alignment = 1
+expand_icon = true
+
+[node name="Decline" type="Button" parent="." unique_id=1820006050]
+layout_mode = 0
+offset_left = 470.0
+offset_top = 410.0
+offset_right = 690.0
+offset_bottom = 480.0
+theme_override_colors/font_color = Color(0.13407923, 3.7327433, 2.988455, 1)
+theme_override_colors/font_hover_color = Color(0.05490196, 0.9882353, 0.24705882, 1)
+theme_override_colors/icon_pressed_color = Color(0.2517353, 0.5681205, 0.5034173, 1)
+theme_override_constants/outline_size = 4
+theme_override_font_sizes/font_size = 25
 text = "Decline
 
 "
@@ -98,9 +103,103 @@ flat = true
 icon_alignment = 1
 expand_icon = true
 
-[node name="SFX" type="HSlider" parent="." unique_id=368457476]
+[node name="Quit" type="Button" parent="." unique_id=1934470258]
 layout_mode = 0
-offset_left = 603.0
-offset_top = 260.0
-offset_right = 628.0
-offset_bottom = 286.0
+offset_left = 470.0
+offset_top = 460.0
+offset_right = 690.0
+offset_bottom = 530.0
+theme_override_colors/font_color = Color(2.523642, 0.14855774, 0.5107124, 1)
+theme_override_colors/font_hover_color = Color(0.84705883, 0.14509805, 0.078431375, 1)
+theme_override_colors/icon_pressed_color = Color(0.89411765, 0.12156863, 0.23529412, 1)
+theme_override_constants/outline_size = 4
+theme_override_font_sizes/font_size = 25
+text = "Quit
+
+"
+icon = ExtResource("3_f2j7s")
+flat = true
+icon_alignment = 1
+expand_icon = true
+
+[node name="Musik" type="TextureProgressBar" parent="." unique_id=94668217]
+layout_mode = 0
+offset_left = 529.0
+offset_top = 180.0
+offset_right = 603.0
+offset_bottom = 195.0
+scale = Vector2(2.5, 2.5)
+max_value = 20.0
+texture_under = ExtResource("6_hbvkj")
+texture_progress = ExtResource("7_1l8yp")
+script = ExtResource("8_1l8yp")
+
+[node name="SFX" type="TextureProgressBar" parent="." unique_id=1690846041]
+layout_mode = 0
+offset_left = 529.0
+offset_top = 245.0
+offset_right = 603.0
+offset_bottom = 260.0
+scale = Vector2(2.5, 2.5)
+max_value = 5.0
+step = 0.4
+texture_under = ExtResource("6_hbvkj")
+texture_progress = ExtResource("7_1l8yp")
+script = ExtResource("8_1l8yp")
+
+[node name="musik_icon" type="TextureRect" parent="." unique_id=180124668]
+layout_mode = 1
+offset_left = 470.0
+offset_top = 240.0
+offset_right = 510.0
+offset_bottom = 280.0
+texture = ExtResource("9_tj17v")
+
+[node name="sfx_icon" type="TextureRect" parent="." unique_id=381415994]
+layout_mode = 0
+offset_left = 470.0
+offset_top = 172.0
+offset_right = 510.0
+offset_bottom = 212.0
+texture = ExtResource("10_hoi7o")
+
+[node name="Label_Music" type="Label" parent="." unique_id=16539684]
+layout_mode = 0
+offset_left = 544.0
+offset_top = 142.0
+offset_right = 614.0
+offset_bottom = 253.0
+theme_override_colors/font_color = Color(0.134, 3.733, 2.988, 1)
+theme_override_constants/outline_size = 4
+theme_override_font_sizes/font_size = 25
+text = "Music
+
+"
+horizontal_alignment = 1
+
+[node name="Label_SFX" type="Label" parent="." unique_id=1038192365]
+layout_mode = 0
+offset_left = 544.0
+offset_top = 212.0
+offset_right = 614.0
+offset_bottom = 285.0
+theme_override_colors/font_color = Color(0.134, 3.733, 2.988, 1)
+theme_override_constants/outline_size = 4
+theme_override_font_sizes/font_size = 25
+text = "SFX
+"
+horizontal_alignment = 1
+
+[node name="Label_Screen" type="Label" parent="." unique_id=1759572983]
+layout_mode = 0
+offset_left = 545.0
+offset_top = 280.0
+offset_right = 627.0
+offset_bottom = 391.0
+theme_override_colors/font_color = Color(0.134, 3.733, 2.988, 1)
+theme_override_constants/outline_size = 4
+theme_override_font_sizes/font_size = 25
+text = "Screen
+
+"
+horizontal_alignment = 1

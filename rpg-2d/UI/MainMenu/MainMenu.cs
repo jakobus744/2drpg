@@ -4,32 +4,35 @@ namespace RPG2d.UI.MainMenu;
 
 public partial class MainMenu : Control
 {
-    [Export] private Button _hostButton;
-    [Export] private Button _joinButton;
-    [Export] private Button _settingsButton;
-    [Export] private Button _quitButton;
+	[Export] private Button _hostButton;
+	[Export] private Button _joinButton;
+	[Export] private Button _settingsButton;
+	[Export] private Button _quitButton;
 
-    // SettingsMenu wird als eigene Scene über CanvasLayer geladen
-    private Control _settingsMenu;
+	// SettingsMenu wird als eigene Scene über CanvasLayer geladen
+	private Control _settingsMenu;
 
-    private GameManager.GameManager _gameManager;
+	private GameManager.GameManager _gameManager;
 
-    public override void _Ready()
-    {
-        _gameManager = GetNode<GameManager.GameManager>("/root/GameManager");
+	public override void _Ready()
+	{
+		// Gespeicherte Audio/Video-Settings laden (Lautstärke, Fullscreen)
+		Settings.SettingsMenu.LoadConfig();
 
-        _hostButton.Pressed += () => _gameManager.StartHost();
-        _joinButton.Pressed += () => _gameManager.JoinGame();
-        _settingsButton.Pressed += OpenSettings;
-        _quitButton.Pressed += () => GetTree().Quit();
-    }
+		_gameManager = GetNode<GameManager.GameManager>("/root/GameManager");
 
-    private void OpenSettings()
-    {
-        if (_settingsMenu != null) return;
-        var scene = GD.Load<PackedScene>("res://UI/Settings/Settings.tscn");
-        _settingsMenu = scene.Instantiate<Control>();
-        _settingsMenu.TreeExited += () => _settingsMenu = null;
-        AddChild(_settingsMenu);
-    }
+		_hostButton.Pressed += () => _gameManager.StartHost();
+		_joinButton.Pressed += () => _gameManager.JoinGame();
+		_settingsButton.Pressed += OpenSettings;
+		_quitButton.Pressed += () => GetTree().Quit();
+	}
+
+	private void OpenSettings()
+	{
+		if (_settingsMenu != null) return;
+		var scene = GD.Load<PackedScene>("res://UI/Settings/Settings.tscn");
+		_settingsMenu = scene.Instantiate<Control>();
+		_settingsMenu.TreeExited += () => _settingsMenu = null;
+		AddChild(_settingsMenu);
+	}
 }

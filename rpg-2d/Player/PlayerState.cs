@@ -10,7 +10,8 @@ public class PlayerState
     public Vector2 Velocity;
     public float Stamina;
     public float Health;
-    public float LastHurtTime;
+    public uint LastHurtTick;
+    public uint NextAttackTick;
 
     private const float MaxError = 1f;
 
@@ -25,7 +26,8 @@ public class PlayerState
         writer.Write(Velocity.Y);
         writer.Write(Stamina);
         writer.Write(Health);
-        writer.Write(LastHurtTime);
+        writer.Write(LastHurtTick);
+        writer.Write(NextAttackTick);
 
         return stream.ToArray();
     }
@@ -41,7 +43,8 @@ public class PlayerState
             Velocity = new Vector2(reader.ReadSingle(), reader.ReadSingle()),
             Stamina = reader.ReadSingle(),
             Health = reader.ReadSingle(),
-            LastHurtTime = reader.ReadSingle()
+            LastHurtTick = reader.ReadUInt32(),
+            NextAttackTick =   reader.ReadUInt32()
         };
     }
 
@@ -49,8 +52,9 @@ public class PlayerState
     {
         return Position.DistanceSquaredTo(other.Position) <= MaxError * MaxError &&
                Velocity.DistanceSquaredTo(other.Velocity) <= MaxError * MaxError &&
-               Math.Abs(Stamina - other.Stamina) < MaxError &&  Math.Abs(Health - other.Health) < MaxError && 
-               Math.Abs(LastHurtTime - other.LastHurtTime) < MaxError;
+               Math.Abs(Stamina - other.Stamina) < MaxError && Math.Abs(Health - other.Health) < MaxError &&
+               LastHurtTick == other.LastHurtTick &&
+               NextAttackTick == other.NextAttackTick;
     }
 
     public PlayerState Clone()
@@ -62,7 +66,8 @@ public class PlayerState
             Velocity = Velocity,
             Stamina = Stamina,
             Health = Health,
-            LastHurtTime = LastHurtTime
+            LastHurtTick = LastHurtTick,
+            NextAttackTick = NextAttackTick
         };
     }
 }

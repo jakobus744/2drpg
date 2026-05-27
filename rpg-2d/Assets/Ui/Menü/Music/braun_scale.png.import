@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://diwcm1gi8i342"
-path="res://.godot/imported/fullWindow.png-9f60f26799d8caa5c452ab693b0662a6.ctex"
+uid="uid://be2iwmify48ws"
+path="res://.godot/imported/braun_scale.png-d38dcdcaf53e893abd197d9e8d207127.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Assets/Ui/Menü/Music/fullWindow.png"
-dest_files=["res://.godot/imported/fullWindow.png-9f60f26799d8caa5c452ab693b0662a6.ctex"]
+source_file="res://Assets/Ui/Menü/Music/braun_scale.png"
+dest_files=["res://.godot/imported/braun_scale.png-d38dcdcaf53e893abd197d9e8d207127.ctex"]
 
 [params]
 

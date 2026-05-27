@@ -8,8 +8,8 @@ radius = 3.9999568
 height = 7.9999137
 
 [node name="Test2" type="Area2D" unique_id=275455072]
+z_index = 1
 rotation = -1.5706586
-scale = Vector2(0.5, 0.5)
 script = ExtResource("1_cpma0")
 DroppedScenePath = "res://World/Items/schield/Test2.tscn"
 ItemTexture = ExtResource("2_86yxr")

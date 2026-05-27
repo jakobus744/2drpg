@@ -1,5 +1,6 @@
 using System;
 using Godot;
+using RPG2d.World.Items;
 
 namespace RPG2d.Player;
 
@@ -20,9 +21,16 @@ public partial class Player : CharacterBody2D
 
 	// Bewegungszustand — bestimmt welche Animation gespielt wird
 	// Dead = alles gesperrt, kein Input mehr verarbeitet, Respawn-Logik extern
-	public enum MoveState { Idle, Walk, Run, Dead }
+	public enum MoveState
+	{
+		Idle,
+		Walk,
+		Run,
+		Dead
+	}
 
 	private MoveState _moveState = MoveState.Idle;
+
 	// Letzter Zustand wird gebraucht um zwischen zwei Idle-Varianten zu unterscheiden:
 	// Nach Sprint → "idle_*.2", nach Walk → "idle_*.1"
 	private MoveState _lastMoveState = MoveState.Idle;
@@ -36,6 +44,7 @@ public partial class Player : CharacterBody2D
 	private bool IsActionLocked => _isAttacking || _isRolling || _isHurt || _moveState == MoveState.Dead;
 
 	private Node2D _weaponPivotNode;
+	private Node2D _offHandPivotNode;
 
 	// Sprite für den Spieler (neue Sprites ohne eingebautes Schwert)
 	private AnimatedSprite2D _anim;
@@ -50,8 +59,8 @@ public partial class Player : CharacterBody2D
 	private Sprite2D _shieldPivot;
 
 	// Aktuell ausgerüstete Szenen  gebraucht um beim Item-Tausch das alte Item fallen zu lassen
-	private PackedScene _currentWeaponScene;
 	private PackedScene _currentOffhandScene;
+	private WeaponItem _currentWeapon;
 
 	// Multiplayer: Server schreibt Position + Animation, Clients lesen und interpolieren
 	[Export] public Vector2 SyncPosition = Vector2.Zero;
@@ -86,6 +95,7 @@ public partial class Player : CharacterBody2D
 
 		// WeaponSprite und ShieldSprite starten unsichtbar werden sichtbar wenn Item equipped
 		_weaponPivotNode = GetNodeOrNull<Node2D>("WeaponPivot");
+		_offHandPivotNode = GetNodeOrNull<Node2D>("OffHandPivot");
 		_weaponPivot = GetNodeOrNull<Sprite2D>("WeaponPivot/WeaponSprite");
 		_shieldPivot = GetNodeOrNull<Sprite2D>("OffHandPivot/OffHandSprite");
 		if (_weaponPivot != null) _weaponPivot.Visible = false;
@@ -134,6 +144,7 @@ public partial class Player : CharacterBody2D
 
 	// Von außen aufrufbar (z.B. durch Health-System bei Treffern)
 	// Kurze Unterbrechung: Hurt-Animation läuft durch, danach normal weiter
+	[Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = false, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
 	public void Hurt(string dirName)
 	{
 		if (_moveState == MoveState.Dead) return; // Keine Hurt-Anim wenn bereits tot
@@ -177,7 +188,15 @@ public partial class Player : CharacterBody2D
 		}
 
 		// 1. Aktionen verarbeiten
-		if (cmd.IsAttackPressed && !IsActionLocked) StartAttack(cmd.FacingDirection);
+		if (cmd.IsAttackPressed && !IsActionLocked && _currentWeapon != null)
+		{
+			if (cmd.Tick >= state.NextAttackTick)
+			{
+				StartAttack(cmd.FacingDirection);
+				state.NextAttackTick += _currentWeapon.Stats.AttackCooldownTicks;
+			}
+		}
+
 		if (cmd.IsRollPressed && !IsActionLocked)
 		{
 			if (state.Stamina >= RollCost)
@@ -246,12 +265,14 @@ public partial class Player : CharacterBody2D
 
 	private void StartAttack(string dirName)
 	{
-		// Angriffsanimation hängt vom aktuellen Bewegungsstate ab (idle/walk/run → andere Anim)
-		if (_weaponPivot == null || !_weaponPivot.Visible) return; // Ohne Waffe kein Angriff
+		if (_currentWeapon == null) return; // Kann nicht angreifen ohne Waffe
 		string animName = GetAttackAnimationName(dirName);
 		if (!_anim.SpriteFrames.HasAnimation(animName)) return;
 
 		_isAttacking = true;
+		if (_currentWeapon.Hitbox != null)
+			_currentWeapon.Hitbox.SetDeferred("monitoring", true);
+
 		_anim.Play(animName);
 		PlayWeaponAnim(animName);
 	}
@@ -286,6 +307,7 @@ public partial class Player : CharacterBody2D
 				PlayWeaponAnim("run_" + dirName);
 				break;
 		}
+
 		UpdateWeaponZIndex(dirName);
 	}
 
@@ -315,7 +337,17 @@ public partial class Player : CharacterBody2D
 	// Wird aufgerufen wenn eine nicht-loopende Animation (Angriff, Rolle, Treffer) fertig ist
 	private void OnAnimationFinished()
 	{
-		string name = _anim.Animation.ToString();
+		var name = _anim.Animation.ToString();
+
+		if (name.Contains("attack"))
+		{
+			_isAttacking = false;
+
+			// Turn OFF the attack hitbox
+			if (_currentWeapon != null && _currentWeapon.Hitbox != null)
+				_currentWeapon.Hitbox.SetDeferred("monitoring", false);
+		}
+
 		if (name.Contains("attack")) _isAttacking = false;
 		if (name.Contains("roll")) _isRolling = false;
 		if (name.Contains("hurt")) _isHurt = false;
@@ -329,26 +361,105 @@ public partial class Player : CharacterBody2D
 		Velocity = state.Velocity;
 	}
 
-	// Waffe ausrüsten: setzt Textur/Region/Scale/Offset/Rotation auf WeaponSprite
-	// rotation kommt in Grad (Inspector) → wird in Radian umgerechnet
-	public void EquipWeapon(PackedScene droppedScene, Texture2D texture, Rect2 region,
-		Vector2 scale, Vector2 offset, float rotation = 0f)
+	private void OnHitboxBodyEntered(Node2D body)
 	{
-		// Alte Waffe fallen lassen wenn bereits eine ausgerüstet war
-		if (_currentWeaponScene != null)
-			DropItem(_currentWeaponScene);
+		// Don't hit yourself!
+        if (body == this) return;
 
-		_currentWeaponScene = droppedScene;
+        if (body is Player enemy && Multiplayer.IsServer())
+        {
+            // Since we are holding the actual weapon, we can read its damage!
+            GD.Print($"Hit enemy for {_currentWeapon.Stats.Damage} damage!");
 
-		if (_weaponPivot == null) return;
-		_weaponPivot.Texture = texture;
-		_weaponPivot.RegionEnabled = true;
-		_weaponPivot.RegionRect = region;
-		_weaponPivot.Rotation = Mathf.DegToRad(rotation);
-		_weaponPivot.Scale = scale;
-		_weaponPivot.Offset = offset;
-		_weaponPivot.Visible = true;
-	}
+            enemy.Hurt(_facingDirection.ToString());
+            enemy.Rpc("Hurt", _facingDirection.ToString());
+        }
+    }
+
+    public void EquipWeapon(WeaponItem groundItem)
+    {
+        string scenePath = groundItem.SceneFilePath;
+        Vector2 itemScale = groundItem.Scale;
+
+        // Alte Waffe fallen lassen (45° gedreht) bevor neue equipped wird
+        if (_currentWeapon != null && IsMultiplayerAuthority())
+        {
+            var dropScene = GD.Load<PackedScene>(_currentWeapon.SceneFilePath);
+            DropItem(dropScene);
+        }
+
+        ApplyWeaponAttachment(scenePath, itemScale);
+
+        if (Multiplayer.HasMultiplayerPeer())
+        {
+            Rpc(MethodName.SyncWeaponEquip, scenePath, itemScale);
+        }
+    }
+
+    [Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = false, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
+    private void SyncWeaponEquip(string scenePath, Vector2 scale)
+    {
+        ApplyWeaponAttachment(scenePath, scale);
+    }
+
+    private void ApplyWeaponAttachment(string scenePath, Vector2 scale)
+    {
+        // 1) Alte Waffe aufräumen — Hitbox-Event abmelden, Node entfernen
+        if (_currentWeapon != null)
+        {
+            if (_currentWeapon.Hitbox != null)
+                _currentWeapon.Hitbox.BodyEntered -= OnHitboxBodyEntered;
+
+            _currentWeapon.QueueFree();
+        }
+
+        // 2) Neue Waffe instantiieren (Scene-Pfad kommt ggf. übers Netzwerk)
+        var weaponScene = GD.Load<PackedScene>(scenePath);
+        _currentWeapon = weaponScene.Instantiate<WeaponItem>();
+
+        // 3) Pickup-Logik deaktivieren — Waffe ist jetzt equipped, nicht mehr am Boden
+        _currentWeapon.IsEquipped = true;
+        _currentWeapon.Monitoring = false;
+        _currentWeapon.Monitorable = false;
+
+        // 4) Pivot-Transform zurücksetzen — AnimationPlayer hinterlässt Position/Rotation
+        //    vom letzten Frame der vorherigen Animation. Ohne Reset sitzt die neue Waffe schief.
+        if (_weaponPivotNode != null)
+        {
+            _weaponPivotNode.Position = Vector2.Zero;
+            _weaponPivotNode.Rotation = 0;
+            _weaponPivotNode.Scale = Vector2.One;
+        }
+        _weaponAnim?.Seek(_weaponAnim.CurrentAnimationPosition, true);
+
+        // 5) Altes WeaponSprite (Sprite2D) ausblenden — wird nicht mehr gebraucht,
+        //    da die Weapon-Scene ihr eigenes Sprite mitbringt
+        if (_weaponPivot != null)
+            _weaponPivot.Visible = false;
+
+        // 6) Weapon-Scene als Kind von WeaponPivot einhängen
+        if (_weaponPivotNode != null)
+        {
+            _weaponPivotNode.AddChild(_currentWeapon);
+
+            // 7) Lokale Transform der Waffe resetten — auf dem Boden hatte sie
+            //    eine Welt-Position/Rotation, die hier nicht mehr gilt
+            _currentWeapon.Position = Vector2.Zero;
+            _currentWeapon.Rotation = Mathf.DegToRad(_currentWeapon.ItemRotation);
+            _currentWeapon.Scale = scale;
+
+            // 8) Z-Index resetten — Weapon-Scenes haben z_index=1 für Boden-Darstellung,
+            //    aber am Spieler wird Z-Order von UpdateWeaponZIndex gesteuert
+            _currentWeapon.ZIndex = 0;
+
+            // 9) Hitbox vorbereiten — startet deaktiviert, wird bei Attack-State eingeschaltet
+            if (_currentWeapon.Hitbox != null)
+            {
+                _currentWeapon.Hitbox.Monitoring = false;
+                _currentWeapon.Hitbox.BodyEntered += OnHitboxBodyEntered;
+            }
+        }
+    }
 
 	public void EquipOffhand(PackedScene droppedScene, Texture2D texture, Rect2 region,
 		Vector2 scale, Vector2 offset, float rotation = 0f)
@@ -359,9 +470,20 @@ public partial class Player : CharacterBody2D
 		_currentOffhandScene = droppedScene;
 
 		if (_shieldPivot == null) return;
+
+		// Pivot-Transform zurücksetzen — AnimationPlayer hinterlässt Position/Rotation
+		if (_offHandPivotNode != null)
+		{
+			_offHandPivotNode.Position = Vector2.Zero;
+			_offHandPivotNode.Rotation = 0;
+			_offHandPivotNode.Scale = Vector2.One;
+		}
+		_weaponAnim?.Seek(_weaponAnim.CurrentAnimationPosition, true);
+
 		_shieldPivot.Texture = texture;
 		_shieldPivot.RegionEnabled = true;
 		_shieldPivot.RegionRect = region;
+		_shieldPivot.Rotation = Mathf.DegToRad(rotation);
 		_shieldPivot.Scale = scale;
 		_shieldPivot.Offset = offset;
 		_shieldPivot.Visible = true;
@@ -372,8 +494,8 @@ public partial class Player : CharacterBody2D
 	{
 		if (scene == null) return;
 		var instance = scene.Instantiate<Node2D>();
-		instance.Scale = Vector2.One;
 		instance.Position = GlobalPosition;
+		instance.RotationDegrees = 45f;
 		GetParent().AddChild(instance);
 	}
 

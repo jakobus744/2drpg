@@ -15,23 +15,28 @@ public partial class EscapeMenu : CanvasLayer
     {
         Visible = false;
 
-        _resumeButton.Pressed += () =>
+        void Resume()
         {
+            CloseSettings();
             Visible = false;
             GetTree().Paused = false;
-        };
-        _settingsButton.Pressed += OpenSettings;
-        _mainMenuButton.Pressed += () =>
-            GetTree().ChangeSceneToFile("res://UI/MainMenu/MainMenu.tscn");
+        }
+        _resumeButton.Pressed += Resume;
+        _backButton.Pressed += Resume;
 
-        _backButton.Pressed += () =>
-        {
-            Visible = false;
-            GetTree().Paused = false;
-        };
+
         _settingsButton.Pressed += OpenSettings;
         _mainMenuButton.Pressed += () =>
+        {
+            CloseSettings();
+            GetTree().Paused = false;
+            if (Multiplayer.MultiplayerPeer != null)
+            {
+                Multiplayer.MultiplayerPeer.Close();
+                Multiplayer.MultiplayerPeer = null;
+            }
             GetTree().ChangeSceneToFile("res://UI/MainMenu/MainMenu.tscn");
+        };
     }
 
     public override void _UnhandledInput(InputEvent e)
@@ -39,6 +44,7 @@ public partial class EscapeMenu : CanvasLayer
         if (!Input.IsActionJustPressed("ui_cancel")) return;
 
         Visible = !Visible;
+        if (!Visible) CloseSettings();
         GetTree().Paused = Visible;
         GetViewport().SetInputAsHandled();
     }
@@ -50,5 +56,11 @@ public partial class EscapeMenu : CanvasLayer
         _settingsMenu = scene.Instantiate<Control>();
         _settingsMenu.TreeExited += () => _settingsMenu = null;
         AddChild(_settingsMenu);
+    }
+
+    private void CloseSettings()
+    {
+        _settingsMenu?.QueueFree();
+        _settingsMenu = null;
     }
 }

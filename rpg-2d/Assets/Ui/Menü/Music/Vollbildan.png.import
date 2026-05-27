@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://cikl20kb6vn0h"
-path="res://.godot/imported/Buttons.png-77986f2cf798d263e8f08da57680c739.ctex"
+uid="uid://dgvup14rmvfye"
+path="res://.godot/imported/Vollbildan.png-62caf250cfdd907b4340093512eace20.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Assets/Ui/Inventar/Buttons.png"
-dest_files=["res://.godot/imported/Buttons.png-77986f2cf798d263e8f08da57680c739.ctex"]
+source_file="res://Assets/Ui/Menü/Music/Vollbildan.png"
+dest_files=["res://.godot/imported/Vollbildan.png-62caf250cfdd907b4340093512eace20.ctex"]
 
 [params]
 
