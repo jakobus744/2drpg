@@ -1,12 +1,12 @@
 [gd_scene format=3 uid="uid://xwhdjjo8ejn2"]
 
 [ext_resource type="Script" uid="uid://c0w5whv2syxu" path="res://Player/Player.cs" id="1_xiiv8"]
-[ext_resource type="AudioStream" uid="uid://b0hd7y0b7kx0n" path="res://Assets/Music/battle/swing.wav" id="2_meyvx"]
+[ext_resource type="AudioStream" uid="uid://dgh8h1ejjjtf2" path="res://Assets/Music/battle/swing.wav" id="2_meyvx"]
 [ext_resource type="Texture2D" uid="uid://j5nhm816exwl" path="res://Assets/Ui/Weapons/Weapons.png" id="2_rkm3v"]
-[ext_resource type="AudioStream" uid="uid://g02ry4fop6jn" path="res://Assets/Music/battle/swing3.wav" id="3_auxe2"]
+[ext_resource type="AudioStream" uid="uid://cdrfdifxrwnv1" path="res://Assets/Music/battle/swing3.wav" id="3_auxe2"]
 [ext_resource type="AudioStream" uid="uid://dwkspppd4ha8a" path="res://Assets/Music/NPC/male-death.mp3" id="3_dwpxe"]
 [ext_resource type="AudioStream" uid="uid://biw7pq21xk3ko" path="res://Assets/Music/NPC/hurt2.wav" id="3_frpnd"]
-[ext_resource type="AudioStream" uid="uid://djb7amc0yfnbv" path="res://Assets/Music/battle/swing2.wav" id="4_kesnb"]
+[ext_resource type="AudioStream" uid="uid://c44v3b73tx5n5" path="res://Assets/Music/battle/swing2.wav" id="4_kesnb"]
 [ext_resource type="AudioStream" uid="uid://d2a0yffjluxwd" path="res://Assets/Music/NPC/rolling.mp3" id="5_wbh1o"]
 [ext_resource type="AudioStream" uid="uid://dqai7l1b872gx" path="res://Assets/Music/NPC/walking_5.wav" id="6_dwpxe"]
 [ext_resource type="Script" uid="uid://cg1uqlqcfps31" path="res://Player/PlayerInput.cs" id="12_rkm3v"]
@@ -2300,7 +2300,7 @@ tracks/2/keys = {
 "times": PackedFloat32Array(0, 6.75, 7, 7.25),
 "transitions": PackedFloat32Array(1, 1, 1, 1),
 "update": 1,
-"values": [Vector2(4, 5), Vector2(4, 4.9999995), Vector2(4, 5), Vector2(4, 5)]
+"values": [Vector2(3.0000002, 4), Vector2(4, 4.9999995), Vector2(4, 5), Vector2(4, 5)]
 }
 tracks/3/type = "value"
 tracks/3/imported = false
@@ -3349,7 +3349,7 @@ tracks/2/keys = {
 "times": PackedFloat32Array(0, 0.14285715, 0.2857143, 0.42857146, 0.5714286, 0.71428573, 0.8571429, 1),
 "transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1, 1, 1),
 "update": 1,
-"values": [Vector2(-2, 1.9999999), Vector2(-2, 4), Vector2(-8, 1), Vector2(3.000001, 6.0000005), Vector2(10, 1), Vector2(8, 1), Vector2(6, 3), Vector2(4.0000005, 3.0000002)]
+"values": [Vector2(-2, 1.9999999), Vector2(-2, 4), Vector2(-8, 1), Vector2(3.000001, 6.0000005), Vector2(10, 1), Vector2(8, 1), Vector2(5, 3), Vector2(3, 1.9999998)]
 }
 tracks/3/type = "value"
 tracks/3/imported = false
@@ -3653,7 +3653,7 @@ tracks/2/keys = {
 "times": PackedFloat32Array(0, 0.14285715, 0.2857143, 0.42857146, 0.5714286, 0.71428573, 0.8571429, 1),
 "transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1, 1, 1),
 "update": 1,
-"values": [Vector2(-5, 2), Vector2(-4.9999995, 3.9999995), Vector2(-4.9999995, 2.0000002), Vector2(-4, 2.9802322e-08), Vector2(-4, 2), Vector2(-3, 4), Vector2(-2.9999998, 1.9999999), Vector2(-4, 0)]
+"values": [Vector2(-5, 1.0000001), Vector2(-6, 3), Vector2(-5, 1.0000005), Vector2(-4.0000005, -1), Vector2(-3, 1), Vector2(-3.0000002, 3), Vector2(-3, 1.0000002), Vector2(-4, -1)]
 }
 tracks/3/type = "value"
 tracks/3/imported = false
@@ -3662,10 +3662,10 @@ tracks/3/path = NodePath("WeaponPivot:rotation")
 tracks/3/interp = 2
 tracks/3/loop_wrap = true
 tracks/3/keys = {
-"times": PackedFloat32Array(0, 0.14285715, 0.2857143, 0.42857146, 0.5714286, 0.71428573, 0.8571429, 1),
-"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1, 1, 1),
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
 "update": 1,
-"values": [6.197194, 6.3300743, 6.4656734, 6.3610497, 6.3610497, 6.2824016, 6.3577814, 6.256351]
+"values": [6.197194]
 }
 tracks/4/type = "value"
 tracks/4/imported = false
@@ -3809,7 +3809,7 @@ tracks/2/keys = {
 "times": PackedFloat32Array(0, 0.14285715, 0.2857143, 0.42857146, 0.5714286, 0.71428573, 0.8571429, 1),
 "transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1, 1, 1),
 "update": 1,
-"values": [Vector2(-1, 5.0000005), Vector2(-1, 6.9999995), Vector2(2, 5), Vector2(1, 2), Vector2(2, 4), Vector2(1, 6), Vector2(2, 5), Vector2(-4.7683716e-07, 2.9999998)]
+"values": [Vector2(1.0000002, 4), Vector2(1.1920929e-07, 6), Vector2(2, 6), Vector2(-1, 2.9999995), Vector2(0.9999999, 5), Vector2(0.99999976, 7), Vector2(2, 6.0000005), Vector2(2.0000002, 5)]
 }
 tracks/3/type = "value"
 tracks/3/imported = false
@@ -3818,10 +3818,10 @@ tracks/3/path = NodePath("WeaponPivot:rotation")
 tracks/3/interp = 2
 tracks/3/loop_wrap = true
 tracks/3/keys = {
-"times": PackedFloat32Array(0, 0.14285715, 0.2857143, 0.42857146, 0.5714286, 0.71428573, 0.8571429, 1),
-"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1, 1, 1),
+"times": PackedFloat32Array(0, 0.42857146, 0.71428573),
+"transitions": PackedFloat32Array(1, 1, 1),
 "update": 1,
-"values": [0.8361417, 0.9174984, 0.76254106, 0.77180725, 1.0140221, 0.8745378, 0.8745378, 0.8745378]
+"values": [0.8361417, 1.0399615, 0.90736467]
 }
 tracks/4/type = "value"
 tracks/4/imported = false
@@ -3900,7 +3900,7 @@ tracks/9/keys = {
 "times": PackedFloat32Array(0, 0.14285715, 0.2857143, 0.42857146, 0.5714286, 0.71428573, 0.8571429, 1),
 "transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1, 1, 1),
 "update": 1,
-"values": [Vector2(4, 8.999999), Vector2(0, 10), Vector2(-6, 8), Vector2(-9, 3), Vector2(-8.000001, 7), Vector2(1, 10), Vector2(2, 7.999999), Vector2(3, 6)]
+"values": [Vector2(4, 8.999999), Vector2(0, 10), Vector2(-6, 8), Vector2(-9.000001, 2.0000005), Vector2(-8.000001, 6.0000005), Vector2(1, 10), Vector2(2, 7.999999), Vector2(3, 6)]
 }
 tracks/10/type = "value"
 tracks/10/imported = false
@@ -3953,7 +3953,7 @@ tracks/1/keys = {
 "times": PackedFloat32Array(0, 0.14285715, 0.2857143, 0.42857146, 0.5714286, 0.71428573, 0.8571429, 1),
 "transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1, 1, 1),
 "update": 1,
-"values": [Vector2(-4, 1.0000001), Vector2(-3.0000002, 4.0000005), Vector2(-4.0000005, 4), Vector2(-4, 2), Vector2(-4, 3), Vector2(-4.0000005, 4), Vector2(-4, 3.0000005), Vector2(-4, 1)]
+"values": [Vector2(-2.9999998, 2.0000002), Vector2(-3, 4), Vector2(-5, 3), Vector2(-4.0000005, 2), Vector2(-4.0000005, 3), Vector2(-4, 4), Vector2(-5, 3.0000002), Vector2(-4.0000005, 1.0000002)]
 }
 tracks/2/type = "value"
 tracks/2/imported = false
@@ -3962,10 +3962,10 @@ tracks/2/path = NodePath("WeaponPivot:rotation")
 tracks/2/interp = 2
 tracks/2/loop_wrap = true
 tracks/2/keys = {
-"times": PackedFloat32Array(0, 0.14285715, 0.2857143, 0.42857146, 0.5714286, 0.71428573, 0.8571429, 1),
-"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1, 1, 1),
+"times": PackedFloat32Array(0, 0.2857143, 0.42857146, 0.5714286, 0.71428573, 0.8571429, 1),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1, 1),
 "update": 1,
-"values": [4.5338817, 4.437878, 4.347861, 4.4594226, 4.4972085999999996, 4.6544614, 4.4194026, 4.580594]
+"values": [4.5338817, 4.640767, 4.6128206, 4.5721745, 4.361928, 4.4502196, 4.612886]
 }
 tracks/3/type = "value"
 tracks/3/imported = false
@@ -4133,7 +4133,7 @@ tracks/2/keys = {
 "times": PackedFloat32Array(0, 0.14285715, 0.2857143, 0.42857146, 0.5714286, 0.71428573, 0.8571429, 1),
 "transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1, 1, 1),
 "update": 1,
-"values": [Vector2(3, 0.99999964), Vector2(3, 2), Vector2(1, 5), Vector2(3, 3), Vector2(3, 1), Vector2(4.0000005, 3.0000002), Vector2(4, 5), Vector2(2.9999995, 1.9999995)]
+"values": [Vector2(3, -5.9604645e-08), Vector2(2, 1), Vector2(0.99999994, 5), Vector2(2.0000005, 2.0000002), Vector2(2.0000002, 2.3841858e-07), Vector2(3, 2), Vector2(3.0000002, 4), Vector2(2.0000005, 2.0000005)]
 }
 tracks/3/type = "value"
 tracks/3/imported = false
@@ -4142,10 +4142,10 @@ tracks/3/path = NodePath("WeaponPivot:rotation")
 tracks/3/interp = 2
 tracks/3/loop_wrap = true
 tracks/3/keys = {
-"times": PackedFloat32Array(0, 0.14285715, 0.2857143, 0.42857146, 0.5714286, 0.71428573, 0.8571429, 1),
-"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1, 1, 1),
+"times": PackedFloat32Array(0, 0.2857143),
+"transitions": PackedFloat32Array(1, 1),
 "update": 1,
-"values": [4.888196, 5.014261, 4.813567, 4.813567, 4.8878384, 4.957514, 4.957514, 4.875748]
+"values": [4.888196, 4.808301]
 }
 tracks/4/type = "value"
 tracks/4/imported = false
@@ -5173,7 +5173,7 @@ tracks/0/keys = {
 "times": PackedFloat32Array(0, 0.2, 0.4, 0.6, 0.8, 1),
 "transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1),
 "update": 1,
-"values": [Vector2(-3, 5), Vector2(-2, 4), Vector2(0, 4), Vector2(0, 5), Vector2(-2, 5), Vector2(-2, 3.9999995)]
+"values": [Vector2(-4, 5), Vector2(-3, 4), Vector2(-2, 3.9999995), Vector2(-2, 3.9999995), Vector2(-2, 5), Vector2(-2, 4.0000005)]
 }
 tracks/1/type = "value"
 tracks/1/imported = false
@@ -5341,7 +5341,7 @@ tracks/0/keys = {
 "times": PackedFloat32Array(0, 0.2, 0.4, 0.6, 0.8, 1),
 "transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1),
 "update": 1,
-"values": [Vector2(3, 4), Vector2(3, 4), Vector2(3.9999995, 4), Vector2(5, 4.0000005), Vector2(5, 3.0000005), Vector2(4.0000005, 4)]
+"values": [Vector2(2, 3), Vector2(2, 3), Vector2(3, 3.9999998), Vector2(3, 4), Vector2(4, 3), Vector2(4, 3)]
 }
 tracks/1/type = "value"
 tracks/1/imported = false
@@ -5374,10 +5374,10 @@ tracks/3/path = NodePath("WeaponPivot:rotation")
 tracks/3/interp = 1
 tracks/3/loop_wrap = true
 tracks/3/keys = {
-"times": PackedFloat32Array(0, 0.2, 0.4, 0.6, 0.8, 1),
-"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1),
+"times": PackedFloat32Array(0, 0.6),
+"transitions": PackedFloat32Array(1, 1),
 "update": 1,
-"values": [-1.5228082, -1.3919249, -1.4138707, -1.1512125, -1.4067276, -1.4067276]
+"values": [-1.5228082, -1.4149643]
 }
 tracks/4/type = "value"
 tracks/4/imported = false
@@ -7602,7 +7602,6 @@ replication_config = SubResource("SceneReplicationConfig_xiiv8")
 [node name="Base Animation" type="AnimatedSprite2D" parent="." unique_id=846420813]
 sprite_frames = SubResource("SpriteFrames_rkm3v")
 animation = &"walk_right"
-frame = 1
 speed_scale = 1.5
 
 [node name="OffHandPivot" type="Node2D" parent="." unique_id=1752773932]
