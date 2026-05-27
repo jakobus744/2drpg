@@ -19,8 +19,6 @@ public partial class Player : CharacterBody2D
 	private const float SprintCost = .25f;
 	private const float SprintFalloff = 30f;
 
-	// Bewegungszustand — bestimmt welche Animation gespielt wird
-	// Dead = alles gesperrt, kein Input mehr verarbeitet, Respawn-Logik extern
 	public enum MoveState
 	{
 		Idle,
@@ -32,7 +30,6 @@ public partial class Player : CharacterBody2D
 	private MoveState _moveState = MoveState.Idle;
 
 	// Letzter Zustand wird gebraucht um zwischen zwei Idle-Varianten zu unterscheiden:
-	// Nach Sprint → "idle_*.2", nach Walk → "idle_*.1"
 	private MoveState _lastMoveState = MoveState.Idle;
 	private Vector2 _facingDirection = Vector2.Down;
 
@@ -46,16 +43,9 @@ public partial class Player : CharacterBody2D
 	private Node2D _weaponPivotNode;
 	private Node2D _offHandPivotNode;
 
-	// Sprite für den Spieler (neue Sprites ohne eingebautes Schwert)
 	private AnimatedSprite2D _anim;
-
-	// AnimationPlayer steuert WeaponPivot-Position/Rotation pro Frame (Waffe folgt der Hand)
 	private AnimationPlayer _weaponAnim;
-
-	// WeaponSprite = das eigentliche Waffen-Bild (Sprite2D, Kind von WeaponPivot)
-	// Wird bei EquipWeapon mit Textur, Offset, Rotation etc. befüllt
 	private Sprite2D _weaponPivot;
-
 	private Sprite2D _shieldPivot;
 
 	// Aktuell ausgerüstete Szenen  gebraucht um beim Item-Tausch das alte Item fallen zu lassen
@@ -81,7 +71,7 @@ public partial class Player : CharacterBody2D
 
 	public override void _Ready()
 	{
-		// YSort am Player selbst deaktivieren — der Parent (Welt) übernimmt das Sorting
+		// YSort am Player selbst deaktivieren  der Parent (Welt) übernimmt das Sorting
 		YSortEnabled = false;
 
 		// Primärer Sprite: neue Sprites ohne eingebautes Schwert
@@ -101,7 +91,7 @@ public partial class Player : CharacterBody2D
 		if (_weaponPivot != null) _weaponPivot.Visible = false;
 		if (_shieldPivot != null) _shieldPivot.Visible = false;
 
-		// ServerSynchronizer gehört dem Server  er liest SyncPosition/SyncAnimation und verteilt sie
+		// ServerSynchronizer gehört dem Server er liest SyncPosition/SyncAnimation und verteilt sie
 		var sync = GetNodeOrNull<MultiplayerSynchronizer>("ServerSynchronizer");
 		sync?.SetMultiplayerAuthority(1);
 
@@ -197,7 +187,7 @@ public partial class Player : CharacterBody2D
 			}
 		}
 
-		if (cmd.IsRollPressed && !IsActionLocked)
+		if (cmd.IsRollPressed && !_isRolling && !_isHurt && _moveState != MoveState.Dead)
 		{
 			if (state.Stamina >= RollCost)
 			{
@@ -257,6 +247,15 @@ public partial class Player : CharacterBody2D
 	{
 		string animName = "roll_" + dirName;
 		if (!_anim.SpriteFrames.HasAnimation(animName)) return;
+
+		// Laufenden Angriff abbrechen — sonst bleibt _isAttacking true nach Roll
+		if (_isAttacking)
+		{
+			_isAttacking = false;
+			if (_currentWeapon?.Hitbox != null)
+				_currentWeapon.Hitbox.SetDeferred("monitoring", false);
+		}
+		_isHurt = false;
 
 		_isRolling = true;
 		_anim.Play(animName);
@@ -364,102 +363,102 @@ public partial class Player : CharacterBody2D
 	private void OnHitboxBodyEntered(Node2D body)
 	{
 		// Don't hit yourself!
-        if (body == this) return;
+		if (body == this) return;
 
-        if (body is Player enemy && Multiplayer.IsServer())
-        {
-            // Since we are holding the actual weapon, we can read its damage!
-            GD.Print($"Hit enemy for {_currentWeapon.Stats.Damage} damage!");
+		if (body is Player enemy && Multiplayer.IsServer())
+		{
+			// Since we are holding the actual weapon, we can read its damage!
+			GD.Print($"Hit enemy for {_currentWeapon.Stats.Damage} damage!");
 
-            enemy.Hurt(_facingDirection.ToString());
-            enemy.Rpc("Hurt", _facingDirection.ToString());
-        }
-    }
+			enemy.Hurt(_facingDirection.ToString());
+			enemy.Rpc("Hurt", _facingDirection.ToString());
+		}
+	}
 
-    public void EquipWeapon(WeaponItem groundItem)
-    {
-        string scenePath = groundItem.SceneFilePath;
-        Vector2 itemScale = groundItem.Scale;
+	public void EquipWeapon(WeaponItem groundItem)
+	{
+		string scenePath = groundItem.SceneFilePath;
+		Vector2 itemScale = groundItem.Scale;
 
-        // Alte Waffe fallen lassen (45° gedreht) bevor neue equipped wird
-        if (_currentWeapon != null && IsMultiplayerAuthority())
-        {
-            var dropScene = GD.Load<PackedScene>(_currentWeapon.SceneFilePath);
-            DropItem(dropScene);
-        }
+		// Alte Waffe fallen lassen (45° gedreht) bevor neue equipped wird
+		if (_currentWeapon != null && IsMultiplayerAuthority())
+		{
+			var dropScene = GD.Load<PackedScene>(_currentWeapon.SceneFilePath);
+			DropItem(dropScene);
+		}
 
-        ApplyWeaponAttachment(scenePath, itemScale);
+		ApplyWeaponAttachment(scenePath, itemScale);
 
-        if (Multiplayer.HasMultiplayerPeer())
-        {
-            Rpc(MethodName.SyncWeaponEquip, scenePath, itemScale);
-        }
-    }
+		if (Multiplayer.HasMultiplayerPeer())
+		{
+			Rpc(MethodName.SyncWeaponEquip, scenePath, itemScale);
+		}
+	}
 
-    [Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = false, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
-    private void SyncWeaponEquip(string scenePath, Vector2 scale)
-    {
-        ApplyWeaponAttachment(scenePath, scale);
-    }
+	[Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = false, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
+	private void SyncWeaponEquip(string scenePath, Vector2 scale)
+	{
+		ApplyWeaponAttachment(scenePath, scale);
+	}
 
-    private void ApplyWeaponAttachment(string scenePath, Vector2 scale)
-    {
-        // 1) Alte Waffe aufräumen — Hitbox-Event abmelden, Node entfernen
-        if (_currentWeapon != null)
-        {
-            if (_currentWeapon.Hitbox != null)
-                _currentWeapon.Hitbox.BodyEntered -= OnHitboxBodyEntered;
+	private void ApplyWeaponAttachment(string scenePath, Vector2 scale)
+	{
+		// 1) Alte Waffe aufräumen — Hitbox-Event abmelden, Node entfernen
+		if (_currentWeapon != null)
+		{
+			if (_currentWeapon.Hitbox != null)
+				_currentWeapon.Hitbox.BodyEntered -= OnHitboxBodyEntered;
 
-            _currentWeapon.QueueFree();
-        }
+			_currentWeapon.QueueFree();
+		}
 
-        // 2) Neue Waffe instantiieren (Scene-Pfad kommt ggf. übers Netzwerk)
-        var weaponScene = GD.Load<PackedScene>(scenePath);
-        _currentWeapon = weaponScene.Instantiate<WeaponItem>();
+		// 2) Neue Waffe instantiieren (Scene-Pfad kommt ggf. übers Netzwerk)
+		var weaponScene = GD.Load<PackedScene>(scenePath);
+		_currentWeapon = weaponScene.Instantiate<WeaponItem>();
 
-        // 3) Pickup-Logik deaktivieren — Waffe ist jetzt equipped, nicht mehr am Boden
-        _currentWeapon.IsEquipped = true;
-        _currentWeapon.Monitoring = false;
-        _currentWeapon.Monitorable = false;
+		// 3) Pickup-Logik deaktivieren — Waffe ist jetzt equipped, nicht mehr am Boden
+		_currentWeapon.IsEquipped = true;
+		_currentWeapon.Monitoring = false;
+		_currentWeapon.Monitorable = false;
 
-        // 4) Pivot-Transform zurücksetzen — AnimationPlayer hinterlässt Position/Rotation
-        //    vom letzten Frame der vorherigen Animation. Ohne Reset sitzt die neue Waffe schief.
-        if (_weaponPivotNode != null)
-        {
-            _weaponPivotNode.Position = Vector2.Zero;
-            _weaponPivotNode.Rotation = 0;
-            _weaponPivotNode.Scale = Vector2.One;
-        }
-        _weaponAnim?.Seek(_weaponAnim.CurrentAnimationPosition, true);
+		// 4) Pivot-Transform zurücksetzen — AnimationPlayer hinterlässt Position/Rotation
+		//    vom letzten Frame der vorherigen Animation. Ohne Reset sitzt die neue Waffe schief.
+		if (_weaponPivotNode != null)
+		{
+			_weaponPivotNode.Position = Vector2.Zero;
+			_weaponPivotNode.Rotation = 0;
+			_weaponPivotNode.Scale = Vector2.One;
+		}
+		_weaponAnim?.Seek(_weaponAnim.CurrentAnimationPosition, true);
 
-        // 5) Altes WeaponSprite (Sprite2D) ausblenden — wird nicht mehr gebraucht,
-        //    da die Weapon-Scene ihr eigenes Sprite mitbringt
-        if (_weaponPivot != null)
-            _weaponPivot.Visible = false;
+		// 5) Altes WeaponSprite (Sprite2D) ausblenden — wird nicht mehr gebraucht,
+		//    da die Weapon-Scene ihr eigenes Sprite mitbringt
+		if (_weaponPivot != null)
+			_weaponPivot.Visible = false;
 
-        // 6) Weapon-Scene als Kind von WeaponPivot einhängen
-        if (_weaponPivotNode != null)
-        {
-            _weaponPivotNode.AddChild(_currentWeapon);
+		// 6) Weapon-Scene als Kind von WeaponPivot einhängen
+		if (_weaponPivotNode != null)
+		{
+			_weaponPivotNode.AddChild(_currentWeapon);
 
-            // 7) Lokale Transform der Waffe resetten — auf dem Boden hatte sie
-            //    eine Welt-Position/Rotation, die hier nicht mehr gilt
-            _currentWeapon.Position = Vector2.Zero;
-            _currentWeapon.Rotation = Mathf.DegToRad(_currentWeapon.ItemRotation);
-            _currentWeapon.Scale = scale;
+			// 7) Lokale Transform der Waffe resetten — auf dem Boden hatte sie
+			//    eine Welt-Position/Rotation, die hier nicht mehr gilt
+			_currentWeapon.Position = Vector2.Zero;
+			_currentWeapon.Rotation = Mathf.DegToRad(_currentWeapon.ItemRotation);
+			_currentWeapon.Scale = scale;
 
-            // 8) Z-Index resetten — Weapon-Scenes haben z_index=1 für Boden-Darstellung,
-            //    aber am Spieler wird Z-Order von UpdateWeaponZIndex gesteuert
-            _currentWeapon.ZIndex = 0;
+			// 8) Z-Index resetten — Weapon-Scenes haben z_index=1 für Boden-Darstellung,
+			//    aber am Spieler wird Z-Order von UpdateWeaponZIndex gesteuert
+			_currentWeapon.ZIndex = 0;
 
-            // 9) Hitbox vorbereiten — startet deaktiviert, wird bei Attack-State eingeschaltet
-            if (_currentWeapon.Hitbox != null)
-            {
-                _currentWeapon.Hitbox.Monitoring = false;
-                _currentWeapon.Hitbox.BodyEntered += OnHitboxBodyEntered;
-            }
-        }
-    }
+			// 9) Hitbox vorbereiten — startet deaktiviert, wird bei Attack-State eingeschaltet
+			if (_currentWeapon.Hitbox != null)
+			{
+				_currentWeapon.Hitbox.Monitoring = false;
+				_currentWeapon.Hitbox.BodyEntered += OnHitboxBodyEntered;
+			}
+		}
+	}
 
 	public void EquipOffhand(PackedScene droppedScene, Texture2D texture, Rect2 region,
 		Vector2 scale, Vector2 offset, float rotation = 0f)
