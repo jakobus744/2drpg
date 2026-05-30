@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://blcjffn8k8vkj"
-path="res://.godot/imported/Numbers.png-01022967010a132c493e9b40f6a74af7.ctex"
+uid="uid://d0a40a5hyik5i"
+path="res://.godot/imported/Equipment.png-3b65f322fb3cde7c5d9f6668ab982976.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Assets/Ui/ALL/Numbers.png"
-dest_files=["res://.godot/imported/Numbers.png-01022967010a132c493e9b40f6a74af7.ctex"]
+source_file="res://Assets/Ui/Iventar/Equipment.png"
+dest_files=["res://.godot/imported/Equipment.png-3b65f322fb3cde7c5d9f6668ab982976.ctex"]
 
 [params]
 

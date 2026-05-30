@@ -2,16 +2,12 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://blcjffn8k8vkj"
-path="res://.godot/imported/Numbers.png-01022967010a132c493e9b40f6a74af7.ctex"
-metadata={
-"vram_texture": false
-}
+uid="uid://bc8quyun74k4"
+valid=false
 
 [deps]
 
-source_file="res://Assets/Ui/ALL/Numbers.png"
-dest_files=["res://.godot/imported/Numbers.png-01022967010a132c493e9b40f6a74af7.ctex"]
+source_file="res://Assets/Ui/Iventar/Action_panel.png"
 
 [params]
 
