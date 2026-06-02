@@ -11,6 +11,8 @@ public struct PlayerCmd
 	public bool IsRunPressed;
 	public bool IsAttackPressed;
 	public bool IsRollPressed;
+	public bool IsInteractPressed;
+	public string InteractTargetPath;
 
 	// Serialization für Godot Networking
 	public byte[] ToBytes()
@@ -25,6 +27,8 @@ public struct PlayerCmd
 		writer.Write(IsRunPressed);
 		writer.Write(IsAttackPressed);
 		writer.Write(IsRollPressed);
+		writer.Write(IsInteractPressed);
+		writer.Write(InteractTargetPath ?? "");
 
 		return stream.ToArray();
 	}
@@ -41,7 +45,9 @@ public struct PlayerCmd
 			FacingDirection = reader.ReadString(),
 			IsRunPressed = reader.ReadBoolean(),
 			IsAttackPressed = reader.ReadBoolean(),
-			IsRollPressed = reader.ReadBoolean()
+			IsRollPressed = reader.ReadBoolean(),
+			IsInteractPressed = reader.ReadBoolean(),
+			InteractTargetPath = reader.ReadString()
 		};
 	}
 }

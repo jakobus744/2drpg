@@ -49,6 +49,7 @@ public class NetworkStateBuffer<T> where T : struct
                 case long sLong when predictedVal is long pLong && Math.Abs(sLong - pLong) > tolerance:
                 case double sDouble when predictedVal is double pDouble && Math.Abs(sDouble - pDouble) > tolerance:
                 case short sShort when predictedVal is short pShort && Math.Abs(sShort - pShort) > tolerance:
+                case string sStr when predictedVal is string pStr && sStr != pStr:
                     return true;
             }
         }
@@ -75,6 +76,7 @@ public class NetworkStateBuffer<T> where T : struct
                 case long l:    writer.Write(l); break;
                 case double d:  writer.Write(d); break;
                 case short s:   writer.Write(s); break;
+                case string s:  writer.Write(s ?? ""); break;
                 default:
                     throw new NotSupportedException(
                         $"Type {val?.GetType()} not supported for NetVar serialization");
@@ -103,6 +105,7 @@ public class NetworkStateBuffer<T> where T : struct
                 _ when field.FieldType == typeof(long)    => reader.ReadInt64(),
                 _ when field.FieldType == typeof(double)  => reader.ReadDouble(),
                 _ when field.FieldType == typeof(short)   => reader.ReadInt16(),
+                _ when field.FieldType == typeof(string) => reader.ReadString(),
                 _ => throw new NotSupportedException(
                     $"Type {field.FieldType} not supported for NetVar deserialization")
             };

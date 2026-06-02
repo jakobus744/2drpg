@@ -28,24 +28,26 @@ public abstract partial class PickupItem : Area2D
         // Nur lokalen Spieler speichern — andere Multiplayer-Clients ignorieren
         BodyEntered += body =>
         {
-            if (body is RPG2d.Player.Player p && p.IsMultiplayerAuthority())
+            if (body is RPG2d.Player.Player p)
+            {
                 PlayerInRange = p;
+                p.RegisterNearbyPickup(this);
+            }
         };
         BodyExited += body =>
         {
-            if (body is RPG2d.Player.Player)
+            if (body is RPG2d.Player.Player p)
+            {
                 PlayerInRange = null;
+                p.UnregisterNearbyPickup(this);
+            }
         };
     }
 
     public override void _Process(double delta)
     {
-        if (PlayerInRange == null || !Input.IsActionJustPressed("interact")) return;
-        Equip(PlayerInRange, _droppedScene);
-        if (Multiplayer.HasMultiplayerPeer())
-            Rpc(MethodName.RemoveItem);
-        else
-            QueueFree();
+        // Pickup is now driven by Player.ProcessCommand (tick-based).
+        // Initial spawning animations (idle float, etc.) go here if added later.
     }
 
     // Subklasse bestimmt was beim Aufnehmen passiert (Waffe / Offhand / etc.)

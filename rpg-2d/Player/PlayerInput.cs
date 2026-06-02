@@ -107,6 +107,9 @@ public partial class PlayerInput : Node
         playerCmd.IsRunPressed = Input.IsActionPressed("run");
         playerCmd.IsRollPressed = Input.IsActionJustPressed("roll");
         playerCmd.IsAttackPressed = Input.IsActionJustPressed("attack");
+        playerCmd.IsInteractPressed = Input.IsActionJustPressed("interact");
+        if (playerCmd.IsInteractPressed)
+            playerCmd.InteractTargetPath = GetParent<Player>().NearbyPickupPath;
 
         return playerCmd;
     }

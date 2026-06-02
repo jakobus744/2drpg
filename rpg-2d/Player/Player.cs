@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using Godot;
 using RPG2d.Entity;
 using RPG2d.World.Items;
@@ -53,9 +54,29 @@ public partial class Player : BaseEntity<PlayerState>
 	private PackedScene _currentOffhandScene;
 	private WeaponItem _currentWeapon;
 
+	// Tick-based pickup: zuletzt betretener PickupItem in Reichweite (Input-Sensing)
+	private PickupItem _nearbyPickup;
+
+	// Tick-based damage: Treffer werden hier gesammelt und in ProcessCommand verarbeitet
+	private struct PendingHit
+	{
+		public Player Target;
+		public float Damage;
+		public string Direction;
+	}
+	private readonly List<PendingHit> _pendingHits = new();
+	private float _pendingDamage;
+	private string _pendingDamageDir = "";
+
+	// Remote sync tracking: nur bei Änderung Waffen-Visual neu laden
+	private string _lastSyncWeaponPath = "";
+	private string _lastSyncOffhandPath = "";
+
 	// Multiplayer: Server schreibt Position + Animation, Clients lesen und interpolieren
 	[Export] public Vector2 SyncPosition = Vector2.Zero;
 	[Export] public string SyncAnimation = "";
+	[Export] public string SyncWeaponPath = "";
+	[Export] public string SyncOffhandPath = "";
 
 	public static Player LocalPlayer { get; private set; }
 	public PlayerInput Input { get; private set; }
@@ -112,10 +133,6 @@ public partial class Player : BaseEntity<PlayerState>
 		Input = GetNodeOrNull<PlayerInput>("Input");
 		if (IsMultiplayerAuthority())
 			LocalPlayer = this;
-
-		// Late-Join: fordere Equipment-State von existierenden Spielern an
-		if (!Multiplayer.IsServer() && IsMultiplayerAuthority())
-			RpcId(1, MethodName.RequestEquipmentSync);
 	}
 
 	public override void _ExitTree()
@@ -124,14 +141,33 @@ public partial class Player : BaseEntity<PlayerState>
 			LocalPlayer = null;
 	}
 
+	// Wird von PickupItem.BodyEntered/BodyExited aufgerufen — nur Input-Sensing, keine Gameplay-Logik
+	public void RegisterNearbyPickup(PickupItem item) => _nearbyPickup = item;
+	public void UnregisterNearbyPickup(PickupItem item)
+	{
+		if (_nearbyPickup == item) _nearbyPickup = null;
+	}
+
+	// Scene-Pfad des nächstgelegenen Pickups — für PlayerCmd.InteractTargetPath
+	public string NearbyPickupPath => _nearbyPickup?.SceneFilePath ?? "";
+
+	// Tick-basierter Schaden: wird vom Angreifer aufgerufen, im nächsten ProcessCommand verarbeitet
+	public void QueueDamage(float amount, string direction)
+	{
+		_pendingDamage += amount;
+		_pendingDamageDir = direction;
+	}
+
 	public override void _PhysicsProcess(double delta)
 	{
-		// Server schreibt laufend Position + Animation in die Sync-Exports
+		// Server schreibt laufend Position + Animation + Waffen-State in die Sync-Exports
 		// MultiplayerSynchronizer überträgt diese an alle Clients
 		if (Multiplayer.IsServer())
 		{
 			SyncPosition = Position;
 			SyncAnimation = _anim.Animation;
+			SyncWeaponPath = _currentWeapon?.SceneFilePath ?? "";
+			SyncOffhandPath = _currentOffhandScene?.ResourcePath ?? "";
 		}
 
 		// Lokaler Spieler wird durch ProcessCommand gesteuert, nicht hier
@@ -145,6 +181,25 @@ public partial class Player : BaseEntity<PlayerState>
 		{
 			_anim.Play(SyncAnimation);
 			PlayWeaponAnim(SyncAnimation);
+		}
+
+		// Weapon-Visuals nur bei Änderung neu laden
+		if (SyncWeaponPath != _lastSyncWeaponPath)
+		{
+			if (!string.IsNullOrEmpty(SyncWeaponPath))
+				ApplyWeaponAttachment(SyncWeaponPath);
+			else
+				HideWeaponVisual();
+			_lastSyncWeaponPath = SyncWeaponPath;
+		}
+
+		if (SyncOffhandPath != _lastSyncOffhandPath)
+		{
+			if (!string.IsNullOrEmpty(SyncOffhandPath))
+				ApplyOffhandVisual(SyncOffhandPath);
+			else
+				HideOffhandVisual();
+			_lastSyncOffhandPath = SyncOffhandPath;
 		}
 	}
 
@@ -187,6 +242,68 @@ public partial class Player : BaseEntity<PlayerState>
 	public void ProcessCommand(PlayerCmd cmd)
 	{
 		var state = StateBuffer.Get(cmd.Tick - 1);
+
+		// 0. Eingehenden Schaden verarbeiten (tick-basiert, vom Server autoritativ)
+		if (_pendingDamage > 0)
+		{
+			state.Health -= _pendingDamage;
+			state.LastHurtTick = cmd.Tick;
+			if (!_isHurt)
+			{
+				string hurtAnim = "hurt_" + _pendingDamageDir;
+				if (_anim.SpriteFrames.HasAnimation(hurtAnim))
+					{
+						_isHurt = true;
+					_anim.Play(hurtAnim);
+					}
+			}
+			string hurtDir = _pendingDamageDir;
+			_pendingDamage = 0f;
+			_pendingDamageDir = "";
+			if (Multiplayer.IsServer())
+				Rpc("Hurt", hurtDir);
+		}
+
+		// 0b. Equip verarbeiten (tick-basiert, Input kommt via PlayerCmd.IsInteractPressed)
+		if (cmd.IsInteractPressed && _nearbyPickup != null)
+		{
+			var pickup = _nearbyPickup;
+			_nearbyPickup = null; // verbraucht — kein Re-Equip während Reprediction
+
+			if (pickup is WeaponItem weapon)
+			{
+				if (_currentWeapon != null && IsMultiplayerAuthority())
+					DropItem(GD.Load<PackedScene>(_currentWeapon.SceneFilePath));
+
+				ApplyWeaponAttachment(weapon.SceneFilePath);
+				state.EquippedWeaponPath = weapon.SceneFilePath;
+			}
+			else if (pickup is OffhandItem)
+			{
+				if (_currentOffhandScene != null && IsMultiplayerAuthority())
+					DropItem(_currentOffhandScene);
+
+				_currentOffhandScene = GD.Load<PackedScene>(pickup.SceneFilePath);
+				ApplyOffhandVisual(pickup.SceneFilePath);
+				state.EquippedOffhandPath = pickup.SceneFilePath;
+			}
+
+			// Nur der Server entfernt das Item authoritativ — Client predicted nur das Visual
+			if (Multiplayer.HasMultiplayerPeer())
+			{
+				if (Multiplayer.IsServer())
+					pickup.Rpc("RemoveItem");
+			}
+			else
+			{
+				pickup.QueueFree(); // Single-Player
+			}
+		}
+
+		// 0c. Ausgehende Treffer an Ziele weiterleiten (tick-basiert)
+		foreach (var hit in _pendingHits)
+			hit.Target.QueueDamage(hit.Damage, hit.Direction);
+		_pendingHits.Clear();
 
 		if (_moveState == MoveState.Dead)
 		{
@@ -396,6 +513,44 @@ public partial class Player : BaseEntity<PlayerState>
 		_isAttacking = false;
 		_isRolling = false;
 		_isHurt = false;
+
+		// Weapon-Reconciliation: falls Server eine andere Waffe hat als angezeigt
+		string currentWeaponPath = _currentWeapon?.SceneFilePath ?? "";
+		if (serverState.EquippedWeaponPath != currentWeaponPath)
+		{
+			if (!string.IsNullOrEmpty(serverState.EquippedWeaponPath))
+				ApplyWeaponAttachment(serverState.EquippedWeaponPath);
+			else
+				HideWeaponVisual();
+		}
+
+		// Offhand-Reconciliation
+		string currentOffhandPath = _currentOffhandScene?.ResourcePath ?? "";
+		if (serverState.EquippedOffhandPath != currentOffhandPath)
+		{
+			if (!string.IsNullOrEmpty(serverState.EquippedOffhandPath))
+			{
+				_currentOffhandScene = GD.Load<PackedScene>(serverState.EquippedOffhandPath);
+				ApplyOffhandVisual(serverState.EquippedOffhandPath);
+			}
+			else
+				HideOffhandVisual();
+		}
+	}
+
+	private void HideWeaponVisual()
+	{
+		if (_currentWeapon == null) return;
+		if (_currentWeapon.Hitbox != null)
+			_currentWeapon.Hitbox.BodyEntered -= OnHitboxBodyEntered;
+		_currentWeapon.QueueFree();
+		_currentWeapon = null;
+	}
+
+	private void HideOffhandVisual()
+	{
+		if (_shieldPivot != null) _shieldPivot.Visible = false;
+		_currentOffhandScene = null;
 	}
 
 	private void OnHitboxBodyEntered(Node2D body)
@@ -403,43 +558,30 @@ public partial class Player : BaseEntity<PlayerState>
 		// Don't hit yourself!
 		if (body == this) return;
 
-		if (body is Player enemy && Multiplayer.IsServer())
+		if (body is Player enemy && Multiplayer.IsServer() && _currentWeapon != null)
 		{
-			// Since we are holding the actual weapon, we can read its damage!
 			GD.Print($"Hit enemy for {_currentWeapon.Stats.Damage} damage!");
 
-			enemy.Hurt(_facingDirection.ToString());
-			enemy.Rpc("Hurt", _facingDirection.ToString());
+			// Queue damage for tick-based processing (statt direkt Hurt aufzurufen)
+			_pendingHits.Add(new PendingHit
+			{
+				Target = enemy,
+				Damage = _currentWeapon.Stats.Damage,
+				Direction = _facingDirection.ToString()
+			});
 		}
 	}
 
+	// Wird von ProcessCommand (tick-basiert) aufgerufen — Visual + State werden dort gesetzt
 	public void EquipWeapon(WeaponItem groundItem)
 	{
-		string scenePath = groundItem.SceneFilePath;
-		Vector2 itemScale = groundItem.Scale;
-
-		// Alte Waffe fallen lassen (45° gedreht) bevor neue equipped wird
 		if (_currentWeapon != null && IsMultiplayerAuthority())
-		{
-			var dropScene = GD.Load<PackedScene>(_currentWeapon.SceneFilePath);
-			DropItem(dropScene);
-		}
+			DropItem(GD.Load<PackedScene>(_currentWeapon.SceneFilePath));
 
-		ApplyWeaponAttachment(scenePath, itemScale);
-
-		if (Multiplayer.HasMultiplayerPeer())
-		{
-			Rpc(MethodName.SyncWeaponEquip, scenePath, itemScale);
-		}
+		ApplyWeaponAttachment(groundItem.SceneFilePath);
 	}
 
-	[Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = false, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
-	private void SyncWeaponEquip(string scenePath, Vector2 scale)
-	{
-		ApplyWeaponAttachment(scenePath, scale);
-	}
-
-	private void ApplyWeaponAttachment(string scenePath, Vector2 scale)
+	private void ApplyWeaponAttachment(string scenePath)
 	{
 		// 1) Alte Waffe aufräumen — Hitbox-Event abmelden, Node entfernen
 		if (_currentWeapon != null)
@@ -450,8 +592,13 @@ public partial class Player : BaseEntity<PlayerState>
 			_currentWeapon.QueueFree();
 		}
 
-		// 2) Neue Waffe instantiieren (Scene-Pfad kommt ggf. übers Netzwerk)
+		// 2) Neue Waffe instantiieren (Scene-Pfad kommt aus State oder Sync-Export)
 		var weaponScene = GD.Load<PackedScene>(scenePath);
+		if (weaponScene == null)
+		{
+			GD.PrintErr($"Failed to load weapon scene: {scenePath}");
+			return;
+		}
 		_currentWeapon = weaponScene.Instantiate<WeaponItem>();
 
 		// 3) Pickup-Logik deaktivieren — Waffe ist jetzt equipped, nicht mehr am Boden
@@ -480,11 +627,9 @@ public partial class Player : BaseEntity<PlayerState>
 		{
 			_weaponPivotNode.AddChild(_currentWeapon);
 
-			// 7) Lokale Transform der Waffe resetten — auf dem Boden hatte sie
-			//    eine Welt-Position/Rotation, die hier nicht mehr gilt
+			// 7) Lokale Transform der Waffe resetten — Scale aus der Scene lesen
 			_currentWeapon.Position = Vector2.Zero;
 			_currentWeapon.Rotation = Mathf.DegToRad(_currentWeapon.ItemRotation);
-			_currentWeapon.Scale = scale;
 
 			// 8) Z-Index resetten — Weapon-Scenes haben z_index=1 für Boden-Darstellung,
 			//    aber am Spieler wird Z-Order von UpdateWeaponZIndex gesteuert
@@ -499,6 +644,7 @@ public partial class Player : BaseEntity<PlayerState>
 		}
 	}
 
+	// Wird von ProcessCommand (tick-basiert) aufgerufen — Visual + State werden dort gesetzt
 	public void EquipOffhand(PackedScene droppedScene, Texture2D texture, Rect2 region,
 		Vector2 scale, Vector2 offset, float rotation = 0f)
 	{
@@ -507,13 +653,10 @@ public partial class Player : BaseEntity<PlayerState>
 
 		_currentOffhandScene = droppedScene;
 		ApplyOffhandVisual(texture, region, scale, offset, rotation);
-
-		if (Multiplayer.HasMultiplayerPeer() && droppedScene != null)
-			Rpc(MethodName.SyncOffhandEquip, droppedScene.ResourcePath);
 	}
 
-	[Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = false, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
-	private void SyncOffhandEquip(string scenePath)
+	// Overload für State-basierte Syncs (Scene-Pfad statt einzelner Properties)
+	private void ApplyOffhandVisual(string scenePath)
 	{
 		var scene = GD.Load<PackedScene>(scenePath);
 		var item = scene.Instantiate<OffhandItem>();
@@ -561,30 +704,6 @@ public partial class Player : BaseEntity<PlayerState>
 		instance.Position = GlobalPosition;
 		instance.RotationDegrees = 45f;
 		GetParent().AddChild(instance);
-	}
-
-	// Sendet aktuelles Equipment an einen Late-Joiner per RpcId
-	public void SendEquipmentState(long targetPeer)
-	{
-		if (_currentWeapon != null)
-			RpcId(targetPeer, MethodName.SyncWeaponEquip, _currentWeapon.SceneFilePath, _currentWeapon.Scale);
-		if (_currentOffhandScene != null)
-			RpcId(targetPeer, MethodName.SyncOffhandEquip, _currentOffhandScene.ResourcePath);
-	}
-
-	// Wird vom neuen Client in _Ready() aufgerufen — Server schickt dann Equipment aller Spieler
-	[Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = false, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
-	private void RequestEquipmentSync()
-	{
-		long requester = Multiplayer.GetRemoteSenderId();
-		var parent = GetParent();
-		if (parent == null) return;
-
-		foreach (var child in parent.GetChildren())
-		{
-			if (child is Player p && p.Name.ToString() != requester.ToString())
-				p.SendEquipmentState(requester);
-		}
 	}
 
 	private void UpdateWeaponZIndex(string dirName)
