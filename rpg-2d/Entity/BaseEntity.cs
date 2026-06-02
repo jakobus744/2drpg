@@ -1,23 +1,14 @@
-﻿using Godot;
+using Godot;
 
 namespace RPG2d.Entity;
 
-public partial class BaseEntity : Node2D
+public abstract partial class BaseEntity<TState> : CharacterBody2D where TState : struct
 {
-    public struct State
-    {
-        [NetVar(Tolerance = 1f)]
-        public Vector2 Position;
-    
-        [NetVar(Tolerance = 1f)]
-        public Vector2 Velocity;
-    }
+    public NetworkStateBuffer<TState> StateBuffer = new();
+    public uint CurrentTick { get; protected set; }
 
-    public NetworkStateBuffer<State> StateBuffer = new();
-    
-    public virtual void ApplyServerState(uint tick, State serverState)
+    public virtual void ApplyServerState(uint tick, TState serverState)
     {
         StateBuffer.Set(tick, serverState);
-        Position = serverState.Position;
     }
 }

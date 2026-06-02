@@ -25,8 +25,8 @@ public partial class Hud : CanvasLayer
         if (Player.Player.LocalPlayer == null)
             return;
 
-        var state = Player.Player.LocalPlayer.Input.GetState(Player.Player.LocalPlayer.Input.CurrentTick);
-        if (state == null) return;
+        var player = Player.Player.LocalPlayer;
+        var state = player.StateBuffer.Get(player.CurrentTick);
         _healthBar.Value = state.Health;
         _staminaBar.Value = state.Stamina;
     }

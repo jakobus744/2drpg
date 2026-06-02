@@ -10,12 +10,11 @@ public partial class PlayerInput : Node
     private readonly List<string> _pressedDirections = [];
     private const int BufferSize = 128;
     private readonly PlayerCmd[] _commandBuffer = new PlayerCmd[BufferSize];
-    private readonly PlayerState[] _stateBuffer = new PlayerState[BufferSize];
 
     private readonly Queue<PlayerCmd> _serverCommandQueue = new Queue<PlayerCmd>();
 
     private PredictionDebug _debugDrawer;
-    
+
     public uint CurrentTick = 0;
     public uint LastTickAcknowledged = 0;
 
@@ -39,41 +38,31 @@ public partial class PlayerInput : Node
             var cmd = BuildPlayerCommand();
             cmd.Tick = CurrentTick;
 
-            // Command speichern, Verarbeiten und Ergebnis speichern.
             SetCommand(cmd.Tick, cmd);
-            var state = GetParent<Player>().ProcessCommand(GetState(CurrentTick - 1), cmd);
-            SetState(CurrentTick, state);
+            GetParent<Player>().ProcessCommand(cmd);
 
             if (!Multiplayer.IsServer())
                 RpcId(1, MethodName.ReceiveCommand, cmd.ToBytes());
         }
         else if (Multiplayer.IsServer())
         {
-            PlayerState state = null;
+            bool processed = false;
             while (_serverCommandQueue.Count > 0)
             {
                 var cmd = _serverCommandQueue.Dequeue();
                 CurrentTick = cmd.Tick;
-
-                state = GetParent<Player>().ProcessCommand(GetState(CurrentTick - 1), cmd);
-                SetState(CurrentTick, state);
+                GetParent<Player>().ProcessCommand(cmd);
+                processed = true;
             }
 
-            if (state != null)
+            if (processed)
             {
-                RpcId(Multiplayer.GetRemoteSenderId(), MethodName.ReceivePlayerState, CurrentTick, state.ToBytes());
+                var player = GetParent<Player>();
+                var state = player.StateBuffer.Get(CurrentTick);
+                RpcId(Multiplayer.GetRemoteSenderId(), MethodName.ReceivePlayerState,
+                    CurrentTick, player.StateBuffer.ToBytes(state));
             }
         }
-    }
-
-    public PlayerState GetState(uint tick)
-    {
-        return _stateBuffer[tick % BufferSize];
-    }
-
-    public void SetState(uint tick, PlayerState state)
-    {
-        _stateBuffer[tick % BufferSize] = state;
     }
 
     public PlayerCmd GetCommand(uint tick)
@@ -155,42 +144,39 @@ public partial class PlayerInput : Node
     [Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = false, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
     private void ReceivePlayerState(uint tickAcknowledged, byte[] stateData)
     {
-        var state = PlayerState.FromBytes(stateData);
+        var player = GetParent<Player>();
+        var serverState = player.StateBuffer.FromBytes(stateData);
 
         // Wir haben bereits einen neueren State verarbeitet
         if (tickAcknowledged < LastTickAcknowledged)
             return;
 
-        // Vergleichen mit dem Server
-        var predictedState = GetState(tickAcknowledged);
+        // Vergleichen mit dem Server via NetworkStateBuffer
+        var predictedState = player.StateBuffer.Get(tickAcknowledged);
 
         var unacknowledgedPath = new List<Vector2>();
         for (var i = tickAcknowledged + 1; i <= CurrentTick; i++)
         {
-            if (GetState(i) != null)
-            {
-                unacknowledgedPath.Add(GetState(i).Position);
-            }
+            unacknowledgedPath.Add(player.StateBuffer.Get(i).Position);
         }
 
-        _debugDrawer?.UpdateDebugData(state.Position, state.Velocity,  predictedState.Position, predictedState.Velocity, unacknowledgedPath);
-        if (state.Equals(predictedState))
+        _debugDrawer?.UpdateDebugData(serverState.Position, serverState.Velocity,
+            predictedState.Position, predictedState.Velocity, unacknowledgedPath);
+
+        if (!player.StateBuffer.IsDesynced(serverState, predictedState))
             return;
 
         GD.Print($"Reprediction nötig! Server State weicht von Prediction ab. Tick: {tickAcknowledged}");
-        GD.Print($"Server State: Pos({state.Position}), Vel({state.Velocity})");
+        GD.Print($"Server State: Pos({serverState.Position}), Vel({serverState.Velocity})");
         GD.Print($"Predicted State: Pos({predictedState.Position}), Vel({predictedState.Velocity})");
         LastTickAcknowledged = tickAcknowledged;
 
-        var player = GetParent<Player>();
-        player.ApplyState(state);
-        SetState(tickAcknowledged, state);
+        player.ApplyServerState(tickAcknowledged, serverState);
 
         for (var tick = tickAcknowledged + 1; tick <= CurrentTick; ++tick)
         {
-            var previousState = GetState(tick - 1);
             var cmd = GetCommand(tick);
-            SetState(tick, player.ProcessCommand(previousState, cmd));
+            player.ProcessCommand(cmd);
         }
     }
 }

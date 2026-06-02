@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using Godot;
 
 namespace RPG2d.GameManager;
@@ -12,6 +13,8 @@ public partial class GameManager : Node
 	private PackedScene _hudScene;
 
 	private const int Port = 8910;
+
+	private readonly HashSet<string> _removedItemPaths = new();
 
 	public override void _Ready()
 	{
@@ -40,7 +43,7 @@ public partial class GameManager : Node
 		GetTree().CurrentScene = newLevel;
 
 		SpawnHud(newLevel);
-		
+
 		AddPlayer(1);
 	}
 
@@ -56,7 +59,7 @@ public partial class GameManager : Node
 		Node newLevel = _mainLevelScene.Instantiate();
 		GetTree().Root.AddChild(newLevel);
 		GetTree().CurrentScene = newLevel;
-		
+
 		SpawnHud(newLevel);
 	}
 
@@ -71,6 +74,14 @@ public partial class GameManager : Node
 		playerInstance.Name = id.ToString();
 
 		GetTree().CurrentScene.AddChild(playerInstance);
+
+		// Sync bereits eingesammelte Items an den neuen Peer
+		if (_removedItemPaths.Count > 0)
+		{
+			var paths = new string[_removedItemPaths.Count];
+			_removedItemPaths.CopyTo(paths);
+			RpcId(id, MethodName.SyncRemovedItems, paths);
+		}
 	}
 
 	private void RemovePlayer(long id)
@@ -87,5 +98,23 @@ public partial class GameManager : Node
 	{
 		var hudInstance = _hudScene.Instantiate();
 		level.AddChild(hudInstance);
+	}
+
+	// Wird von PickupItem.RemoveItem aufgerufen wenn der Server das Item entfernt
+	public void TrackRemovedItem(NodePath path)
+	{
+		_removedItemPaths.Add(path);
+	}
+
+	// Läuft auf dem neuen Client: entfernt alle bereits eingesammelten Items
+	[Rpc(MultiplayerApi.RpcMode.Authority, CallLocal = false,
+	     TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
+	private void SyncRemovedItems(string[] paths)
+	{
+		foreach (var path in paths)
+		{
+			var item = GetTree().CurrentScene.GetNodeOrNull(path);
+			item?.QueueFree();
+		}
 	}
 }

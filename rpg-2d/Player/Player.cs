@@ -1,10 +1,11 @@
 using System;
 using Godot;
+using RPG2d.Entity;
 using RPG2d.World.Items;
 
 namespace RPG2d.Player;
 
-public partial class Player : CharacterBody2D
+public partial class Player : BaseEntity<PlayerState>
 {
 	private const float SpeedWalk = 70f;
 	private const float SpeedRun = 100f;
@@ -74,6 +75,14 @@ public partial class Player : CharacterBody2D
 		// YSort am Player selbst deaktivieren  der Parent (Welt) übernimmt das Sorting
 		YSortEnabled = false;
 
+		// Tick 0 mit Initialwerten befüllen, damit ProcessCommand immer einen Vorgänger hat
+		StateBuffer.Set(0, new PlayerState
+		{
+			Health = MaxHealth,
+			Stamina = MaxStamina,
+			Position = Position
+		});
+
 		// Primärer Sprite: neue Sprites ohne eingebautes Schwert
 		_anim = GetNode<AnimatedSprite2D>("Base Animation");
 		_anim.AnimationFinished += OnAnimationFinished;
@@ -103,6 +112,10 @@ public partial class Player : CharacterBody2D
 		Input = GetNodeOrNull<PlayerInput>("Input");
 		if (IsMultiplayerAuthority())
 			LocalPlayer = this;
+
+		// Late-Join: fordere Equipment-State von existierenden Spielern an
+		if (!Multiplayer.IsServer() && IsMultiplayerAuthority())
+			RpcId(1, MethodName.RequestEquipmentSync);
 	}
 
 	public override void _ExitTree()
@@ -129,7 +142,10 @@ public partial class Player : CharacterBody2D
 
 		// Animation des remote Spielers synchron halten
 		if (!string.IsNullOrEmpty(SyncAnimation))
+		{
 			_anim.Play(SyncAnimation);
+			PlayWeaponAnim(SyncAnimation);
+		}
 	}
 
 	// Von außen aufrufbar (z.B. durch Health-System bei Treffern)
@@ -159,22 +175,24 @@ public partial class Player : CharacterBody2D
 			_anim.Play(animName);
 	}
 
-	// Hauptschnittstelle: wird vom PlayerInput-System aufgerufen (lokal + Server)
-	// Verarbeitet einen Eingabe-Snapshot und gibt den resultierenden State zurück
-	public PlayerState ProcessCommand(PlayerState previousState, PlayerCmd cmd)
+	// Server-Authority RPC für externe Todes-Auslöser (Fallen, Umgebungsschaden, etc.)
+	[Rpc(MultiplayerApi.RpcMode.Authority, CallLocal = true, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
+	public void DieRpc(string dirName)
 	{
-		var state = previousState?.Clone() ?? new PlayerState
-		{
-			Position = Position,
-			Velocity = Velocity,
-			Stamina = MaxStamina,
-			Health = MaxHealth,
-		};
+		Die(dirName);
+	}
+
+	// Hauptschnittstelle: wird vom PlayerInput-System aufgerufen (lokal + Server)
+	// Liest vorherigen State aus StateBuffer, verarbeitet den Command und schreibt Ergebnis zurück
+	public void ProcessCommand(PlayerCmd cmd)
+	{
+		var state = StateBuffer.Get(cmd.Tick - 1);
 
 		if (_moveState == MoveState.Dead)
 		{
 			state.Velocity = Vector2.Zero;
-			return state;
+			StateBuffer.Set(cmd.Tick, state);
+			return;
 		}
 
 		// 1. Aktionen verarbeiten
@@ -242,7 +260,7 @@ public partial class Player : CharacterBody2D
 		state.Position = Position;
 		state.Velocity = Velocity;
 
-		return state;
+		StateBuffer.Set(cmd.Tick, state);
 	}
 
 	private void StartRoll(string dirName)
@@ -368,10 +386,16 @@ public partial class Player : CharacterBody2D
 	}
 
 	// Wird vom Server bei Reconciliation aufgerufen — setzt Position/Velocity hart zurück
-	public void ApplyState(PlayerState state)
+	public override void ApplyServerState(uint tick, PlayerState serverState)
 	{
-		Position = state.Position;
-		Velocity = state.Velocity;
+		base.ApplyServerState(tick, serverState);
+		Position = serverState.Position;
+		Velocity = serverState.Velocity;
+
+		// Action-Locks zurücksetzen, damit Reprediction nicht mit veralteten States startet
+		_isAttacking = false;
+		_isRolling = false;
+		_isHurt = false;
 	}
 
 	private void OnHitboxBodyEntered(Node2D body)
@@ -443,7 +467,8 @@ public partial class Player : CharacterBody2D
 			_weaponPivotNode.Rotation = 0;
 			_weaponPivotNode.Scale = Vector2.One;
 		}
-		_weaponAnim?.Seek(_weaponAnim.CurrentAnimationPosition, true);
+		if (_weaponAnim != null && !string.IsNullOrEmpty(_weaponAnim.CurrentAnimation))
+			_weaponAnim.Seek(_weaponAnim.CurrentAnimationPosition, true);
 
 		// 5) Altes WeaponSprite (Sprite2D) ausblenden — wird nicht mehr gebraucht,
 		//    da die Weapon-Scene ihr eigenes Sprite mitbringt
@@ -477,11 +502,29 @@ public partial class Player : CharacterBody2D
 	public void EquipOffhand(PackedScene droppedScene, Texture2D texture, Rect2 region,
 		Vector2 scale, Vector2 offset, float rotation = 0f)
 	{
-		if (_currentOffhandScene != null)
+		if (_currentOffhandScene != null && IsMultiplayerAuthority())
 			DropItem(_currentOffhandScene);
 
 		_currentOffhandScene = droppedScene;
+		ApplyOffhandVisual(texture, region, scale, offset, rotation);
 
+		if (Multiplayer.HasMultiplayerPeer() && droppedScene != null)
+			Rpc(MethodName.SyncOffhandEquip, droppedScene.ResourcePath);
+	}
+
+	[Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = false, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
+	private void SyncOffhandEquip(string scenePath)
+	{
+		var scene = GD.Load<PackedScene>(scenePath);
+		var item = scene.Instantiate<OffhandItem>();
+		ApplyOffhandVisual(item.ItemTexture, item.ItemRegion,
+			item.ItemScale, item.ItemOffset, item.ItemRotation);
+		item.QueueFree();
+	}
+
+	private void ApplyOffhandVisual(Texture2D texture, Rect2 region,
+		Vector2 scale, Vector2 offset, float rotation)
+	{
 		if (_shieldPivot == null) return;
 
 		// Pivot-Transform zurücksetzen — AnimationPlayer hinterlässt Position/Rotation
@@ -491,7 +534,8 @@ public partial class Player : CharacterBody2D
 			_offHandPivotNode.Rotation = 0;
 			_offHandPivotNode.Scale = Vector2.One;
 		}
-		_weaponAnim?.Seek(_weaponAnim.CurrentAnimationPosition, true);
+		if (_weaponAnim != null && !string.IsNullOrEmpty(_weaponAnim.CurrentAnimation))
+			_weaponAnim.Seek(_weaponAnim.CurrentAnimationPosition, true);
 
 		_shieldPivot.Texture = texture;
 		_shieldPivot.RegionEnabled = true;
@@ -506,10 +550,41 @@ public partial class Player : CharacterBody2D
 	private void DropItem(PackedScene scene)
 	{
 		if (scene == null) return;
+		Rpc(MethodName.DropItemRpc, scene.ResourcePath);
+	}
+
+	[Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
+	private void DropItemRpc(string scenePath)
+	{
+		var scene = GD.Load<PackedScene>(scenePath);
 		var instance = scene.Instantiate<Node2D>();
 		instance.Position = GlobalPosition;
 		instance.RotationDegrees = 45f;
 		GetParent().AddChild(instance);
+	}
+
+	// Sendet aktuelles Equipment an einen Late-Joiner per RpcId
+	public void SendEquipmentState(long targetPeer)
+	{
+		if (_currentWeapon != null)
+			RpcId(targetPeer, MethodName.SyncWeaponEquip, _currentWeapon.SceneFilePath, _currentWeapon.Scale);
+		if (_currentOffhandScene != null)
+			RpcId(targetPeer, MethodName.SyncOffhandEquip, _currentOffhandScene.ResourcePath);
+	}
+
+	// Wird vom neuen Client in _Ready() aufgerufen — Server schickt dann Equipment aller Spieler
+	[Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = false, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
+	private void RequestEquipmentSync()
+	{
+		long requester = Multiplayer.GetRemoteSenderId();
+		var parent = GetParent();
+		if (parent == null) return;
+
+		foreach (var child in parent.GetChildren())
+		{
+			if (child is Player p && p.Name.ToString() != requester.ToString())
+				p.SendEquipmentState(requester);
+		}
 	}
 
 	private void UpdateWeaponZIndex(string dirName)

@@ -54,5 +54,13 @@ public abstract partial class PickupItem : Area2D
     // RPC stellt sicher dass Item bei allen Clients verschwindet
     [Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true,
          TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
-    private void RemoveItem() => QueueFree();
+    private void RemoveItem()
+    {
+        if (Multiplayer.IsServer())
+        {
+            var gm = GetNodeOrNull<RPG2d.GameManager.GameManager>("/root/GameManager");
+            gm?.TrackRemovedItem(GetPath());
+        }
+        QueueFree();
+    }
 }
