@@ -34,6 +34,7 @@ public partial class Player : BaseEntity<PlayerState>
 	// Letzter Zustand wird gebraucht um zwischen zwei Idle-Varianten zu unterscheiden:
 	private MoveState _lastMoveState = MoveState.Idle;
 	private Vector2 _facingDirection = Vector2.Down;
+	private string _facingDirectionName = "down";
 
 	// Verhindert Bewegungs-/Animationsunterbrechung während Angriff, Rolle oder Treffer
 	// Dead sperrt zusätzlich alles dauerhaft bis Respawn
@@ -348,6 +349,7 @@ public partial class Player : BaseEntity<PlayerState>
 		else
 		{
 			_facingDirection = DirectionStringToVector(cmd.FacingDirection);
+				_facingDirectionName = cmd.FacingDirection;
 			_moveState = cmd.IsRunPressed ? MoveState.Run : MoveState.Walk;
 
 			var wishSpeed = SpeedWalk;
@@ -576,7 +578,7 @@ public partial class Player : BaseEntity<PlayerState>
 			{
 				Target = enemy,
 				Damage = _currentWeapon.Stats.Damage,
-				Direction = _facingDirection.ToString()
+				Direction = _facingDirectionName
 			});
 		}
 	}
