@@ -65,6 +65,7 @@ public partial class Player : BaseEntity<PlayerState>
 		public string Direction;
 	}
 	private readonly List<PendingHit> _pendingHits = new();
+	private readonly HashSet<Node2D> _hitBodies = new(); // verhindert Doppeltreffer pro Angriff
 	private float _pendingDamage;
 	private string _pendingDamageDir = "";
 
@@ -211,6 +212,7 @@ public partial class Player : BaseEntity<PlayerState>
 		if (_moveState == MoveState.Dead) return; // Keine Hurt-Anim wenn bereits tot
 
 		string animName = "hurt_" + dirName;
+		CancelAttack();
 		if (!_anim.SpriteFrames.HasAnimation(animName)) return;
 
 		_isHurt = true;
@@ -224,6 +226,7 @@ public partial class Player : BaseEntity<PlayerState>
 		if (_moveState == MoveState.Dead) return; // Nicht doppelt sterben
 		_moveState = MoveState.Dead;
 		Velocity = Vector2.Zero;
+		CancelAttack();
 
 		string animName = "death_" + dirName;
 		if (_anim.SpriteFrames.HasAnimation(animName))
@@ -250,6 +253,7 @@ public partial class Player : BaseEntity<PlayerState>
 			state.LastHurtTick = cmd.Tick;
 			if (!_isHurt)
 			{
+				CancelAttack();
 				string hurtAnim = "hurt_" + _pendingDamageDir;
 				if (_anim.SpriteFrames.HasAnimation(hurtAnim))
 					{
@@ -380,18 +384,20 @@ public partial class Player : BaseEntity<PlayerState>
 		StateBuffer.Set(cmd.Tick, state);
 	}
 
+	private void CancelAttack()
+	{
+		if (!_isAttacking) return;
+		_isAttacking = false;
+		_hitBodies.Clear();
+		if (_currentWeapon?.Hitbox != null)
+			_currentWeapon.Hitbox.SetDeferred("monitoring", false);
+	}
+
 	private void StartRoll(string dirName)
 	{
 		string animName = "roll_" + dirName;
 		if (!_anim.SpriteFrames.HasAnimation(animName)) return;
-
-		// Laufenden Angriff abbrechen — sonst bleibt _isAttacking true nach Roll
-		if (_isAttacking)
-		{
-			_isAttacking = false;
-			if (_currentWeapon?.Hitbox != null)
-				_currentWeapon.Hitbox.SetDeferred("monitoring", false);
-		}
+		CancelAttack();
 		_isHurt = false;
 
 		_isRolling = true;
@@ -491,12 +497,12 @@ public partial class Player : BaseEntity<PlayerState>
 		{
 			_isAttacking = false;
 
+			_hitBodies.Clear();
 			// Turn OFF the attack hitbox
 			if (_currentWeapon != null && _currentWeapon.Hitbox != null)
 				_currentWeapon.Hitbox.SetDeferred("monitoring", false);
 		}
 
-		if (name.Contains("attack")) _isAttacking = false;
 		if (name.Contains("roll")) _isRolling = false;
 		if (name.Contains("hurt")) _isHurt = false;
 		// "death" bewusst nicht hier — Dead-State bleibt bis Respawn von außen
@@ -560,6 +566,9 @@ public partial class Player : BaseEntity<PlayerState>
 
 		if (body is Player enemy && Multiplayer.IsServer() && _currentWeapon != null)
 		{
+			// Verhindert Doppeltreffer durch mehrere Collision Shapes oder erneuten BodyEntered
+			if (!_hitBodies.Add(body)) return;
+
 			GD.Print($"Hit enemy for {_currentWeapon.Stats.Damage} damage!");
 
 			// Queue damage for tick-based processing (statt direkt Hurt aufzurufen)
