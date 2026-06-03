@@ -25,10 +25,8 @@ public partial class SettingsMenu : Control
         _musicBus = AudioServer.GetBusIndex("Music");
         _sfxBus = AudioServer.GetBusIndex("SFX");
         
-        // Gespeicherte Config laden und auf AudioServer anwenden
         LoadConfig();
 
-        // Aktuelle AudioServer-Werte in Slider übernehmen
         if (_musicBus >= 0 && _musicSlider != null)
         {
             _savedMusicVolume = Mathf.DbToLinear(AudioServer.GetBusVolumeDb(_musicBus));
@@ -41,12 +39,10 @@ public partial class SettingsMenu : Control
             _sfxSlider.Value = _savedSfxVolume;
         }
 
-        // Fullscreen-Status aus Config lesen (nicht aus WindowMode, da Embedded immer Windowed meldet)
         _savedFullscreen = LoadFullscreenFromConfig();
         if (_fullscreenToggle != null)
             _fullscreenToggle.ButtonPressed = _savedFullscreen;
 
-        // Buttons
         if (_closeButton != null)
             _closeButton.Pressed += () => QueueFree();
         if (_backButton != null)
@@ -56,7 +52,6 @@ public partial class SettingsMenu : Control
         if (_declineButton != null)
             _declineButton.Pressed += Decline;
 
-        // Live-Preview beim Schieben
         if (_musicBus >= 0 && _musicSlider != null)
             _musicSlider.ValueChanged += v =>
                 AudioServer.SetBusVolumeDb(_musicBus, Mathf.LinearToDb((float)v));
@@ -71,7 +66,6 @@ public partial class SettingsMenu : Control
     {
         var config = new ConfigFile();
 
-        // Aktuelle Slider-Werte speichern
         if (_musicSlider != null)
             config.SetValue("audio", "music_volume", (float)_musicSlider.Value);
         if (_sfxSlider != null)
@@ -86,7 +80,6 @@ public partial class SettingsMenu : Control
 
     private void Decline()
     {
-        // Alte Werte wiederherstellen
         if (_musicBus >= 0)
             AudioServer.SetBusVolumeDb(_musicBus, Mathf.LinearToDb(_savedMusicVolume));
         if (_sfxBus >= 0)
@@ -101,7 +94,6 @@ public partial class SettingsMenu : Control
         if (config.Load(ConfigPath) != Error.Ok)
             return;
 
-        // Music-Bus
         int musicBus = AudioServer.GetBusIndex("Music");
         if (musicBus >= 0 && config.HasSectionKey("audio", "music_volume"))
         {
@@ -109,7 +101,6 @@ public partial class SettingsMenu : Control
             AudioServer.SetBusVolumeDb(musicBus, Mathf.LinearToDb(vol));
         }
 
-        // SFX-Bus (Fallback auf Master)
         int sfxBus = AudioServer.GetBusIndex("SFX");
         if (sfxBus >= 0 && config.HasSectionKey("audio", "sfx_volume"))
         {
@@ -117,7 +108,6 @@ public partial class SettingsMenu : Control
             AudioServer.SetBusVolumeDb(sfxBus, Mathf.LinearToDb(vol));
         }
 
-        // Fullscreen
         if (config.HasSectionKey("video", "fullscreen"))
         {
             bool fs = (bool)config.GetValue("video", "fullscreen");
@@ -128,7 +118,6 @@ public partial class SettingsMenu : Control
     }
 
 
-    // Borderless-Fullscreen als Workaround für Godot Embedded-Window-Limitierung.
     private static bool LoadFullscreenFromConfig()
     {
         var config = new ConfigFile();

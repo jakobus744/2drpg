@@ -33,13 +33,10 @@ public partial class Player : BaseEntity<PlayerState>
 
 	private MoveState _moveState = MoveState.Idle;
 
-	// Letzter Zustand wird gebraucht um zwischen zwei Idle-Varianten zu unterscheiden:
 	private MoveState _lastMoveState = MoveState.Idle;
 	private Vector2 _facingDirection = Vector2.Down;
 	private string _facingDirectionName = "down";
 
-	// Verhindert Bewegungs-/Animationsunterbrechung während Angriff, Rolle oder Treffer
-	// Dead sperrt zusätzlich alles dauerhaft bis Respawn
 	private bool _isAttacking = false;
 	private bool _isRolling = false;
 	private bool _isHurt = false;
@@ -53,14 +50,11 @@ public partial class Player : BaseEntity<PlayerState>
 	private Sprite2D _weaponPivot;
 	private Sprite2D _shieldPivot;
 
-	// Aktuell ausgerüstete Szenen  gebraucht um beim Item-Tausch das alte Item fallen zu lassen
 	private PackedScene _currentOffhandScene;
 	private WeaponItem _currentWeapon;
 
-	// Tick-based pickup: zuletzt betretener PickupItem in Reichweite (Input-Sensing)
 	private PickupItem _nearbyPickup;
 
-	// Tick-based damage: Treffer werden hier gesammelt und in ProcessCommand verarbeitet
 	private struct PendingHit
 	{
 		public Player Target;
@@ -68,15 +62,13 @@ public partial class Player : BaseEntity<PlayerState>
 		public string Direction;
 	}
 	private readonly List<PendingHit> _pendingHits = new();
-	private readonly HashSet<Node2D> _hitBodies = new(); // verhindert Doppeltreffer pro Angriff
+	private readonly HashSet<Node2D> _hitBodies = new();
 	private float _pendingDamage;
 	private string _pendingDamageDir = "";
 
-	// Remote sync tracking: nur bei Änderung Waffen-Visual neu laden
 	private string _lastSyncWeaponPath = "";
 	private string _lastSyncOffhandPath = "";
 
-	// Multiplayer: Server schreibt Position + Animation, Clients lesen und interpolieren
 	[Export] public Vector2 SyncPosition = Vector2.Zero;
 	[Export] public string SyncAnimation = "";
 	[Export] public string SyncWeaponPath = "";
@@ -87,20 +79,16 @@ public partial class Player : BaseEntity<PlayerState>
 
 	public override void _EnterTree()
 	{
-		// Node-Name ist die PeerId des Besitzers (gesetzt vom Lobby-System)
-		// SetMultiplayerAuthority bestimmt wer Input schicken darf
 		if (int.TryParse(Name, out int peerId))
 			SetMultiplayerAuthority(peerId);
 		else
-			SetMultiplayerAuthority(1); // Fallback: Server hat Kontrolle
+			SetMultiplayerAuthority(1);
 	}
 
 	public override void _Ready()
 	{
-		// YSort am Player selbst deaktivieren  der Parent (Welt) übernimmt das Sorting
 		YSortEnabled = false;
 
-		// Tick 0 mit Initialwerten befüllen, damit ProcessCommand immer einen Vorgänger hat
 		StateBuffer.Set(0, new PlayerState
 		{
 			Health = MaxHealth,
@@ -108,16 +96,13 @@ public partial class Player : BaseEntity<PlayerState>
 			Position = Position
 		});
 
-		// Primärer Sprite: neue Sprites ohne eingebautes Schwert
 		_anim = GetNode<AnimatedSprite2D>("Base Animation");
 		_anim.AnimationFinished += OnAnimationFinished;
 
-		// Altes Sprite (Swordsman mit eingebautem Schwert) ausblenden  nicht mehr aktiv
 		GetNodeOrNull<AnimatedSprite2D>("AnimatedSprite2D")?.Hide();
 
 		_weaponAnim = GetNodeOrNull<AnimationPlayer>("AnimationPlayer");
 
-		// WeaponSprite und ShieldSprite starten unsichtbar werden sichtbar wenn Item equipped
 		_weaponPivotNode = GetNodeOrNull<Node2D>("WeaponPivot");
 		_offHandPivotNode = GetNodeOrNull<Node2D>("OffHandPivot");
 		_weaponPivot = GetNodeOrNull<Sprite2D>("WeaponPivot/WeaponSprite");
@@ -125,11 +110,9 @@ public partial class Player : BaseEntity<PlayerState>
 		if (_weaponPivot != null) _weaponPivot.Visible = false;
 		if (_shieldPivot != null) _shieldPivot.Visible = false;
 
-		// ServerSynchronizer gehört dem Server er liest SyncPosition/SyncAnimation und verteilt sie
 		var sync = GetNodeOrNull<MultiplayerSynchronizer>("ServerSynchronizer");
 		sync?.SetMultiplayerAuthority(1);
 
-		// Kamera nur beim lokalen Spieler aktivieren
 		var camera = GetNodeOrNull<Camera2D>("Camera2D");
 		if (camera != null)
 			camera.Enabled = IsMultiplayerAuthority();
@@ -145,17 +128,14 @@ public partial class Player : BaseEntity<PlayerState>
 			LocalPlayer = null;
 	}
 
-	// Wird von PickupItem.BodyEntered/BodyExited aufgerufen — nur Input-Sensing, keine Gameplay-Logik
 	public void RegisterNearbyPickup(PickupItem item) => _nearbyPickup = item;
 	public void UnregisterNearbyPickup(PickupItem item)
 	{
 		if (_nearbyPickup == item) _nearbyPickup = null;
 	}
 
-	// Scene-Pfad des nächstgelegenen Pickups — für PlayerCmd.InteractTargetPath
 	public string NearbyPickupPath => _nearbyPickup?.SceneFilePath ?? "";
 
-	// Tick-basierter Schaden: wird vom Angreifer aufgerufen, im nächsten ProcessCommand verarbeitet
 	public void QueueDamage(float amount, string direction)
 	{
 		_pendingDamage += amount;
@@ -164,8 +144,6 @@ public partial class Player : BaseEntity<PlayerState>
 
 	public override void _PhysicsProcess(double delta)
 	{
-		// Server schreibt laufend Position + Animation + Waffen-State in die Sync-Exports
-		// MultiplayerSynchronizer überträgt diese an alle Clients
 		if (Multiplayer.IsServer())
 		{
 			SyncPosition = Position;
@@ -174,20 +152,16 @@ public partial class Player : BaseEntity<PlayerState>
 			SyncOffhandPath = _currentOffhandScene?.ResourcePath ?? "";
 		}
 
-		// Lokaler Spieler wird durch ProcessCommand gesteuert, nicht hier
 		if (IsMultiplayerAuthority()) return;
 
-		// Remote-Spieler: Position interpolieren (verhindert Rucken bei Netzwerklatenz)
 		Position = Position.Lerp(SyncPosition, (float)delta * 15f);
 
-		// Animation des remote Spielers synchron halten
 		if (!string.IsNullOrEmpty(SyncAnimation))
 		{
 			_anim.Play(SyncAnimation);
 			PlayWeaponAnim(SyncAnimation);
 		}
 
-		// Weapon-Visuals nur bei Änderung neu laden
 		if (SyncWeaponPath != _lastSyncWeaponPath)
 		{
 			if (!string.IsNullOrEmpty(SyncWeaponPath))
@@ -207,12 +181,10 @@ public partial class Player : BaseEntity<PlayerState>
 		}
 	}
 
-	// Von außen aufrufbar (z.B. durch Health-System bei Treffern)
-	// Kurze Unterbrechung: Hurt-Animation läuft durch, danach normal weiter
 	[Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = false, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
 	public void Hurt(string dirName)
 	{
-		if (_moveState == MoveState.Dead) return; // Keine Hurt-Anim wenn bereits tot
+		if (_moveState == MoveState.Dead) return;
 
 		string animName = "hurt_" + dirName;
 		CancelAttack();
@@ -222,11 +194,9 @@ public partial class Player : BaseEntity<PlayerState>
 		_anim.Play(animName);
 	}
 
-	// Von außen aufrufbar (z.B. durch Health-System wenn HP auf 0 fällt)
-	// Setzt State auf Dead, spielt Death-Animation, blockiert danach allen Input
 	public void Die(string dirName)
 	{
-		if (_moveState == MoveState.Dead) return; // Nicht doppelt sterben
+		if (_moveState == MoveState.Dead) return;
 		_moveState = MoveState.Dead;
 		Velocity = Vector2.Zero;
 		CancelAttack();
@@ -236,21 +206,17 @@ public partial class Player : BaseEntity<PlayerState>
 			_anim.Play(animName);
 	}
 
-	// Server-Authority RPC für externe Todes-Auslöser (Fallen, Umgebungsschaden, etc.)
 	[Rpc(MultiplayerApi.RpcMode.Authority, CallLocal = true, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
 	public void DieRpc(string dirName)
 	{
 		Die(dirName);
 	}
 
-	// Hauptschnittstelle: wird vom PlayerInput-System aufgerufen (lokal + Server)
-	// Liest vorherigen State aus StateBuffer, verarbeitet den Command und schreibt Ergebnis zurück
 	public void ProcessCommand(PlayerCmd cmd)
 	{
 		var state = StateBuffer.Get(cmd.Tick - 1);
-		CurrentTick = cmd.Tick; // zuerst lesen dann schreiben
+		CurrentTick = cmd.Tick;
 
-		// 0. Eingehenden Schaden verarbeiten (tick-basiert, vom Server autoritativ)
 		if (_pendingDamage > 0)
 		{
 			state.Health -= _pendingDamage;
@@ -272,11 +238,11 @@ public partial class Player : BaseEntity<PlayerState>
 				Rpc("Hurt", hurtDir);
 		}
 
-		// 0b. Equip verarbeiten (tick-basiert, Input kommt via PlayerCmd.IsInteractPressed)
+		// 0b. Equip verarbeiten
 		if (cmd.IsInteractPressed && _nearbyPickup != null)
 		{
 			var pickup = _nearbyPickup;
-			_nearbyPickup = null; // verbraucht — kein Re-Equip während Reprediction
+			_nearbyPickup = null;
 
 			if (pickup is WeaponItem weapon)
 			{
@@ -296,7 +262,7 @@ public partial class Player : BaseEntity<PlayerState>
 				state.EquippedOffhandPath = pickup.SceneFilePath;
 			}
 
-			// Nur der Server entfernt das Item authoritativ — Client predicted nur das Visual
+			// Nur der Server entfernt das Item authoritativ
 			if (Multiplayer.HasMultiplayerPeer())
 			{
 				if (Multiplayer.IsServer())
@@ -304,12 +270,11 @@ public partial class Player : BaseEntity<PlayerState>
 			}
 			else
 			{
-				pickup.QueueFree(); // Single-Player
+				pickup.QueueFree();
 			}
 		}
 
-		// 0c. Ausgehende Treffer an Ziele weiterleiten (tick-basiert)
-		foreach (var hit in _pendingHits)
+	foreach (var hit in _pendingHits)
 			hit.Target.QueueDamage(hit.Damage, hit.Direction);
 		_pendingHits.Clear();
 
@@ -320,7 +285,6 @@ public partial class Player : BaseEntity<PlayerState>
 			return;
 		}
 
-		// 1. Aktionen verarbeiten
 		if (cmd.IsAttackPressed && !IsActionLocked && _currentWeapon != null)
 		{
 			float attackCost = GetAttackStaminaCost();
@@ -341,8 +305,7 @@ public partial class Player : BaseEntity<PlayerState>
 			}
 		}
 
-		// 2. Bewegung verarbeiten
-		if (cmd.MovementVector == Vector2.Zero)
+	if (cmd.MovementVector == Vector2.Zero)
 		{
 			_lastMoveState = _moveState;
 			_moveState = MoveState.Idle;
@@ -392,8 +355,7 @@ public partial class Player : BaseEntity<PlayerState>
 		if (state.IsExhausted && state.Stamina >= stoprun)
 			state.IsExhausted = false;
 
-		// 3. Animation + Physik
-		UpdateAnimation(cmd.FacingDirection);
+	UpdateAnimation(cmd.FacingDirection);
 		MoveAndSlide();
 
 		state.Position = Position;
@@ -425,7 +387,7 @@ public partial class Player : BaseEntity<PlayerState>
 
 	private void StartAttack(string dirName)
 	{
-		if (_currentWeapon == null) return; // Kann nicht angreifen ohne Waffe
+		if (_currentWeapon == null) return;
 		string animName = GetAttackAnimationName(dirName);
 		if (!_anim.SpriteFrames.HasAnimation(animName)) return;
 
@@ -437,7 +399,6 @@ public partial class Player : BaseEntity<PlayerState>
 		PlayWeaponAnim(animName);
 	}
 
-	// Stamina-Kosten pro Angriff: Basis aus WeaponData × Bewegungs-Multiplikator
 	private float GetAttackStaminaCost()
 	{
 		var stats = _currentWeapon.Stats;
@@ -445,7 +406,7 @@ public partial class Player : BaseEntity<PlayerState>
 		{
 			MoveState.Run => stats.AttackStaminaCost * stats.RunAttackMultiplier,
 			MoveState.Walk => stats.AttackStaminaCost * stats.WalkAttackMultiplier,
-			_ => stats.AttackStaminaCost, // Idle = Basis-Kosten
+			_ => stats.AttackStaminaCost,
 		};
 	}
 
@@ -458,14 +419,11 @@ public partial class Player : BaseEntity<PlayerState>
 
 	private void UpdateAnimation(string dirName)
 	{
-		// Während Angriff/Rolle/Tod läuft die Animation bereits nicht unterbrechen
-		if (IsActionLocked) return;
+	if (IsActionLocked) return;
 
 		switch (_moveState)
 		{
 			case MoveState.Idle:
-				// Zwei Idle-Varianten: .1 nach Walk, .2 nach Sprint
-				// Fällt auf "idle_*" zurück falls Variante nicht existiert
 				PlayIdleAnimation(dirName);
 				PlayWeaponAnim("idle_" + dirName);
 				break;
@@ -475,7 +433,6 @@ public partial class Player : BaseEntity<PlayerState>
 				break;
 			case MoveState.Run:
 				_anim.Play("run_" + dirName);
-				// Falls AnimationPlayer keine run_*-Animation hat: Waffe bleibt auf letzter Position
 				PlayWeaponAnim("run_" + dirName);
 				break;
 		}
@@ -485,12 +442,10 @@ public partial class Player : BaseEntity<PlayerState>
 
 	private void PlayIdleAnimation(string dir)
 	{
-		// Nach Sprint andere Idle-Variante als nach normalem Laufen
 		string anim = _lastMoveState == MoveState.Run
 			? "idle_" + dir + ".2"
 			: "idle_" + dir + ".1";
 
-		// Fallback falls Variante nicht in SpriteFrames definiert
 		if (!_anim.SpriteFrames.HasAnimation(anim))
 			anim = "idle_" + dir;
 
@@ -506,7 +461,6 @@ public partial class Player : BaseEntity<PlayerState>
 		_ => Vector2.Zero,
 	};
 
-	// Wird aufgerufen wenn eine nicht-loopende Animation (Angriff, Rolle, Treffer) fertig ist
 	private void OnAnimationFinished()
 	{
 		var name = _anim.Animation.ToString();
@@ -516,29 +470,24 @@ public partial class Player : BaseEntity<PlayerState>
 			_isAttacking = false;
 
 			_hitBodies.Clear();
-			// Turn OFF the attack hitbox
 			if (_currentWeapon != null && _currentWeapon.Hitbox != null)
 				_currentWeapon.Hitbox.SetDeferred("monitoring", false);
 		}
 
 		if (name.Contains("roll")) _isRolling = false;
 		if (name.Contains("hurt")) _isHurt = false;
-		// "death" bewusst nicht hier — Dead-State bleibt bis Respawn von außen
 	}
 
-	// Wird vom Server bei Reconciliation aufgerufen — setzt Position/Velocity hart zurück
 	public override void ApplyServerState(uint tick, PlayerState serverState)
 	{
 		base.ApplyServerState(tick, serverState);
 		Position = serverState.Position;
 		Velocity = serverState.Velocity;
 
-		// Action-Locks zurücksetzen, damit Reprediction nicht mit veralteten States startet
 		_isAttacking = false;
 		_isRolling = false;
 		_isHurt = false;
 
-		// Weapon-Reconciliation: falls Server eine andere Waffe hat als angezeigt
 		string currentWeaponPath = _currentWeapon?.SceneFilePath ?? "";
 		if (serverState.EquippedWeaponPath != currentWeaponPath)
 		{
@@ -548,7 +497,6 @@ public partial class Player : BaseEntity<PlayerState>
 				HideWeaponVisual();
 		}
 
-		// Offhand-Reconciliation
 		string currentOffhandPath = _currentOffhandScene?.ResourcePath ?? "";
 		if (serverState.EquippedOffhandPath != currentOffhandPath)
 		{
@@ -581,15 +529,14 @@ public partial class Player : BaseEntity<PlayerState>
 	{
 		// Don't hit yourself!
 		if (body == this) return;
+		if (!Multiplayer.IsServer() || _currentWeapon == null) return;
 
-		if (body is Player enemy && Multiplayer.IsServer() && _currentWeapon != null)
+		if (!_hitBodies.Add(body)) return;
+
+		if (body is Player enemy)
 		{
-			// Verhindert Doppeltreffer durch mehrere Collision Shapes oder erneuten BodyEntered
-			if (!_hitBodies.Add(body)) return;
-
 			GD.Print($"Hit enemy for {_currentWeapon.Stats.Damage} damage!");
 
-			// Queue damage for tick-based processing (statt direkt Hurt aufzurufen)
 			_pendingHits.Add(new PendingHit
 			{
 				Target = enemy,
@@ -597,9 +544,13 @@ public partial class Player : BaseEntity<PlayerState>
 				Direction = _facingDirectionName
 			});
 		}
+		else if (body is MobBase mob)
+		{
+			GD.Print($"Hit mob for {_currentWeapon.Stats.Damage} damage!");
+			mob.TakeDamage(_currentWeapon.Stats.Damage);
+		}
 	}
 
-	// Wird von ProcessCommand (tick-basiert) aufgerufen — Visual + State werden dort gesetzt
 	public void EquipWeapon(WeaponItem groundItem)
 	{
 		if (_currentWeapon != null && IsMultiplayerAuthority())
@@ -610,7 +561,6 @@ public partial class Player : BaseEntity<PlayerState>
 
 	private void ApplyWeaponAttachment(string scenePath)
 	{
-		// 1) Alte Waffe aufräumen — Hitbox-Event abmelden, Node entfernen
 		if (_currentWeapon != null)
 		{
 			if (_currentWeapon.Hitbox != null)
@@ -619,7 +569,6 @@ public partial class Player : BaseEntity<PlayerState>
 			_currentWeapon.QueueFree();
 		}
 
-		// 2) Neue Waffe instantiieren (Scene-Pfad kommt aus State oder Sync-Export)
 		var weaponScene = GD.Load<PackedScene>(scenePath);
 		if (weaponScene == null)
 		{
@@ -628,13 +577,10 @@ public partial class Player : BaseEntity<PlayerState>
 		}
 		_currentWeapon = weaponScene.Instantiate<WeaponItem>();
 
-		// 3) Pickup-Logik deaktivieren — Waffe ist jetzt equipped, nicht mehr am Boden
 		_currentWeapon.IsEquipped = true;
 		_currentWeapon.Monitoring = false;
 		_currentWeapon.Monitorable = false;
 
-		// 4) Pivot-Transform zurücksetzen — AnimationPlayer hinterlässt Position/Rotation
-		//    vom letzten Frame der vorherigen Animation. Ohne Reset sitzt die neue Waffe schief.
 		if (_weaponPivotNode != null)
 		{
 			_weaponPivotNode.Position = Vector2.Zero;
@@ -644,25 +590,18 @@ public partial class Player : BaseEntity<PlayerState>
 		if (_weaponAnim != null && !string.IsNullOrEmpty(_weaponAnim.CurrentAnimation))
 			_weaponAnim.Seek(_weaponAnim.CurrentAnimationPosition, true);
 
-		// 5) Altes WeaponSprite (Sprite2D) ausblenden — wird nicht mehr gebraucht,
-		//    da die Weapon-Scene ihr eigenes Sprite mitbringt
 		if (_weaponPivot != null)
 			_weaponPivot.Visible = false;
 
-		// 6) Weapon-Scene als Kind von WeaponPivot einhängen
 		if (_weaponPivotNode != null)
 		{
 			_weaponPivotNode.AddChild(_currentWeapon);
 
-			// 7) Lokale Transform der Waffe resetten — Scale aus der Scene lesen
 			_currentWeapon.Position = Vector2.Zero;
 			_currentWeapon.Rotation = Mathf.DegToRad(_currentWeapon.ItemRotation);
 
-			// 8) Z-Index resetten — Weapon-Scenes haben z_index=1 für Boden-Darstellung,
-			//    aber am Spieler wird Z-Order von UpdateWeaponZIndex gesteuert
 			_currentWeapon.ZIndex = 0;
 
-			// 9) Hitbox vorbereiten — startet deaktiviert, wird bei Attack-State eingeschaltet
 			if (_currentWeapon.Hitbox != null)
 			{
 				_currentWeapon.Hitbox.Monitoring = false;
@@ -671,7 +610,6 @@ public partial class Player : BaseEntity<PlayerState>
 		}
 	}
 
-	// Wird von ProcessCommand (tick-basiert) aufgerufen — Visual + State werden dort gesetzt
 	public void EquipOffhand(PackedScene droppedScene, Texture2D texture, Rect2 region,
 		Vector2 scale, Vector2 offset, float rotation = 0f)
 	{
@@ -682,7 +620,6 @@ public partial class Player : BaseEntity<PlayerState>
 		ApplyOffhandVisual(texture, region, scale, offset, rotation);
 	}
 
-	// Overload für State-basierte Syncs (Scene-Pfad statt einzelner Properties)
 	private void ApplyOffhandVisual(string scenePath)
 	{
 		var scene = GD.Load<PackedScene>(scenePath);
@@ -697,7 +634,6 @@ public partial class Player : BaseEntity<PlayerState>
 	{
 		if (_shieldPivot == null) return;
 
-		// Pivot-Transform zurücksetzen — AnimationPlayer hinterlässt Position/Rotation
 		if (_offHandPivotNode != null)
 		{
 			_offHandPivotNode.Position = Vector2.Zero;
@@ -716,7 +652,6 @@ public partial class Player : BaseEntity<PlayerState>
 		_shieldPivot.Visible = true;
 	}
 
-	// Instanziiert das Item als Node2D an der aktuellen Spielerposition in der Welt
 	private void DropItem(PackedScene scene)
 	{
 		if (scene == null) return;
@@ -746,12 +681,10 @@ public partial class Player : BaseEntity<PlayerState>
 		_weaponPivotNode.ZIndex = 0;
 	}
 
-	// AnimationPlayer für WeaponPivot abspielen — nur wenn Animation wechselt
-	// Sprite (_anim) und AnimationPlayer laufen gleiche FPS → bleiben synchron ohne Frame-Sync
 	private void PlayWeaponAnim(string animName)
 	{
 		if (_weaponAnim == null) return;
-		if (_weaponAnim.CurrentAnimation == animName) return; // Läuft bereits
+		if (_weaponAnim.CurrentAnimation == animName) return;
 		if (_weaponAnim.HasAnimation(animName))
 			_weaponAnim.Play(animName);
 	}

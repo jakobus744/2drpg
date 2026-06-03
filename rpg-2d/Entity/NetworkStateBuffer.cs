@@ -15,7 +15,6 @@ public class NetworkStateBuffer<T> where T : struct
     
     public NetworkStateBuffer()
     {
-        // Einmalig mit Reflection die Typen holen und Cachen
         var fields = typeof(T).GetFields(BindingFlags.Public | BindingFlags.Instance);
         
         foreach (var field in fields)

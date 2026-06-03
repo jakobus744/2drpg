@@ -52,12 +52,10 @@ public partial class PredictionDebug : Node2D
     {
         if (!_hasData || !_showDebug) return;
 
-        // Magenta Fehler Linie
         DrawLine(_historicalPredictedPosition, _serverPosition, new Color(1f, 0f, 1f, 1f), 2f);
         
         DrawCircle(_historicalPredictedPosition, 4f, new Color(1f, 1f, 0f, 1f));
 
-        // Predicted Pfad 
         if (_unacknowledgedPath.Count > 1)
         {
             for (int i = 0; i < _unacknowledgedPath.Count - 1; i++)
@@ -66,15 +64,12 @@ public partial class PredictionDebug : Node2D
             }
         }
         
-        // Pred Vel
         if (_predictedVel != Vector2.Zero)
         {
             DrawLine(_historicalPredictedPosition, _historicalPredictedPosition + _predictedVel * 0.2f, new Color(1f, 1f, 0f, 0.5f), 2f);
         }        
 
-        // Server Pos
         DrawCircle(_serverPosition, 12f, new Color(0f, 1f, 0f, 0.5f));
-        // Server Vel
         if (_serverVelocity != Vector2.Zero)
         {
             DrawLine(_serverPosition, _serverPosition + _serverVelocity * 0.2f, new Color(0f, 1f, 0f, 0.5f), 2f);

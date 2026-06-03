@@ -14,7 +14,6 @@ public struct PlayerCmd
 	public bool IsInteractPressed;
 	public string InteractTargetPath;
 
-	// Serialization für Godot Networking
 	public byte[] ToBytes()
 	{
 		using var stream = new MemoryStream();
