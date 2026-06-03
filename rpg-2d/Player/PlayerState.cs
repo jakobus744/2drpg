@@ -12,6 +12,7 @@ public struct PlayerState
     [NetVar(Tolerance = 1f)] public float Health;
     [NetVar] public uint LastHurtTick;
     [NetVar] public uint NextAttackTick;
+    [NetVar] public bool IsExhausted;
     [NetVar] public string EquippedWeaponPath = "";
     [NetVar] public string EquippedOffhandPath = "";
 }

@@ -24,8 +24,7 @@ public partial class SettingsMenu : Control
     {
         _musicBus = AudioServer.GetBusIndex("Music");
         _sfxBus = AudioServer.GetBusIndex("SFX");
-
-
+        
         // Gespeicherte Config laden und auf AudioServer anwenden
         LoadConfig();
 
@@ -145,3 +144,5 @@ public partial class SettingsMenu : Control
             : DisplayServer.WindowMode.Windowed);
     }
 }
+
+

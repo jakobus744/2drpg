@@ -7,8 +7,9 @@
 [sub_resource type="Resource" id="Resource_frf72"]
 script = ExtResource("2_cnvmk")
 WeaponName = "Sword"
-AttackCooldownTicks = 25
-AttackStaminaCost = 5.0
+AttackStaminaCost = 8.0
+WalkAttackMultiplier = 1.5
+RunAttackMultiplier = 2.0
 metadata/_custom_type_script = "uid://c4rd17rbw62vc"
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_frf72"]

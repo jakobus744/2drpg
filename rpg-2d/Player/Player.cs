@@ -15,11 +15,13 @@ public partial class Player : BaseEntity<PlayerState>
 	private const float HealthRecovery = 1f;
 
 	private const float MaxStamina = 100f;
-	private const float StaminaRecovery = .8f;
-	private const float MovingStaminaRecovery = .2f;
-	private const float RollCost = 20f;
-	private const float SprintCost = .10f;
-	private const float SprintFalloff = 33f;
+	private const float StaminaRecovery = .80f;
+	private const float MovingStaminaRecovery = .25f;
+	private const float RollCost = 5f;
+	private const float SprintCost = .2f;
+	private const float SprintFalloff = 35f;
+
+	private const float stoprun = 25f;
 
 	public enum MoveState
 	{
@@ -246,6 +248,7 @@ public partial class Player : BaseEntity<PlayerState>
 	public void ProcessCommand(PlayerCmd cmd)
 	{
 		var state = StateBuffer.Get(cmd.Tick - 1);
+		CurrentTick = cmd.Tick; // zuerst lesen dann schreiben
 
 		// 0. Eingehenden Schaden verarbeiten (tick-basiert, vom Server autoritativ)
 		if (_pendingDamage > 0)
@@ -257,10 +260,10 @@ public partial class Player : BaseEntity<PlayerState>
 				CancelAttack();
 				string hurtAnim = "hurt_" + _pendingDamageDir;
 				if (_anim.SpriteFrames.HasAnimation(hurtAnim))
-					{
-						_isHurt = true;
+				{
+					_isHurt = true;
 					_anim.Play(hurtAnim);
-					}
+				}
 			}
 			string hurtDir = _pendingDamageDir;
 			_pendingDamage = 0f;
@@ -349,16 +352,26 @@ public partial class Player : BaseEntity<PlayerState>
 		else
 		{
 			_facingDirection = DirectionStringToVector(cmd.FacingDirection);
-				_facingDirectionName = cmd.FacingDirection;
-			_moveState = cmd.IsRunPressed ? MoveState.Run : MoveState.Walk;
+			_facingDirectionName = cmd.FacingDirection;
+			if (cmd.IsRunPressed && !state.IsExhausted && state.Stamina > SprintCost)
+			{
+				_moveState = MoveState.Run;
+			}
+			else
+			{
+				_moveState = MoveState.Walk;
+			}
 
 			var wishSpeed = SpeedWalk;
-			if (cmd.IsRunPressed && state.Stamina > SprintCost)
+			if (_moveState == MoveState.Run)
 			{
 				wishSpeed = state.Stamina <= SprintFalloff
 					? SpeedWalk + (SpeedRun - SpeedWalk) * (state.Stamina / SprintFalloff)
 					: SpeedRun;
 				state.Stamina -= SprintCost;
+
+				if (state.Stamina <= SprintCost)
+					state.IsExhausted = true;
 			}
 			else
 			{
@@ -375,6 +388,9 @@ public partial class Player : BaseEntity<PlayerState>
 
 		state.Stamina = Math.Clamp(state.Stamina, 0f, MaxStamina);
 		state.Health = Math.Clamp(state.Health, 0f, MaxHealth);
+
+		if (state.IsExhausted && state.Stamina >= stoprun)
+			state.IsExhausted = false;
 
 		// 3. Animation + Physik
 		UpdateAnimation(cmd.FacingDirection);
