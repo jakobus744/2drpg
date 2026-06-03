@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Godot;
+using RPG2d.World.Items.Data;
 
 namespace RPG2d.Player;
 
@@ -111,7 +112,19 @@ public partial class PlayerInput : Node
         if (playerCmd.IsInteractPressed)
             playerCmd.InteractTargetPath = GetParent<Player>().NearbyPickupPath;
 
+        // Ausrüstung aus den Equipment-Slots des Inventars (treibt die Hand-Optik)
+        playerCmd.EquippedWeaponPath = GetEquipPath(EquipSlot.Weapon);
+        playerCmd.EquippedOffhandPath = GetEquipPath(EquipSlot.Offhand);
+
         return playerCmd;
+    }
+
+    // Scene-Pfad des Items im Equipment-Slot (leer = nichts angelegt)
+    private string GetEquipPath(EquipSlot slot)
+    {
+        var inv = GetParent<Player>().Inventory;
+        var stack = inv?.EquipmentSlots.GetValueOrDefault(slot);
+        return stack?.Data?.DroppedScenePath ?? "";
     }
 
     private void AddDirection(string dir)

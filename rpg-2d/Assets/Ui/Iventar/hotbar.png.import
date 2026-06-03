@@ -2,12 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://bc8quyun74k4"
-valid=false
+uid="uid://blrwr24qa0msq"
+path="res://.godot/imported/hotbar.png-ee47a484d68dcf88ba06a8f128847b4e.ctex"
+metadata={
+"vram_texture": false
+}
 
 [deps]
 
-source_file="res://Assets/Ui/Iventar/Action_panel.png"
+source_file="res://Assets/Ui/Iventar/hotbar.png"
+dest_files=["res://.godot/imported/hotbar.png-ee47a484d68dcf88ba06a8f128847b4e.ctex"]
 
 [params]
 

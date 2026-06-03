@@ -1,4 +1,5 @@
 using Godot;
+using RPG2d.World.Items.Data;
 
 namespace RPG2d.World.Items;
 
@@ -52,6 +53,9 @@ public abstract partial class PickupItem : Area2D
 
     // Subklasse bestimmt was beim Aufnehmen passiert (Waffe / Offhand / etc.)
     protected abstract void Equip(RPG2d.Player.Player player, PackedScene dropped);
+
+    // Subklasse liefert die ItemData-Vorlage für dieses Item (fürs Inventar)
+    public abstract ItemData GetItemData();
 
     // RPC stellt sicher dass Item bei allen Clients verschwindet
     [Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true,

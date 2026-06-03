@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://c7h1ev01hqd7i"]
+
+[ext_resource type="Script" uid="uid://8m65hgxkrbcb" path="res://World/Items/Data/ItemData.cs" id="1_4mtoh"]
+[ext_resource type="Texture2D" uid="uid://j5nhm816exwl" path="res://Assets/Ui/Weapons/Weapons.png" id="2_icon"]
+
+[resource]
+script = ExtResource("1_4mtoh")
+ItemId = "axt"
+DisplayName = "Axt"
+Icon = ExtResource("2_icon")
+IconRegion = Rect2(229, 49, 20, 14)
+IconRotation = -45.0
+Slot = 1
+DroppedScenePath = "res://World/Items/Weapons/axt.tscn"
+metadata/_custom_type_script = "uid://8m65hgxkrbcb"

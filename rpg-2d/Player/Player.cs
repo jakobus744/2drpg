@@ -3,11 +3,13 @@ using System.Collections.Generic;
 using Godot;
 using RPG2d.Entity;
 using RPG2d.World.Items;
+using RPG2d.World.Items.Inventory;
 
 namespace RPG2d.Player;
 
 public partial class Player : BaseEntity<PlayerState>
 {
+	public PlayerInventory Inventory { get; private set; }
 	private const float SpeedWalk = 70f;
 	private const float SpeedRun = 100f;
 
@@ -97,6 +99,8 @@ public partial class Player : BaseEntity<PlayerState>
 
 	public override void _Ready()
 	{
+		Inventory = new PlayerInventory();
+		
 		// YSort am Player selbst deaktivieren  der Parent (Welt) übernimmt das Sorting
 		YSortEnabled = false;
 
@@ -272,31 +276,23 @@ public partial class Player : BaseEntity<PlayerState>
 				Rpc("Hurt", hurtDir);
 		}
 
-		// 0b. Equip verarbeiten (tick-basiert, Input kommt via PlayerCmd.IsInteractPressed)
+		// 0b. Pickup verarbeiten — Item NUR ins Inventar (kein Auto-Equip mehr).
+		// Equip läuft jetzt über die Equipment-Slots (siehe 0d).
 		if (cmd.IsInteractPressed && _nearbyPickup != null)
 		{
 			var pickup = _nearbyPickup;
-			_nearbyPickup = null; // verbraucht — kein Re-Equip während Reprediction
+			_nearbyPickup = null; // verbraucht — kein Re-Pickup während Reprediction
 
-			if (pickup is WeaponItem weapon)
+			// Nur lokaler Besitzer füllt sein (privates) Inventar
+			if (IsMultiplayerAuthority())
 			{
-				if (_currentWeapon != null && IsMultiplayerAuthority())
-					DropItem(GD.Load<PackedScene>(_currentWeapon.SceneFilePath));
-
-				ApplyWeaponAttachment(weapon.SceneFilePath);
-				state.EquippedWeaponPath = weapon.SceneFilePath;
-			}
-			else if (pickup is OffhandItem)
-			{
-				if (_currentOffhandScene != null && IsMultiplayerAuthority())
-					DropItem(_currentOffhandScene);
-
-				_currentOffhandScene = GD.Load<PackedScene>(pickup.SceneFilePath);
-				ApplyOffhandVisual(pickup.SceneFilePath);
-				state.EquippedOffhandPath = pickup.SceneFilePath;
+				var itemData = pickup.GetItemData();
+				if (itemData != null)
+					Inventory.TryAddItem(itemData);
 			}
 
-			// Nur der Server entfernt das Item authoritativ — Client predicted nur das Visual
+			// Server entfernt das Item authoritativ
+			// TODO: bei vollem Inventar Item liegen lassen (Server kennt Client-Inventar nicht)
 			if (Multiplayer.HasMultiplayerPeer())
 			{
 				if (Multiplayer.IsServer())
@@ -306,6 +302,31 @@ public partial class Player : BaseEntity<PlayerState>
 			{
 				pickup.QueueFree(); // Single-Player
 			}
+		}
+
+		// 0d. Equip aus Equipment-Slots (Pfade kommen via cmd, getrieben vom Inventar).
+		// Ändert sich der gewünschte Pfad → Visual + synced State aktualisieren.
+		if (cmd.EquippedWeaponPath != state.EquippedWeaponPath)
+		{
+			if (!string.IsNullOrEmpty(cmd.EquippedWeaponPath))
+				ApplyWeaponAttachment(cmd.EquippedWeaponPath);
+			else
+				HideWeaponVisual();
+			state.EquippedWeaponPath = cmd.EquippedWeaponPath;
+		}
+
+		if (cmd.EquippedOffhandPath != state.EquippedOffhandPath)
+		{
+			if (!string.IsNullOrEmpty(cmd.EquippedOffhandPath))
+			{
+				_currentOffhandScene = GD.Load<PackedScene>(cmd.EquippedOffhandPath);
+				ApplyOffhandVisual(cmd.EquippedOffhandPath);
+			}
+			else
+			{
+				HideOffhandVisual();
+			}
+			state.EquippedOffhandPath = cmd.EquippedOffhandPath;
 		}
 
 		// 0c. Ausgehende Treffer an Ziele weiterleiten (tick-basiert)

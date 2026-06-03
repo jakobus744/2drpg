@@ -14,6 +14,11 @@ public struct PlayerCmd
 	public bool IsInteractPressed;
 	public string InteractTargetPath;
 
+	// Gewünschte Ausrüstung (aus den Equipment-Slots des lokalen Inventars).
+	// "" = nichts angelegt. Treibt state.EquippedWeaponPath/Offhand in ProcessCommand.
+	public string EquippedWeaponPath;
+	public string EquippedOffhandPath;
+
 	// Serialization für Godot Networking
 	public byte[] ToBytes()
 	{
@@ -29,6 +34,8 @@ public struct PlayerCmd
 		writer.Write(IsRollPressed);
 		writer.Write(IsInteractPressed);
 		writer.Write(InteractTargetPath ?? "");
+		writer.Write(EquippedWeaponPath ?? "");
+		writer.Write(EquippedOffhandPath ?? "");
 
 		return stream.ToArray();
 	}
@@ -47,7 +54,9 @@ public struct PlayerCmd
 			IsAttackPressed = reader.ReadBoolean(),
 			IsRollPressed = reader.ReadBoolean(),
 			IsInteractPressed = reader.ReadBoolean(),
-			InteractTargetPath = reader.ReadString()
+			InteractTargetPath = reader.ReadString(),
+			EquippedWeaponPath = reader.ReadString(),
+			EquippedOffhandPath = reader.ReadString()
 		};
 	}
 }
