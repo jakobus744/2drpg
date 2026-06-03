@@ -21,7 +21,7 @@ public partial class Player : BaseEntity<PlayerState>
 	private const float SprintCost = .2f;
 	private const float SprintFalloff = 35f;
 
-	private const float stoprun = 25f;
+	private const float stoprun = 40f;
 
 	public enum MoveState
 	{
