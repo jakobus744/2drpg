@@ -33,10 +33,18 @@ public abstract partial class MobBase : BaseEntity<MobState>
         });
 
         PlayAnim("idle");
+        Sprite.AnimationFinished += OnSpriteAnimFinished;
         OnReady();
     }
 
     protected virtual void OnReady() { }
+
+    private void OnSpriteAnimFinished()
+    {
+        if (_deathAnimPlaying) return;
+        if (!IsDead)
+            PlayAnim("idle");
+    }
 
     protected virtual void ProcessAI(double delta) { }
 
