@@ -27,6 +27,7 @@
 [ext_resource type="PackedScene" uid="uid://dguvoym7d7wtj" path="res://World/Items/schield/Test2.tscn" id="24_2few0"]
 [ext_resource type="PackedScene" uid="uid://bpns7mlagug71" path="res://World/Items/Weapons/axt.tscn" id="25_6fk55"]
 [ext_resource type="AudioStream" uid="uid://by6xm0r2647tk" path="res://Assets/Music/freesound_community-clouds-29191.mp3" id="26_cbare"]
+[ext_resource type="PackedScene" uid="uid://csmdj4c81xgvd" path="res://Mobs/Monster/Goblin/Goblin.tscn" id="27_bmqv2"]
 [ext_resource type="PackedScene" uid="uid://b2rwvtixqikfg" path="res://UI/EscapeMenu/EscapeMenu.tscn" id="28_s0288"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_v5eci"]
@@ -6738,6 +6739,9 @@ position = Vector2(45, 12)
 [node name="Axt" parent="TileMap" unique_id=1225248469 instance=ExtResource("25_6fk55")]
 position = Vector2(14, -21)
 rotation = -2.104867
+
+[node name="Goblin" parent="TileMap" unique_id=320708107 instance=ExtResource("27_bmqv2")]
+position = Vector2(26, 8)
 
 [node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="." unique_id=772117944]
 stream = ExtResource("26_cbare")

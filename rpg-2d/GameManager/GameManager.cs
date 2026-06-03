@@ -75,7 +75,6 @@ public partial class GameManager : Node
 
 		GetTree().CurrentScene.AddChild(playerInstance);
 
-		// Sync bereits eingesammelte Items an den neuen Peer
 		if (_removedItemPaths.Count > 0)
 		{
 			var paths = new string[_removedItemPaths.Count];
@@ -100,15 +99,13 @@ public partial class GameManager : Node
 		level.AddChild(hudInstance);
 	}
 
-	// Wird von PickupItem.RemoveItem aufgerufen wenn der Server das Item entfernt
 	public void TrackRemovedItem(NodePath path)
 	{
 		_removedItemPaths.Add(path);
 	}
 
-	// Läuft auf dem neuen Client: entfernt alle bereits eingesammelten Items
 	[Rpc(MultiplayerApi.RpcMode.Authority, CallLocal = false,
-	     TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
+		 TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
 	private void SyncRemovedItems(string[] paths)
 	{
 		foreach (var path in paths)

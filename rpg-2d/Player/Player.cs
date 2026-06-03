@@ -602,12 +602,13 @@ public partial class Player : BaseEntity<PlayerState>
 	{
 		// Don't hit yourself!
 		if (body == this) return;
+		if (!Multiplayer.IsServer() || _currentWeapon == null) return;
 
-		if (body is Player enemy && Multiplayer.IsServer() && _currentWeapon != null)
+		// Verhindert Doppeltreffer durch mehrere Collision Shapes oder erneuten BodyEntered
+		if (!_hitBodies.Add(body)) return;
+
+		if (body is Player enemy)
 		{
-			// Verhindert Doppeltreffer durch mehrere Collision Shapes oder erneuten BodyEntered
-			if (!_hitBodies.Add(body)) return;
-
 			GD.Print($"Hit enemy for {_currentWeapon.Stats.Damage} damage!");
 
 			// Queue damage for tick-based processing (statt direkt Hurt aufzurufen)
@@ -617,6 +618,12 @@ public partial class Player : BaseEntity<PlayerState>
 				Damage = _currentWeapon.Stats.Damage,
 				Direction = _facingDirectionName
 			});
+		}
+		else if (body is MobBase mob)
+		{
+			// Kollegens Combat: Mobs nehmen direkt Schaden
+			GD.Print($"Hit mob for {_currentWeapon.Stats.Damage} damage!");
+			mob.TakeDamage(_currentWeapon.Stats.Damage);
 		}
 	}
 

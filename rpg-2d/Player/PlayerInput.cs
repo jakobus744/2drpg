@@ -90,10 +90,8 @@ public partial class PlayerInput : Node
         if (Input.IsActionJustReleased("left")) RemoveDirection("left");
         if (Input.IsActionJustReleased("right")) RemoveDirection("right");
 
-        // Combined für diagonales laufen
         playerCmd.MovementVector = GetCombinedMovementVector();
 
-        // wir starten down
         if (CurrentTick == 1)
         {
             playerCmd.FacingDirection = "down";
@@ -163,11 +161,9 @@ public partial class PlayerInput : Node
         var player = GetParent<Player>();
         var serverState = player.StateBuffer.FromBytes(stateData);
 
-        // Wir haben bereits einen neueren State verarbeitet
         if (tickAcknowledged < LastTickAcknowledged)
             return;
 
-        // Vergleichen mit dem Server via NetworkStateBuffer
         var predictedState = player.StateBuffer.Get(tickAcknowledged);
 
         var unacknowledgedPath = new List<Vector2>();

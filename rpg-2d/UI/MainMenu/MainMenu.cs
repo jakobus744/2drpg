@@ -9,14 +9,12 @@ public partial class MainMenu : Control
 	[Export] private Button _settingsButton;
 	[Export] private Button _quitButton;
 
-	// SettingsMenu wird als eigene Scene über CanvasLayer geladen
 	private Control _settingsMenu;
 
 	private GameManager.GameManager _gameManager;
 
 	public override void _Ready()
 	{
-		// Gespeicherte Audio/Video-Settings laden (Lautstärke, Fullscreen)
 		Settings.SettingsMenu.LoadConfig();
 
 		_gameManager = GetNode<GameManager.GameManager>("/root/GameManager");
