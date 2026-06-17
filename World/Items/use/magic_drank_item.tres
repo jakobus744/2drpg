@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://b7blevy71hso"]
+
+[ext_resource type="Texture2D" uid="uid://co03y2si1klg8" path="res://Assets/Ui/magic/Bottles_icons.png" id="1_uuri8"]
+[ext_resource type="Script" uid="uid://8m65hgxkrbcb" path="res://World/Items/Data/ItemData.cs" id="2_ltvqr"]
+
+[resource]
+script = ExtResource("2_ltvqr")
+ItemId = "magic_drank"
+DisplayName = "Magic_drank"
+Icon = ExtResource("1_uuri8")
+IconRegion = Rect2(195, 50, 9, 12)
+IconRotation = 5.0
+IconScale = 0.6
+MaxStackSize = 3

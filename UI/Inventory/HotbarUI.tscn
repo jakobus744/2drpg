@@ -1,0 +1,114 @@
+[gd_scene format=3 uid="uid://dtffopxags5aa"]
+
+[ext_resource type="Script" uid="uid://dlx6caa1fj3rs" path="res://UI/Inventory/HotbarUI.cs" id="1_hb"]
+[ext_resource type="PackedScene" uid="uid://cthmy0p71mrnk" path="res://UI/Inventory/InventorySlotUI.tscn" id="2_hb"]
+[ext_resource type="Texture2D" uid="uid://blrwr24qa0msq" path="res://Assets/Ui/Iventar/hotbar.png" id="3_hb"]
+
+[node name="HotbarUI" type="Control" unique_id=2104221087]
+custom_minimum_size = Vector2(168, 21)
+layout_mode = 3
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -236.0
+offset_top = -60.0
+offset_right = 268.0
+offset_bottom = 3.0
+grow_horizontal = 2
+grow_vertical = 0
+mouse_filter = 1
+script = ExtResource("1_hb")
+
+[node name="Background" type="TextureRect" parent="." unique_id=721899943]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+texture = ExtResource("3_hb")
+
+[node name="Node2D" type="Node2D" parent="." unique_id=1411777683]
+position = Vector2(16, 8)
+
+[node name="1" parent="Node2D" unique_id=1645231146 instance=ExtResource("2_hb")]
+custom_minimum_size = Vector2(42, 43)
+offset_left = -1.0
+offset_top = 5.0
+offset_right = 41.0
+offset_bottom = 48.0
+
+[node name="2" parent="Node2D" unique_id=1337440073 instance=ExtResource("2_hb")]
+custom_minimum_size = Vector2(42, 43)
+offset_left = 47.0
+offset_top = 6.0
+offset_right = 89.0
+offset_bottom = 49.0
+DesignIndex = 1
+
+[node name="3" parent="Node2D" unique_id=361597037 instance=ExtResource("2_hb")]
+custom_minimum_size = Vector2(42, 43)
+offset_left = 95.0
+offset_top = 7.0
+offset_right = 137.0
+offset_bottom = 50.0
+DesignIndex = 2
+
+[node name="5" parent="Node2D" unique_id=1073128008 instance=ExtResource("2_hb")]
+custom_minimum_size = Vector2(42, 43)
+offset_left = 191.0
+offset_top = 6.0
+offset_right = 233.0
+offset_bottom = 49.0
+DesignIndex = 4
+
+[node name="4" parent="Node2D" unique_id=1008592583 instance=ExtResource("2_hb")]
+custom_minimum_size = Vector2(42, 43)
+offset_left = 143.0
+offset_top = 7.0
+offset_right = 185.0
+offset_bottom = 50.0
+DesignIndex = 3
+
+[node name="6" parent="Node2D" unique_id=1413894829 instance=ExtResource("2_hb")]
+custom_minimum_size = Vector2(42, 43)
+offset_left = 239.0
+offset_top = 6.0
+offset_right = 281.0
+offset_bottom = 49.0
+DesignIndex = 5
+
+[node name="7" parent="Node2D" unique_id=779728698 instance=ExtResource("2_hb")]
+custom_minimum_size = Vector2(42, 43)
+offset_left = 287.0
+offset_top = 7.0
+offset_right = 329.0
+offset_bottom = 50.0
+DesignIndex = 6
+
+[node name="9" parent="Node2D" unique_id=1352916917 instance=ExtResource("2_hb")]
+custom_minimum_size = Vector2(42, 43)
+offset_left = 383.0
+offset_top = 7.0
+offset_right = 425.0
+offset_bottom = 50.0
+DesignIndex = 8
+
+[node name="8" parent="Node2D" unique_id=872366640 instance=ExtResource("2_hb")]
+custom_minimum_size = Vector2(42, 43)
+offset_left = 335.0
+offset_top = 6.0
+offset_right = 377.0
+offset_bottom = 49.0
+DesignIndex = 7
+
+[node name="10" parent="Node2D" unique_id=1971829699 instance=ExtResource("2_hb")]
+custom_minimum_size = Vector2(42, 43)
+offset_left = 432.0
+offset_top = 7.0
+offset_right = 474.0
+offset_bottom = 50.0
+DesignIndex = 9

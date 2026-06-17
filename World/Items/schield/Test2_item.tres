@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://brvtheaoxboqi"]
+
+[ext_resource type="Texture2D" uid="uid://j5nhm816exwl" path="res://Assets/Ui/Weapons/Weapons.png" id="1_1uog5"]
+[ext_resource type="Script" uid="uid://8m65hgxkrbcb" path="res://World/Items/Data/ItemData.cs" id="2_vsjwi"]
+
+[resource]
+script = ExtResource("2_vsjwi")
+ItemId = "Test2_item"
+DisplayName = "Schield"
+Icon = ExtResource("1_1uog5")
+IconRegion = Rect2(36, 82, 9, 13)
+IconRotation = -50.0
+IconScale = 0.8
+Category = 1
+Slot = 2
+DroppedScenePath = "res://World/Items/schield/Test2.tscn"

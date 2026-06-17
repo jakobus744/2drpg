@@ -1,0 +1,298 @@
+[gd_scene format=3 uid="uid://dqwqlaimr84o7"]
+
+[ext_resource type="Script" uid="uid://bfysccg7v62ft" path="res://UI/Inventory/InventoryPanelUI.cs" id="1_inv"]
+[ext_resource type="PackedScene" uid="uid://cthmy0p71mrnk" path="res://UI/Inventory/InventorySlotUI.tscn" id="2_inv"]
+[ext_resource type="Texture2D" uid="uid://dwl2ta1uvp433" path="res://Assets/Ui/Iventar/equipment.png" id="3_af6c2"]
+
+[node name="InventoryPanelUI" type="Control" unique_id=879938808]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+script = ExtResource("1_inv")
+
+[node name="Wrapper" type="Control" parent="." unique_id=904832622]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -79.0
+offset_top = -45.0
+offset_right = 79.0
+offset_bottom = 45.0
+grow_horizontal = 2
+grow_vertical = 2
+scale = Vector2(4, 4)
+pivot_offset = Vector2(79, 45)
+
+[node name="Background" type="TextureRect" parent="Wrapper" unique_id=964673747]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 0.5
+offset_right = 0.5
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("3_af6c2")
+
+[node name="Grid" type="GridContainer" parent="Wrapper" unique_id=733700915]
+layout_mode = 0
+offset_left = 80.5
+offset_top = 17.5
+offset_right = 145.5
+offset_bottom = 82.5
+theme_override_constants/h_separation = 0
+theme_override_constants/v_separation = 15
+columns = 4
+
+[node name="Equip" type="Control" parent="Wrapper" unique_id=619787716]
+anchors_preset = 0
+offset_left = -38.25
+offset_top = 34.5
+offset_right = -23.25
+offset_bottom = 49.5
+
+[node name="Inventar_Index" type="Node2D" parent="." unique_id=1304499156]
+position = Vector2(446, 273)
+scale = Vector2(4, 4)
+
+[node name="1" parent="Inventar_Index" unique_id=586030237 instance=ExtResource("2_inv")]
+offset_left = 33.749996
+offset_top = -14.75
+offset_right = 75.75
+offset_bottom = 27.25
+scale = Vector2(0.35, 0.35)
+DesignType = 0
+
+[node name="2" parent="Inventar_Index" unique_id=538212864 instance=ExtResource("2_inv")]
+offset_left = 49.999992
+offset_top = -15.0
+offset_right = 92.0
+offset_bottom = 27.0
+scale = Vector2(0.35, 0.35)
+DesignType = 0
+DesignIndex = 1
+
+[node name="3" parent="Inventar_Index" unique_id=1955015392 instance=ExtResource("2_inv")]
+offset_left = 66.99999
+offset_top = -15.0
+offset_right = 109.0
+offset_bottom = 27.0
+scale = Vector2(0.35, 0.35)
+DesignType = 0
+DesignIndex = 2
+
+[node name="4" parent="Inventar_Index" unique_id=2002385457 instance=ExtResource("2_inv")]
+offset_left = 83.99999
+offset_top = -14.75
+offset_right = 126.0
+offset_bottom = 27.25
+scale = Vector2(0.35, 0.35)
+DesignType = 0
+DesignIndex = 3
+
+[node name="5" parent="Inventar_Index" unique_id=1789245634 instance=ExtResource("2_inv")]
+offset_left = 33.499996
+offset_top = 1.7499981
+offset_right = 75.5
+offset_bottom = 43.75
+scale = Vector2(0.35, 0.35)
+DesignType = 0
+DesignIndex = 4
+
+[node name="6" parent="Inventar_Index" unique_id=116524298 instance=ExtResource("2_inv")]
+offset_left = 50.499992
+offset_top = 1.7499981
+offset_right = 92.5
+offset_bottom = 43.75
+scale = Vector2(0.35, 0.35)
+DesignType = 0
+DesignIndex = 5
+
+[node name="7" parent="Inventar_Index" unique_id=1607363126 instance=ExtResource("2_inv")]
+offset_left = 67.24999
+offset_top = 1.7499981
+offset_right = 109.25
+offset_bottom = 43.75
+scale = Vector2(0.35, 0.35)
+DesignType = 0
+DesignIndex = 6
+
+[node name="8" parent="Inventar_Index" unique_id=1647363455 instance=ExtResource("2_inv")]
+offset_left = 83.99999
+offset_top = 1.7499981
+offset_right = 126.0
+offset_bottom = 43.75
+scale = Vector2(0.35, 0.35)
+DesignType = 0
+DesignIndex = 7
+
+[node name="9" parent="Inventar_Index" unique_id=1944931 instance=ExtResource("2_inv")]
+offset_left = 33.499996
+offset_top = 18.249996
+offset_right = 75.5
+offset_bottom = 60.249996
+scale = Vector2(0.35, 0.35)
+DesignType = 0
+DesignIndex = 8
+
+[node name="10" parent="Inventar_Index" unique_id=1974549588 instance=ExtResource("2_inv")]
+offset_left = 50.249992
+offset_top = 18.499996
+offset_right = 92.25
+offset_bottom = 60.499996
+scale = Vector2(0.35, 0.35)
+DesignType = 0
+DesignIndex = 9
+
+[node name="11" parent="Inventar_Index" unique_id=1921027117 instance=ExtResource("2_inv")]
+offset_left = 67.49999
+offset_top = 18.249996
+offset_right = 109.5
+offset_bottom = 60.249996
+scale = Vector2(0.35, 0.35)
+DesignType = 0
+DesignIndex = 10
+
+[node name="12" parent="Inventar_Index" unique_id=1015966352 instance=ExtResource("2_inv")]
+offset_left = 83.99999
+offset_top = 18.499996
+offset_right = 126.0
+offset_bottom = 60.499996
+scale = Vector2(0.35, 0.35)
+DesignType = 0
+DesignIndex = 11
+
+[node name="13" parent="Inventar_Index" unique_id=1222978098 instance=ExtResource("2_inv")]
+offset_left = 33.499996
+offset_top = 34.999996
+offset_right = 75.5
+offset_bottom = 77.0
+scale = Vector2(0.35, 0.35)
+DesignType = 0
+DesignIndex = 12
+
+[node name="14" parent="Inventar_Index" unique_id=1595675518 instance=ExtResource("2_inv")]
+offset_left = 50.499992
+offset_top = 34.999996
+offset_right = 92.5
+offset_bottom = 77.0
+scale = Vector2(0.35, 0.35)
+DesignType = 0
+DesignIndex = 13
+
+[node name="15" parent="Inventar_Index" unique_id=1264099455 instance=ExtResource("2_inv")]
+offset_left = 67.24999
+offset_top = 34.999996
+offset_right = 109.25
+offset_bottom = 77.0
+scale = Vector2(0.35, 0.35)
+DesignType = 0
+DesignIndex = 14
+
+[node name="16" parent="Inventar_Index" unique_id=1953166253 instance=ExtResource("2_inv")]
+offset_left = 84.24999
+offset_top = 34.999996
+offset_right = 126.25
+offset_bottom = 77.0
+scale = Vector2(0.35, 0.35)
+DesignType = 0
+DesignIndex = 15
+
+[node name="Equip" type="Node2D" parent="." unique_id=638573763]
+
+[node name="Weapon" parent="Equip" unique_id=1645231146 instance=ExtResource("2_inv")]
+offset_left = 445.0
+offset_top = 280.0
+offset_right = 504.0
+offset_bottom = 339.0
+DesignEquipSlot = 1
+
+[node name="OffHand" parent="Equip" unique_id=627636666 instance=ExtResource("2_inv")]
+offset_left = 310.0
+offset_top = 278.0
+offset_right = 369.0
+offset_bottom = 337.0
+DesignEquipSlot = 2
+DesignType = 2
+
+[node name="Helm" parent="Equip" unique_id=776474996 instance=ExtResource("2_inv")]
+anchors_preset = 0
+anchor_left = 0.0
+anchor_top = 0.0
+anchor_right = 0.0
+anchor_bottom = 0.0
+offset_left = 377.0
+offset_top = 214.0
+offset_right = 392.0
+offset_bottom = 229.0
+grow_horizontal = 1
+grow_vertical = 1
+DesignEquipSlot = 3
+DesignType = 2
+
+[node name="Amor" parent="Equip" unique_id=265745502 instance=ExtResource("2_inv")]
+anchors_preset = 0
+anchor_left = 0.0
+anchor_top = 0.0
+anchor_right = 0.0
+anchor_bottom = 0.0
+offset_left = 378.0
+offset_top = 280.0
+offset_right = 393.0
+offset_bottom = 295.0
+grow_horizontal = 1
+grow_vertical = 1
+DesignEquipSlot = 4
+DesignType = 2
+
+[node name="Extra" parent="Equip" unique_id=1572061501 instance=ExtResource("2_inv")]
+anchors_preset = 0
+anchor_left = 0.0
+anchor_top = 0.0
+anchor_right = 0.0
+anchor_bottom = 0.0
+offset_left = 446.0
+offset_top = 412.0
+offset_right = 461.0
+offset_bottom = 427.0
+grow_horizontal = 1
+grow_vertical = 1
+DesignEquipSlot = 7
+DesignType = 2
+
+[node name="Ring" parent="Equip" unique_id=415025786 instance=ExtResource("2_inv")]
+anchors_preset = 0
+anchor_left = 0.0
+anchor_top = 0.0
+anchor_right = 0.0
+anchor_bottom = 0.0
+offset_left = 310.0
+offset_top = 413.0
+offset_right = 325.0
+offset_bottom = 428.0
+grow_horizontal = 1
+grow_vertical = 1
+DesignEquipSlot = 6
+DesignType = 2
+
+[node name="shooes" parent="Equip" unique_id=854291206 instance=ExtResource("2_inv")]
+anchors_preset = 0
+anchor_left = 0.0
+anchor_top = 0.0
+anchor_right = 0.0
+anchor_bottom = 0.0
+offset_left = 379.0
+offset_top = 347.0
+offset_right = 394.0
+offset_bottom = 362.0
+grow_horizontal = 1
+grow_vertical = 1
+DesignEquipSlot = 5
+DesignType = 2
