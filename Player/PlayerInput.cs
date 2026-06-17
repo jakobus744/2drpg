@@ -29,7 +29,6 @@ public partial class PlayerInput : Node
     }
 
 
-
     public override void _PhysicsProcess(double delta)
     {
         if (IsMultiplayerAuthority())

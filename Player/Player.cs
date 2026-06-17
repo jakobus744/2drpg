@@ -4,6 +4,7 @@ using Godot;
 using RPG2d.Entity;
 using RPG2d.World.Items;
 using RPG2d.World.Items.Inventory;
+using GameMgr = RPG2d.GameManager.GameManager;
 
 namespace RPG2d.Player;
 
@@ -69,10 +70,14 @@ public partial class Player : BaseEntity<PlayerState>
 		public float Damage;
 		public string Direction;
 	}
+
 	private readonly List<PendingHit> _pendingHits = new();
 	private readonly HashSet<Node2D> _hitBodies = new(); // verhindert Doppeltreffer pro Angriff
 	private float _pendingDamage;
 	private string _pendingDamageDir = "";
+
+	// Lag compensation: captured when StartAttack runs on the server
+	private uint _attackStartServerTick;
 
 	// Remote sync tracking: nur bei Änderung Waffen-Visual neu laden
 	private string _lastSyncWeaponPath = "";
@@ -100,7 +105,7 @@ public partial class Player : BaseEntity<PlayerState>
 	public override void _Ready()
 	{
 		Inventory = new PlayerInventory();
-		
+
 		// YSort am Player selbst deaktivieren  der Parent (Welt) übernimmt das Sorting
 		YSortEnabled = false;
 
@@ -151,6 +156,7 @@ public partial class Player : BaseEntity<PlayerState>
 
 	// Wird von PickupItem.BodyEntered/BodyExited aufgerufen — nur Input-Sensing, keine Gameplay-Logik
 	public void RegisterNearbyPickup(PickupItem item) => _nearbyPickup = item;
+
 	public void UnregisterNearbyPickup(PickupItem item)
 	{
 		if (_nearbyPickup == item) _nearbyPickup = null;
@@ -269,6 +275,7 @@ public partial class Player : BaseEntity<PlayerState>
 					_anim.Play(hurtAnim);
 				}
 			}
+
 			string hurtDir = _pendingDamageDir;
 			_pendingDamage = 0f;
 			_pendingDamageDir = "";
@@ -326,6 +333,7 @@ public partial class Player : BaseEntity<PlayerState>
 			{
 				HideOffhandVisual();
 			}
+
 			state.EquippedOffhandPath = cmd.EquippedOffhandPath;
 		}
 
@@ -347,6 +355,7 @@ public partial class Player : BaseEntity<PlayerState>
 			float attackCost = GetAttackStaminaCost();
 			if (cmd.Tick >= state.NextAttackTick && state.Stamina >= attackCost)
 			{
+				_attackStartServerTick = GameMgr.ServerTick;
 				StartAttack(cmd.FacingDirection);
 				state.NextAttackTick += _currentWeapon.Stats.AttackCooldownTicks;
 				state.Stamina -= attackCost;
@@ -601,186 +610,211 @@ public partial class Player : BaseEntity<PlayerState>
 	private void OnHitboxBodyEntered(Node2D body)
 	{
 		// Don't hit yourself!
-		if (body == this) return;
-		if (!Multiplayer.IsServer() || _currentWeapon == null) return;
+        if (body == this) return;
+        if (!Multiplayer.IsServer() || _currentWeapon == null) return;
 
-		// Verhindert Doppeltreffer durch mehrere Collision Shapes oder erneuten BodyEntered
-		if (!_hitBodies.Add(body)) return;
+        // Verhindert Doppeltreffer durch mehrere Collision Shapes oder erneuten BodyEntered
+        if (!_hitBodies.Add(body)) return;
 
-		if (body is Player enemy)
-		{
-			GD.Print($"Hit enemy for {_currentWeapon.Stats.Damage} damage!");
+        if (body is Player enemy)
+        {
+            GD.Print($"Hit enemy for {_currentWeapon.Stats.Damage} damage!");
 
-			// Queue damage for tick-based processing (statt direkt Hurt aufzurufen)
-			_pendingHits.Add(new PendingHit
-			{
-				Target = enemy,
-				Damage = _currentWeapon.Stats.Damage,
-				Direction = _facingDirectionName
-			});
-		}
-		else if (body is MobBase mob)
-		{
-			// Kollegens Combat: Mobs nehmen direkt Schaden
-			GD.Print($"Hit mob for {_currentWeapon.Stats.Damage} damage!");
-			mob.TakeDamage(_currentWeapon.Stats.Damage);
-		}
-	}
+            // Queue damage for tick-based processing (statt direkt Hurt aufzurufen)
+            _pendingHits.Add(new PendingHit
+            {
+                Target = enemy,
+                Damage = _currentWeapon.Stats.Damage,
+                Direction = _facingDirectionName
+            });
+        }
+        else if (body is MobBase mob)
+        {
+            // Lag-compensated hit: rewind mob to attack tick, validate with
+            // actual collision shapes via OverlapsBody, then restore.
+            uint lookupTick = _attackStartServerTick > 0 ? _attackStartServerTick - 1 : 0;
+            var saved = new MobState
+            {
+                Position = mob.Position,
+                Velocity = mob.Velocity,
+                Health = mob.CurrentHealth,
+                IsDead = mob.IsDead
+            };
+            mob.ApplyState(mob.GetStateAtTick(lookupTick));
+            Vector2 rewindPos = mob.Position;
 
-	// Wird von ProcessCommand (tick-basiert) aufgerufen — Visual + State werden dort gesetzt
-	public void EquipWeapon(WeaponItem groundItem)
-	{
-		if (_currentWeapon != null && IsMultiplayerAuthority())
-			DropItem(GD.Load<PackedScene>(_currentWeapon.SceneFilePath));
+            bool valid = _currentWeapon.Hitbox != null
+                         && _currentWeapon.Hitbox.OverlapsBody(mob);
 
-		ApplyWeaponAttachment(groundItem.SceneFilePath);
-	}
+            mob.ApplyState(saved);
 
-	private void ApplyWeaponAttachment(string scenePath)
-	{
-		// 1) Alte Waffe aufräumen — Hitbox-Event abmelden, Node entfernen
-		if (_currentWeapon != null)
-		{
-			if (_currentWeapon.Hitbox != null)
-				_currentWeapon.Hitbox.BodyEntered -= OnHitboxBodyEntered;
+            PredictionDebug.Instance?.ShowMobRollback(saved.Position, rewindPos, valid);
 
-			_currentWeapon.QueueFree();
-		}
+            if (!valid)
+                return;
 
-		// 2) Neue Waffe instantiieren (Scene-Pfad kommt aus State oder Sync-Export)
-		var weaponScene = GD.Load<PackedScene>(scenePath);
-		if (weaponScene == null)
-		{
-			GD.PrintErr($"Failed to load weapon scene: {scenePath}");
-			return;
-		}
-		_currentWeapon = weaponScene.Instantiate<WeaponItem>();
+            GD.Print($"Hit mob for {_currentWeapon.Stats.Damage} damage!");
+            mob.TakeDamage(_currentWeapon.Stats.Damage);
+        }
+    }
 
-		// 3) Pickup-Logik deaktivieren — Waffe ist jetzt equipped, nicht mehr am Boden
-		_currentWeapon.IsEquipped = true;
-		_currentWeapon.Monitoring = false;
-		_currentWeapon.Monitorable = false;
+    // Wird von ProcessCommand (tick-basiert) aufgerufen — Visual + State werden dort gesetzt
+    public void EquipWeapon(WeaponItem groundItem)
+    {
+        if (_currentWeapon != null && IsMultiplayerAuthority())
+            DropItem(GD.Load<PackedScene>(_currentWeapon.SceneFilePath));
 
-		// 4) Pivot-Transform zurücksetzen — AnimationPlayer hinterlässt Position/Rotation
-		//    vom letzten Frame der vorherigen Animation. Ohne Reset sitzt die neue Waffe schief.
-		if (_weaponPivotNode != null)
-		{
-			_weaponPivotNode.Position = Vector2.Zero;
-			_weaponPivotNode.Rotation = 0;
-			_weaponPivotNode.Scale = Vector2.One;
-		}
-		if (_weaponAnim != null && !string.IsNullOrEmpty(_weaponAnim.CurrentAnimation))
-			_weaponAnim.Seek(_weaponAnim.CurrentAnimationPosition, true);
+        ApplyWeaponAttachment(groundItem.SceneFilePath);
+    }
 
-		// 5) Altes WeaponSprite (Sprite2D) ausblenden — wird nicht mehr gebraucht,
-		//    da die Weapon-Scene ihr eigenes Sprite mitbringt
-		if (_weaponPivot != null)
-			_weaponPivot.Visible = false;
+    private void ApplyWeaponAttachment(string scenePath)
+    {
+        // 1) Alte Waffe aufräumen — Hitbox-Event abmelden, Node entfernen
+        if (_currentWeapon != null)
+        {
+            if (_currentWeapon.Hitbox != null)
+                _currentWeapon.Hitbox.BodyEntered -= OnHitboxBodyEntered;
 
-		// 6) Weapon-Scene als Kind von WeaponPivot einhängen
-		if (_weaponPivotNode != null)
-		{
-			_weaponPivotNode.AddChild(_currentWeapon);
+            _currentWeapon.QueueFree();
+        }
 
-			// 7) Lokale Transform der Waffe resetten — Scale aus der Scene lesen
-			_currentWeapon.Position = Vector2.Zero;
-			_currentWeapon.Rotation = Mathf.DegToRad(_currentWeapon.ItemRotation);
+        // 2) Neue Waffe instantiieren (Scene-Pfad kommt aus State oder Sync-Export)
+        var weaponScene = GD.Load<PackedScene>(scenePath);
+        if (weaponScene == null)
+        {
+            GD.PrintErr($"Failed to load weapon scene: {scenePath}");
+            return;
+        }
 
-			// 8) Z-Index resetten — Weapon-Scenes haben z_index=1 für Boden-Darstellung,
-			//    aber am Spieler wird Z-Order von UpdateWeaponZIndex gesteuert
-			_currentWeapon.ZIndex = 0;
+        _currentWeapon = weaponScene.Instantiate<WeaponItem>();
 
-			// 9) Hitbox vorbereiten — startet deaktiviert, wird bei Attack-State eingeschaltet
-			if (_currentWeapon.Hitbox != null)
-			{
-				_currentWeapon.Hitbox.Monitoring = false;
-				_currentWeapon.Hitbox.BodyEntered += OnHitboxBodyEntered;
-			}
-		}
-	}
+        // 3) Pickup-Logik deaktivieren — Waffe ist jetzt equipped, nicht mehr am Boden
+        _currentWeapon.IsEquipped = true;
+        _currentWeapon.Monitoring = false;
+        _currentWeapon.Monitorable = false;
 
-	// Wird von ProcessCommand (tick-basiert) aufgerufen — Visual + State werden dort gesetzt
-	public void EquipOffhand(PackedScene droppedScene, Texture2D texture, Rect2 region,
-		Vector2 scale, Vector2 offset, float rotation = 0f)
-	{
-		if (_currentOffhandScene != null && IsMultiplayerAuthority())
-			DropItem(_currentOffhandScene);
+        // 4) Pivot-Transform zurücksetzen — AnimationPlayer hinterlässt Position/Rotation
+        //    vom letzten Frame der vorherigen Animation. Ohne Reset sitzt die neue Waffe schief.
+        if (_weaponPivotNode != null)
+        {
+            _weaponPivotNode.Position = Vector2.Zero;
+            _weaponPivotNode.Rotation = 0;
+            _weaponPivotNode.Scale = Vector2.One;
+        }
 
-		_currentOffhandScene = droppedScene;
-		ApplyOffhandVisual(texture, region, scale, offset, rotation);
-	}
+        if (_weaponAnim != null && !string.IsNullOrEmpty(_weaponAnim.CurrentAnimation))
+            _weaponAnim.Seek(_weaponAnim.CurrentAnimationPosition, true);
 
-	// Overload für State-basierte Syncs (Scene-Pfad statt einzelner Properties)
-	private void ApplyOffhandVisual(string scenePath)
-	{
-		var scene = GD.Load<PackedScene>(scenePath);
-		var item = scene.Instantiate<OffhandItem>();
-		ApplyOffhandVisual(item.ItemTexture, item.ItemRegion,
-			item.ItemScale, item.ItemOffset, item.ItemRotation);
-		item.QueueFree();
-	}
+        // 5) Altes WeaponSprite (Sprite2D) ausblenden — wird nicht mehr gebraucht,
+        //    da die Weapon-Scene ihr eigenes Sprite mitbringt
+        if (_weaponPivot != null)
+            _weaponPivot.Visible = false;
 
-	private void ApplyOffhandVisual(Texture2D texture, Rect2 region,
-		Vector2 scale, Vector2 offset, float rotation)
-	{
-		if (_shieldPivot == null) return;
+        // 6) Weapon-Scene als Kind von WeaponPivot einhängen
+        if (_weaponPivotNode != null)
+        {
+            _weaponPivotNode.AddChild(_currentWeapon);
 
-		// Pivot-Transform zurücksetzen — AnimationPlayer hinterlässt Position/Rotation
-		if (_offHandPivotNode != null)
-		{
-			_offHandPivotNode.Position = Vector2.Zero;
-			_offHandPivotNode.Rotation = 0;
-			_offHandPivotNode.Scale = Vector2.One;
-		}
-		if (_weaponAnim != null && !string.IsNullOrEmpty(_weaponAnim.CurrentAnimation))
-			_weaponAnim.Seek(_weaponAnim.CurrentAnimationPosition, true);
+            // 7) Lokale Transform der Waffe resetten — Scale aus der Scene lesen
+            _currentWeapon.Position = Vector2.Zero;
+            _currentWeapon.Rotation = Mathf.DegToRad(_currentWeapon.ItemRotation);
 
-		_shieldPivot.Texture = texture;
-		_shieldPivot.RegionEnabled = true;
-		_shieldPivot.RegionRect = region;
-		_shieldPivot.Rotation = Mathf.DegToRad(rotation);
-		_shieldPivot.Scale = scale;
-		_shieldPivot.Offset = offset;
-		_shieldPivot.Visible = true;
-	}
+            // 8) Z-Index resetten — Weapon-Scenes haben z_index=1 für Boden-Darstellung,
+            //    aber am Spieler wird Z-Order von UpdateWeaponZIndex gesteuert
+            _currentWeapon.ZIndex = 0;
 
-	// Instanziiert das Item als Node2D an der aktuellen Spielerposition in der Welt
-	private void DropItem(PackedScene scene)
-	{
-		if (scene == null) return;
-		Rpc(MethodName.DropItemRpc, scene.ResourcePath);
-	}
+            // 9) Hitbox vorbereiten — startet deaktiviert, wird bei Attack-State eingeschaltet
+            if (_currentWeapon.Hitbox != null)
+            {
+                _currentWeapon.Hitbox.Monitoring = false;
+                _currentWeapon.Hitbox.BodyEntered += OnHitboxBodyEntered;
+            }
+        }
+    }
 
-	[Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
-	private void DropItemRpc(string scenePath)
-	{
-		var scene = GD.Load<PackedScene>(scenePath);
-		var instance = scene.Instantiate<Node2D>();
-		instance.Position = GlobalPosition;
-		instance.RotationDegrees = 45f;
-		GetParent().AddChild(instance);
-	}
+    // Wird von ProcessCommand (tick-basiert) aufgerufen — Visual + State werden dort gesetzt
+    public void EquipOffhand(PackedScene droppedScene, Texture2D texture, Rect2 region,
+        Vector2 scale, Vector2 offset, float rotation = 0f)
+    {
+        if (_currentOffhandScene != null && IsMultiplayerAuthority())
+            DropItem(_currentOffhandScene);
 
-	private void UpdateWeaponZIndex(string dirName)
-	{
-		if (_weaponPivotNode == null) return;
+        _currentOffhandScene = droppedScene;
+        ApplyOffhandVisual(texture, region, scale, offset, rotation);
+    }
 
-		bool inFront = _moveState == MoveState.Idle && dirName == "down" || dirName == "right";
-		bool currentlyInFront = _weaponPivotNode.GetIndex() > _anim.GetIndex();
+    // Overload für State-basierte Syncs (Scene-Pfad statt einzelner Properties)
+    private void ApplyOffhandVisual(string scenePath)
+    {
+        var scene = GD.Load<PackedScene>(scenePath);
+        var item = scene.Instantiate<OffhandItem>();
+        ApplyOffhandVisual(item.ItemTexture, item.ItemRegion,
+            item.ItemScale, item.ItemOffset, item.ItemRotation);
+        item.QueueFree();
+    }
 
-		if (inFront == currentlyInFront) return;
+    private void ApplyOffhandVisual(Texture2D texture, Rect2 region,
+        Vector2 scale, Vector2 offset, float rotation)
+    {
+        if (_shieldPivot == null) return;
 
-		_weaponPivotNode.GetParent().MoveChild(_weaponPivotNode, _anim.GetIndex());
-		_weaponPivotNode.ZIndex = 0;
-	}
+        // Pivot-Transform zurücksetzen — AnimationPlayer hinterlässt Position/Rotation
+        if (_offHandPivotNode != null)
+        {
+            _offHandPivotNode.Position = Vector2.Zero;
+            _offHandPivotNode.Rotation = 0;
+            _offHandPivotNode.Scale = Vector2.One;
+        }
 
-	// AnimationPlayer für WeaponPivot abspielen — nur wenn Animation wechselt
-	// Sprite (_anim) und AnimationPlayer laufen gleiche FPS → bleiben synchron ohne Frame-Sync
-	private void PlayWeaponAnim(string animName)
-	{
-		if (_weaponAnim == null) return;
-		if (_weaponAnim.CurrentAnimation == animName) return; // Läuft bereits
-		if (_weaponAnim.HasAnimation(animName))
-			_weaponAnim.Play(animName);
-	}
+        if (_weaponAnim != null && !string.IsNullOrEmpty(_weaponAnim.CurrentAnimation))
+            _weaponAnim.Seek(_weaponAnim.CurrentAnimationPosition, true);
+
+        _shieldPivot.Texture = texture;
+        _shieldPivot.RegionEnabled = true;
+        _shieldPivot.RegionRect = region;
+        _shieldPivot.Rotation = Mathf.DegToRad(rotation);
+        _shieldPivot.Scale = scale;
+        _shieldPivot.Offset = offset;
+        _shieldPivot.Visible = true;
+    }
+
+    // Instanziiert das Item als Node2D an der aktuellen Spielerposition in der Welt
+    private void DropItem(PackedScene scene)
+    {
+        if (scene == null) return;
+        Rpc(MethodName.DropItemRpc, scene.ResourcePath);
+    }
+
+    [Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
+    private void DropItemRpc(string scenePath)
+    {
+        var scene = GD.Load<PackedScene>(scenePath);
+        var instance = scene.Instantiate<Node2D>();
+        instance.Position = GlobalPosition;
+        instance.RotationDegrees = 45f;
+        GetParent().AddChild(instance);
+    }
+
+    private void UpdateWeaponZIndex(string dirName)
+    {
+        if (_weaponPivotNode == null) return;
+
+        bool inFront = _moveState == MoveState.Idle && dirName == "down" || dirName == "right";
+        bool currentlyInFront = _weaponPivotNode.GetIndex() > _anim.GetIndex();
+
+        if (inFront == currentlyInFront) return;
+
+        _weaponPivotNode.GetParent().MoveChild(_weaponPivotNode, _anim.GetIndex());
+        _weaponPivotNode.ZIndex = 0;
+    }
+
+    // AnimationPlayer für WeaponPivot abspielen — nur wenn Animation wechselt
+    // Sprite (_anim) und AnimationPlayer laufen gleiche FPS → bleiben synchron ohne Frame-Sync
+    private void PlayWeaponAnim(string animName)
+    {
+        if (_weaponAnim == null) return;
+        if (_weaponAnim.CurrentAnimation == animName) return; // Läuft bereits
+        if (_weaponAnim.HasAnimation(animName))
+            _weaponAnim.Play(animName);
+    }
 }

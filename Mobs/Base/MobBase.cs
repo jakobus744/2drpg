@@ -1,5 +1,6 @@
 using Godot;
 using RPG2d.Entity;
+using RPG2d.GameManager;
 
 public abstract partial class MobBase : BaseEntity<MobState>
 {
@@ -133,6 +134,19 @@ public abstract partial class MobBase : BaseEntity<MobState>
         OnDeathAnimationFinished();
     }
 
+    public MobState GetStateAtTick(uint tick)
+    {
+        return StateBuffer.Get(tick);
+    }
+
+    public void ApplyState(MobState state)
+    {
+        Position = state.Position;
+        Velocity = state.Velocity;
+        CurrentHealth = state.Health;
+        IsDead = state.IsDead;
+    }
+
     public override void _PhysicsProcess(double delta)
     {
         bool isAuthority = !Multiplayer.HasMultiplayerPeer() || IsMultiplayerAuthority();
@@ -149,8 +163,8 @@ public abstract partial class MobBase : BaseEntity<MobState>
                     UpdateFacingDirection(Velocity);
             }
 
-            // State history for future lag compensation
-            StateBuffer.Set(CurrentTick, new MobState
+            // State history for lag compensation — indexed by global server tick
+            StateBuffer.Set(GameManager.ServerTick, new MobState
             {
                 Position = Position,
                 Velocity = Velocity,
