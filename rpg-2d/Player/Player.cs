@@ -4,6 +4,7 @@ using Godot;
 using RPG2d.Entity;
 using RPG2d.World.Items;
 using RPG2d.World.Items.Inventory;
+using GameMgr = RPG2d.GameManager.GameManager;
 
 namespace RPG2d.Player;
 
@@ -73,6 +74,9 @@ public partial class Player : BaseEntity<PlayerState>
 	private readonly HashSet<Node2D> _hitBodies = new(); // verhindert Doppeltreffer pro Angriff
 	private float _pendingDamage;
 	private string _pendingDamageDir = "";
+
+	// Lag compensation: captured when StartAttack runs on the server
+	private uint _attackStartServerTick;
 
 	// Remote sync tracking: nur bei Änderung Waffen-Visual neu laden
 	private string _lastSyncWeaponPath = "";
@@ -347,6 +351,7 @@ public partial class Player : BaseEntity<PlayerState>
 			float attackCost = GetAttackStaminaCost();
 			if (cmd.Tick >= state.NextAttackTick && state.Stamina >= attackCost)
 			{
+				_attackStartServerTick = GameMgr.ServerTick;
 				StartAttack(cmd.FacingDirection);
 				state.NextAttackTick += _currentWeapon.Stats.AttackCooldownTicks;
 				state.Stamina -= attackCost;
@@ -621,7 +626,26 @@ public partial class Player : BaseEntity<PlayerState>
 		}
 		else if (body is MobBase mob)
 		{
-			// Kollegens Combat: Mobs nehmen direkt Schaden
+			// Lag-compensated hit: rewind mob to attack tick, validate with
+			// actual collision shapes via OverlapsBody, then restore.
+			uint lookupTick = _attackStartServerTick > 0 ? _attackStartServerTick - 1 : 0;
+			var saved = new MobState
+			{
+				Position = mob.Position,
+				Velocity = mob.Velocity,
+				Health = mob.CurrentHealth,
+				IsDead = mob.IsDead
+			};
+			mob.ApplyState(mob.GetStateAtTick(lookupTick));
+
+			bool valid = _currentWeapon.Hitbox != null
+				&& _currentWeapon.Hitbox.OverlapsBody(mob);
+
+			mob.ApplyState(saved);
+
+			if (!valid)
+				return;
+
 			GD.Print($"Hit mob for {_currentWeapon.Stats.Damage} damage!");
 			mob.TakeDamage(_currentWeapon.Stats.Damage);
 		}

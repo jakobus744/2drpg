@@ -16,10 +16,18 @@ public partial class GameManager : Node
 
 	private readonly HashSet<string> _removedItemPaths = new();
 
+	public static uint ServerTick { get; private set; }
+
 	public override void _Ready()
 	{
 		Multiplayer.PeerConnected += AddPlayer;
 		Multiplayer.PeerDisconnected += RemovePlayer;
+	}
+
+	public override void _PhysicsProcess(double delta)
+	{
+		if (Multiplayer.IsServer())
+			ServerTick++;
 	}
 
 	public void StartHost()
