@@ -19,6 +19,12 @@ public struct PlayerCmd
     public string EquippedWeaponPath;
     public string EquippedOffhandPath;
 
+    // Consumable-Nutzung (Rechtsklick auf aktivem Hotbar-Slot). Effektwerte werden
+    // mitgeschickt, da das Inventar lokal ist — Server kennt den Item-Inhalt nicht.
+    public bool IsUseItemPressed;
+    public float UseStaminaRestore;
+    public float UseHealthRestore;
+
     // Serialization für Godot Networking
     public byte[] ToBytes()
     {
@@ -36,6 +42,9 @@ public struct PlayerCmd
         writer.Write(InteractTargetPath ?? "");
         writer.Write(EquippedWeaponPath ?? "");
         writer.Write(EquippedOffhandPath ?? "");
+        writer.Write(IsUseItemPressed);
+        writer.Write(UseStaminaRestore);
+        writer.Write(UseHealthRestore);
 
         return stream.ToArray();
     }
@@ -56,7 +65,10 @@ public struct PlayerCmd
             IsInteractPressed = reader.ReadBoolean(),
             InteractTargetPath = reader.ReadString(),
             EquippedWeaponPath = reader.ReadString(),
-            EquippedOffhandPath = reader.ReadString()
+            EquippedOffhandPath = reader.ReadString(),
+            IsUseItemPressed = reader.ReadBoolean(),
+            UseStaminaRestore = reader.ReadSingle(),
+            UseHealthRestore = reader.ReadSingle()
         };
     }
 }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Godot;
 using RPG2d.World.Items.Data;
+using RPG2d.World.Items.Inventory;
 
 namespace RPG2d.Player;
 
@@ -113,6 +114,14 @@ public partial class PlayerInput : Node
         playerCmd.EquippedWeaponPath = GetEquipPath(EquipSlot.Weapon);
         playerCmd.EquippedOffhandPath = GetEquipPath(EquipSlot.Offhand);
 
+        // Consumable nutzen (Rechtsklick auf aktivem Hotbar-Slot)
+        if (Input.IsActionJustPressed("use_item"))
+            TryUseActiveConsumable(ref playerCmd);
+
+        // Item droppen (aktives Hotbar-Item auf Boden)
+        if (Input.IsActionJustPressed("drop"))
+            DropActiveHotbarItem();
+
         return playerCmd;
     }
 
@@ -122,6 +131,40 @@ public partial class PlayerInput : Node
         var inv = GetParent<Player>().Inventory;
         var stack = inv?.EquipmentSlots.GetValueOrDefault(slot);
         return stack?.Data?.DroppedScenePath ?? "";
+    }
+
+    // Aktiver Hotbar-Slot ein Consumable? → Effektwerte ins cmd, 1 vom Stapel abziehen.
+    // Removal hier (einmalig pro Tick), NICHT in ProcessCommand → kein Doppelverbrauch bei Reprediction.
+    private void TryUseActiveConsumable(ref PlayerCmd cmd)
+    {
+        var inv = GetParent<Player>().Inventory;
+        if (inv == null) return;
+
+        var addr = SlotAddress.Hotbar(inv.ActiveHotbarIndex);
+        var stack = inv.GetSlot(addr);
+        if (stack == null || stack.IsEmpty || stack.Data.Category != ItemCategory.Consumable) return;
+
+        cmd.IsUseItemPressed = true;
+        cmd.UseStaminaRestore = stack.Data.StaminaRestore;
+        cmd.UseHealthRestore = stack.Data.HealthRestore;
+        inv.RemoveFromSlot(addr, 1);
+    }
+
+    // Wirft das aktive Hotbar-Item auf den Boden (spawnt es via RPC für alle).
+    private void DropActiveHotbarItem()
+    {
+        var player = GetParent<Player>();
+        var inv = player.Inventory;
+        if (inv == null) return;
+
+        var addr = SlotAddress.Hotbar(inv.ActiveHotbarIndex);
+        var stack = inv.GetSlot(addr);
+        if (stack == null || stack.IsEmpty) return;
+
+        var data = stack.Data;
+        int count = stack.Count;          // ganzer Stapel inkl. Rest-Nutzungen
+        inv.RemoveFromSlot(addr, count);
+        player.DropToGround(data, count);
     }
 
     private void AddDirection(string dir)

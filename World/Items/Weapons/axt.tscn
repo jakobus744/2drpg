@@ -22,7 +22,7 @@ height = 11.428453
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_mxl6k"]
 size = Vector2(7.1428633, 8.571432)
 
-[node name="Schield" type="Area2D" unique_id=275455072]
+[node name="axt" type="Area2D" unique_id=275455072]
 z_index = 1
 script = ExtResource("1_rl7ov")
 Stats = SubResource("Resource_ls51t")

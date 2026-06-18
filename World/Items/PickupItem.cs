@@ -7,6 +7,9 @@ public abstract partial class PickupItem : Area2D
 {
     [Export] public string DroppedScenePath = "";
     [Export] public Texture2D ItemTexture;
+
+    // >0 = dieses Boden-Item wurde gedroppt und trägt eine Rest-Anzahl (statt PickupAmount).
+    public int AmountOverride = 0;
     [Export] public Rect2 ItemRegion;
     [Export] public Vector2 ItemScale = Vector2.One;
     [Export] public Vector2 ItemOffset = Vector2.Zero;

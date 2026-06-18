@@ -15,5 +15,11 @@ public partial class ItemData : Resource
     [Export] public ItemCategory Category;
     [Export] public EquipSlot Slot = EquipSlot.None;
     [Export] public int MaxStackSize = 1;        // 1 für Waffen, höher für Tränke
+    [Export] public int PickupAmount = 1;        // wie viele man pro Aufheben bekommt (= Nutzungen bei Tränken)
     [Export] public string DroppedScenePath = "";
+
+    // Consumable-Effekte (nur relevant wenn Category == Consumable).
+    // Pro Nutzung wird 1 vom Stapel verbraucht und diese Effekte angewendet.
+    [Export] public float StaminaRestore = 0f;
+    [Export] public float HealthRestore = 0f;
 }

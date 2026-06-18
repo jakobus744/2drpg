@@ -113,7 +113,8 @@ public class PlayerInventory
         var s = GetSlot(addr);
         if (s == null || s.IsEmpty) return;
         s.Count -= count;
-        if (s.IsEmpty) SetSlot(addr, null);
+        if (s.IsEmpty) SetSlot(addr, null);   // feuert Changed
+        else NotifyChanged();                  // Menge sank, Slot nicht leer → UI trotzdem updaten
     }
 
 }

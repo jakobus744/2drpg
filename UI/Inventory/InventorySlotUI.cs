@@ -121,7 +121,27 @@ public partial class InventorySlotUI : Control
         };
         SetDragPreview(preview);
 
+        _dragging = true;
         return Variant.From(this); // Quelle = dieser Slot
+    }
+
+    private bool _dragging;
+
+    // Drag endete: wenn auf KEINEM Slot gedroppt (außerhalb Panel/auf Welt) → Item auf Boden werfen
+    public override void _Notification(int what)
+    {
+        if (what != NotificationDragEnd || !_dragging) return;
+        _dragging = false;
+
+        if (GetViewport().GuiIsDragSuccessful()) return; // wurde auf einem Slot abgelegt → nichts tun
+
+        var stack = GetStack();
+        if (stack == null || stack.IsEmpty) return;
+
+        var data = stack.Data;
+        int count = stack.Count;          // ganzer Stapel inkl. Rest-Nutzungen
+        _inventory.RemoveFromSlot(Address, count);
+        Player.Player.LocalPlayer?.DropToGround(data, count);
     }
 
     // Darf hier abgelegt werden? Equipment-Slots filtern nach passendem EquipSlot

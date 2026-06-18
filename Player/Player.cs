@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Godot;
 using RPG2d.Entity;
 using RPG2d.World.Items;
+using RPG2d.World.Items.Data;
 using RPG2d.World.Items.Inventory;
 using GameMgr = RPG2d.GameManager.GameManager;
 
@@ -295,7 +296,11 @@ public partial class Player : BaseEntity<PlayerState>
 			{
 				var itemData = pickup.GetItemData();
 				if (itemData != null)
-					Inventory.TryAddItem(itemData);
+				{
+					// gedropptes Item trägt seine Rest-Anzahl, sonst frisches Welt-Item → PickupAmount
+					int amount = pickup.AmountOverride > 0 ? pickup.AmountOverride : itemData.PickupAmount;
+					Inventory.TryAddItem(itemData, amount);
+				}
 			}
 
 			// Server entfernt das Item authoritativ
@@ -335,6 +340,14 @@ public partial class Player : BaseEntity<PlayerState>
 			}
 
 			state.EquippedOffhandPath = cmd.EquippedOffhandPath;
+		}
+
+		// 0d2. Consumable-Effekt (Rechtsklick) — Inventar-Removal lief schon clientseitig.
+		// Werte kommen im cmd, Effekt deterministisch auf synced State (Clamp folgt unten).
+		if (cmd.IsUseItemPressed)
+		{
+			state.Stamina += cmd.UseStaminaRestore;
+			state.Health += cmd.UseHealthRestore;
 		}
 
 		// 0c. Ausgehende Treffer an Ziele weiterleiten (tick-basiert)
@@ -784,19 +797,27 @@ public partial class Player : BaseEntity<PlayerState>
     }
 
     // Instanziiert das Item als Node2D an der aktuellen Spielerposition in der Welt
-    private void DropItem(PackedScene scene)
+    // Öffentlich: wirft ein Item (per ItemData) auf den Boden — spawnt die DroppedScene für alle.
+    public void DropToGround(ItemData data, int count = 1)
+    {
+        if (data == null || string.IsNullOrEmpty(data.DroppedScenePath)) return;
+        DropItem(GD.Load<PackedScene>(data.DroppedScenePath), count);
+    }
+
+    private void DropItem(PackedScene scene, int count = 1)
     {
         if (scene == null) return;
-        Rpc(MethodName.DropItemRpc, scene.ResourcePath);
+        Rpc(MethodName.DropItemRpc, scene.ResourcePath, count);
     }
 
     [Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
-    private void DropItemRpc(string scenePath)
+    private void DropItemRpc(string scenePath, int amount)
     {
         var scene = GD.Load<PackedScene>(scenePath);
         var instance = scene.Instantiate<Node2D>();
         instance.Position = GlobalPosition;
         instance.RotationDegrees = 45f;
+        if (instance is PickupItem pi) pi.AmountOverride = amount;   // Rest-Anzahl mitführen
         GetParent().AddChild(instance);
     }
 
