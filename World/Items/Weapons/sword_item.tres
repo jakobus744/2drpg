@@ -11,4 +11,4 @@ Icon = ExtResource("1_7se6x")
 IconRegion = Rect2(65, 1, 31, 14)
 IconRotation = 50.0
 Slot = 1
-DroppedScenePath = "res://World/Items/Weapons/test_item.tscn"
+DroppedScenePath = "res://World/Items/Weapons/Sword.tscn"

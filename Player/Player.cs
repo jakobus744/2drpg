@@ -747,6 +747,11 @@ public partial class Player : BaseEntity<PlayerState>
     private void ApplyOffhandVisual(string scenePath)
     {
         var scene = GD.Load<PackedScene>(scenePath);
+        if (scene == null)
+        {
+            GD.PrintErr($"Offhand-Szene nicht ladbar: {scenePath}");
+            return;
+        }
         var item = scene.Instantiate<OffhandItem>();
         ApplyOffhandVisual(item.ItemTexture, item.ItemRegion,
             item.ItemScale, item.ItemOffset, item.ItemRotation);

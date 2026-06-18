@@ -1,0 +1,8 @@
+[gd_scene format=3 uid="uid://dgu3y3fayuqbo"]
+
+[ext_resource type="Script" path="res://World/WorldManager.cs" id="1_wm"]
+
+[node name="MainWorld" type="Node2D"]
+y_sort_enabled = true
+script = ExtResource("1_wm")
+ZoneSize = 3424

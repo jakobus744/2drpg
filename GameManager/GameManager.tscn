@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" uid="uid://b0f6peht2dvih" path="res://GameManager/GameManager.cs" id="1_v4rul"]
 [ext_resource type="PackedScene" uid="uid://xwhdjjo8ejn2" path="res://Player/Main/main_player.tscn" id="2_pe3qf"]
-[ext_resource type="PackedScene" uid="uid://cc8qsty6libro" path="res://World/Zones/Forest/ForestZone.tscn" id="3_pe3qf"]
+[ext_resource type="PackedScene" uid="uid://cmainworld0001a" path="res://World/MainWorld.tscn" id="3_pe3qf"]
 [ext_resource type="PackedScene" uid="uid://dh5024xatqr3" path="res://UI/HUD/HUD.tscn" id="4_w2y15"]
 
 [node name="GameManager" type="Node" unique_id=797792432]

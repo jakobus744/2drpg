@@ -80,6 +80,7 @@ public partial class GameManager : Node
 
 		var playerInstance = _playerScene.Instantiate<Player.Player>();
 		playerInstance.Name = id.ToString();
+		playerInstance.Position = new Vector2(3424, 3424); // Zentrum von Forest (Zelle 1,1 × 3424)
 
 		GetTree().CurrentScene.AddChild(playerInstance);
 
