@@ -59,7 +59,8 @@ public abstract partial class PickupItem : Area2D
         if (Multiplayer.IsServer())
         {
             var gm = GetNodeOrNull<RPG2d.GameManager.GameManager>("/root/GameManager");
-            gm?.TrackRemovedItem(GetPath());
+            gm?.TrackRemovedItem(SceneFilePath);
+			gm?.Rpc("RemoveItemByScene", SceneFilePath, GlobalPosition);
         }
         QueueFree();
     }

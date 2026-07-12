@@ -316,13 +316,21 @@ public partial class Player : BaseEntity<PlayerState>
 					int amount = pickup.AmountOverride > 0 ? pickup.AmountOverride : itemData.PickupAmount;
 					if (itemData != null && Inventory.TryAddItem(itemData, amount))
 					{
-						pickup.Rpc("RemoveItem");
+						pickup.Visible = false;
+						pickup.SetDeferred("monitoring", false);
+						pickup.QueueFree();
 						InventoryDirty = true;
+						var gm = GetNodeOrNull<RPG2d.GameManager.GameManager>("/root/GameManager");
+						gm?.TrackRemovedItem(pickup.SceneFilePath);
+						gm?.Rpc("RemoveItemByScene", pickup.SceneFilePath, pickup.GlobalPosition);
+
 					}
 				}
 			}
 			else
 			{
+						pickup.Visible = false;
+						pickup.SetDeferred("monitoring", false);
 				pickup.QueueFree();
 			}
 		}
@@ -907,10 +915,8 @@ public partial class Player : BaseEntity<PlayerState>
         if (instance is PickupItem pi) pi.AmountOverride = amount;   // Rest-Anzahl mitführen
         GetParent().AddChild(instance);
     }
-
-
-	[Rpc(MultiplayerApi.RpcMode.Authority, CallLocal = false, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
-	public void SyncInventoryState(byte[] inventoryData)
+	[Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = false, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
+	private void SyncInventoryState(byte[] inventoryData)
 	{
 		if (!IsMultiplayerAuthority()) return;
 		var serverInv = new PlayerInventory();

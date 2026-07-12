@@ -14,7 +14,7 @@ public partial class GameManager : Node
 
 	private const int Port = 8910;
 
-	private readonly HashSet<string> _removedItemPaths = new();
+	private static readonly HashSet<string> _removedItemScenes = new();
 
 	public static uint ServerTick { get; private set; }
 
@@ -84,10 +84,10 @@ public partial class GameManager : Node
 
 		GetTree().CurrentScene.AddChild(playerInstance);
 
-		if (_removedItemPaths.Count > 0)
+		if (_removedItemScenes.Count > 0)
 		{
-			var paths = new string[_removedItemPaths.Count];
-			_removedItemPaths.CopyTo(paths);
+			var paths = new string[_removedItemScenes.Count];
+			_removedItemScenes.CopyTo(paths);
 			RpcId(id, MethodName.SyncRemovedItems, paths);
 		}
 	}
@@ -108,9 +108,9 @@ public partial class GameManager : Node
 		level.AddChild(hudInstance);
 	}
 
-	public void TrackRemovedItem(NodePath path)
+	public void TrackRemovedItem(string scenePath)
 	{
-		_removedItemPaths.Add(path);
+		_removedItemScenes.Add(scenePath);
 	}
 
 	[Rpc(MultiplayerApi.RpcMode.Authority, CallLocal = false,
@@ -118,9 +118,57 @@ public partial class GameManager : Node
 	private void SyncRemovedItems(string[] paths)
 	{
 		foreach (var path in paths)
+			FreeAllByScene(path);
+	}
+
+	private static void FreeAllByScene(string scenePath)
+	{
+		if (string.IsNullOrEmpty(scenePath)) return;
+		var root = ((SceneTree)Engine.GetMainLoop()).CurrentScene;
+		FreeAllRecursive(root, scenePath);
+	}
+
+	private static void FreeAllRecursive(Node node, string scenePath)
+	{
+		if (node is World.Items.PickupItem pi && pi.SceneFilePath == scenePath)
 		{
-			var item = GetTree().CurrentScene.GetNodeOrNull(path);
-			item?.QueueFree();
+			pi.QueueFree();
 		}
+		foreach (var child in node.GetChildren())
+			FreeAllRecursive(child, scenePath);
+	}
+
+	[Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = false,
+		 TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
+	private void RemoveItemByScene(string scenePath, Vector2 atPosition)
+	{
+		FreeItemByScene(scenePath, atPosition);
+	}
+
+
+	private static void FreeItemByScene(string scenePath, Vector2 atPosition)
+	{
+		if (string.IsNullOrEmpty(scenePath)) return;
+		var root = ((SceneTree)Engine.GetMainLoop()).CurrentScene;
+		float bestDist = float.MaxValue;
+		World.Items.PickupItem best = null;
+		FindClosestPickup(root, scenePath, atPosition, ref bestDist, ref best);
+		if (best != null)
+		{
+			best.Visible = false;
+			best.GetParent()?.RemoveChild(best);
+			best.QueueFree();
+		}
+	}
+
+	private static void FindClosestPickup(Node node, string scenePath, Vector2 pos, ref float bestDist, ref World.Items.PickupItem best)
+	{
+		if (node is World.Items.PickupItem pi && pi.SceneFilePath == scenePath)
+		{
+			float d = pi.GlobalPosition.DistanceSquaredTo(pos);
+			if (d < bestDist) { bestDist = d; best = pi; }
+		}
+		foreach (var child in node.GetChildren())
+			FindClosestPickup(child, scenePath, pos, ref bestDist, ref best);
 	}
 }
