@@ -87,6 +87,7 @@ public partial class Player : BaseEntity<PlayerState>
 	// Remote sync tracking: nur bei Änderung Waffen-Visual neu laden
 	private string _lastSyncWeaponPath = "";
 	private string _lastSyncOffhandPath = "";
+	private string _lastSyncedAnimation = "";
 
 	// Multiplayer: Server schreibt Position + Animation, Clients lesen und interpolieren
 	[Export] public Vector2 SyncPosition = Vector2.Zero;
@@ -199,11 +200,12 @@ public partial class Player : BaseEntity<PlayerState>
 		// Remote-Spieler: Position interpolieren (verhindert Rucken bei Netzwerklatenz)
 		Position = Position.Lerp(SyncPosition, (float)delta * 15f);
 
-		// Animation des remote Spielers synchron halten
-		if (!string.IsNullOrEmpty(SyncAnimation))
+		// Animation des remote Spielers synchron halten (nur bei Änderung)
+		if (!string.IsNullOrEmpty(SyncAnimation) && SyncAnimation != _lastSyncedAnimation)
 		{
 			_anim.Play(SyncAnimation);
 			PlayWeaponAnim(SyncAnimation);
+			_lastSyncedAnimation = SyncAnimation;
 		}
 
 		// Weapon-Visuals nur bei Änderung neu laden
@@ -555,6 +557,11 @@ public partial class Player : BaseEntity<PlayerState>
 
 	private void UpdateAnimation(string dirName)
 	{
+		// Safety: wenn _isAttacking noch true ist aber die Animation keine
+		// Attack-Animation ist, Lock aufheben (verhindert stuck nach Reconciliation)
+		if (_isAttacking && !_anim.Animation.ToString().Contains("attack"))
+			CancelAttack();
+
 		// Während Angriff/Rolle/Tod läuft die Animation bereits nicht unterbrechen
 		if (IsActionLocked) return;
 
