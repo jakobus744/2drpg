@@ -64,6 +64,10 @@ public partial class Player : BaseEntity<PlayerState>
 	// Tick-based pickup: zuletzt betretener PickupItem in Reichweite (Input-Sensing)
 	private PickupItem _nearbyPickup;
 
+	public bool InventoryDirty { get; set; }
+
+	public PickupItem GetNearbyPickupItem() => _nearbyPickup;
+
 	// Tick-based damage: Treffer werden hier gesammelt und in ProcessCommand verarbeitet
 	private struct PendingHit
 	{
@@ -284,36 +288,74 @@ public partial class Player : BaseEntity<PlayerState>
 				Rpc("Hurt", hurtDir);
 		}
 
-		// 0b. Pickup verarbeiten — Item NUR ins Inventar (kein Auto-Equip mehr).
-		// Equip läuft jetzt über die Equipment-Slots (siehe 0d).
+		// 0b. Pickup verarbeiten — Client predicted, Server validiert gegen autoritatives Inventar.
 		if (cmd.IsInteractPressed && _nearbyPickup != null)
 		{
 			var pickup = _nearbyPickup;
-			_nearbyPickup = null; // verbraucht — kein Re-Pickup während Reprediction
+			_nearbyPickup = null;
 
-			// Nur lokaler Besitzer füllt sein (privates) Inventar
-			if (IsMultiplayerAuthority())
+			if (IsMultiplayerAuthority() && !(Multiplayer.HasMultiplayerPeer() && Multiplayer.IsServer()))
 			{
 				var itemData = pickup.GetItemData();
 				if (itemData != null)
 				{
-					// gedropptes Item trägt seine Rest-Anzahl, sonst frisches Welt-Item → PickupAmount
 					int amount = pickup.AmountOverride > 0 ? pickup.AmountOverride : itemData.PickupAmount;
 					Inventory.TryAddItem(itemData, amount);
 				}
 			}
 
-			// Server entfernt das Item authoritativ
-			// TODO: bei vollem Inventar Item liegen lassen (Server kennt Client-Inventar nicht)
 			if (Multiplayer.HasMultiplayerPeer())
 			{
 				if (Multiplayer.IsServer())
-					pickup.Rpc("RemoveItem");
+				{
+					var itemData = pickup.GetItemData();
+					int amount = pickup.AmountOverride > 0 ? pickup.AmountOverride : itemData.PickupAmount;
+					if (itemData != null && Inventory.TryAddItem(itemData, amount))
+					{
+						pickup.Rpc("RemoveItem");
+						InventoryDirty = true;
+					}
+				}
 			}
 			else
 			{
-				pickup.QueueFree(); // Single-Player
+				pickup.QueueFree();
 			}
+		}
+
+		// 0b2. Server: Inventar-Aktion aus cmd verarbeiten, Equipment + Consumable
+		// aus autoritativem Inventar ableiten (überschreibt Client-Werte).
+		if (Multiplayer.IsServer())
+		{
+			ProcessServerInventoryAction(cmd);
+
+			var wep = Inventory.EquipmentSlots.GetValueOrDefault(EquipSlot.Weapon);
+			cmd.EquippedWeaponPath = wep?.Data?.DroppedScenePath ?? "";
+			var off = Inventory.EquipmentSlots.GetValueOrDefault(EquipSlot.Offhand);
+			cmd.EquippedOffhandPath = off?.Data?.DroppedScenePath ?? "";
+
+			if (cmd.IsUseItemPressed)
+			{
+				var addr = SlotAddress.Hotbar(cmd.ActiveHotbarIndex);
+				var stack = Inventory.GetSlot(addr);
+				if (stack != null && !stack.IsEmpty
+					&& stack.Data.Category == ItemCategory.Consumable
+					&& stack.Data.ItemId == cmd.InvItemId)
+				{
+					Inventory.RemoveFromSlot(addr, 1);
+					InventoryDirty = true;
+					cmd.UseStaminaRestore = stack.Data.StaminaRestore;
+					cmd.UseHealthRestore = stack.Data.HealthRestore;
+				}
+				else
+				{
+					cmd.IsUseItemPressed = false;
+					cmd.UseStaminaRestore = 0;
+					cmd.UseHealthRestore = 0;
+				}
+			}
+
+			Inventory.ActiveHotbarIndex = cmd.ActiveHotbarIndex;
 		}
 
 		// 0d. Equip aus Equipment-Slots (Pfade kommen via cmd, getrieben vom Inventar).
@@ -342,8 +384,8 @@ public partial class Player : BaseEntity<PlayerState>
 			state.EquippedOffhandPath = cmd.EquippedOffhandPath;
 		}
 
-		// 0d2. Consumable-Effekt (Rechtsklick) — Inventar-Removal lief schon clientseitig.
-		// Werte kommen im cmd, Effekt deterministisch auf synced State (Clamp folgt unten).
+		// 0d2. Consumable-Effekt (Rechtsklick) — Server validiert + entfernt Item aus autoritativem
+		// Inventar (siehe 0b2). Werte im cmd sind jetzt server-bestätigt.
 		if (cmd.IsUseItemPressed)
 		{
 			state.Stamina += cmd.UseStaminaRestore;
@@ -620,6 +662,47 @@ public partial class Player : BaseEntity<PlayerState>
 		_currentOffhandScene = null;
 	}
 
+	private void ProcessServerInventoryAction(PlayerCmd cmd)
+	{
+		var action = (InvActionType)cmd.InvAction;
+		switch (action)
+		{
+			case InvActionType.Swap:
+			{
+				var from = SlotAddress.FromIndexByte(cmd.InvSlotA);
+				var to = SlotAddress.FromIndexByte(cmd.InvSlotB);
+				var srcStack = Inventory.GetSlot(from);
+				if (srcStack == null || srcStack.IsEmpty) break;
+				if (srcStack.Data.ItemId != cmd.InvItemId) break;
+				if (to.Type == SlotType.Equipment && !IsValidEquipForSlot(srcStack.Data, to.Equip))
+					break;
+				Inventory.SwapSlots(from, to);
+				InventoryDirty = true;
+				break;
+			}
+			case InvActionType.Drop:
+			{
+				var from = SlotAddress.FromIndexByte(cmd.InvSlotA);
+				var stack = Inventory.GetSlot(from);
+				if (stack == null || stack.IsEmpty || stack.Data.ItemId != cmd.InvItemId) break;
+				int count = Math.Min(cmd.InvCount > 0 ? cmd.InvCount : stack.Count, stack.Count);
+				var data = stack.Data;
+				Inventory.RemoveFromSlot(from, count);
+				DropToGround(data, count);
+				InventoryDirty = true;
+				break;
+			}
+		}
+	}
+
+	private static bool IsValidEquipForSlot(ItemData item, EquipSlot slot)
+	{
+		if (item.Slot == slot) return true;
+		if (item.Category == ItemCategory.Ring && (slot == EquipSlot.Ring1 || slot == EquipSlot.Ring2))
+			return true;
+		return false;
+	}
+
 	private void OnHitboxBodyEntered(Node2D body)
 	{
 		// Don't hit yourself!
@@ -810,7 +893,7 @@ public partial class Player : BaseEntity<PlayerState>
         Rpc(MethodName.DropItemRpc, scene.ResourcePath, count);
     }
 
-    [Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
+    [Rpc(MultiplayerApi.RpcMode.Authority, CallLocal = true, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
     private void DropItemRpc(string scenePath, int amount)
     {
         var scene = GD.Load<PackedScene>(scenePath);
@@ -820,6 +903,16 @@ public partial class Player : BaseEntity<PlayerState>
         if (instance is PickupItem pi) pi.AmountOverride = amount;   // Rest-Anzahl mitführen
         GetParent().AddChild(instance);
     }
+
+
+	[Rpc(MultiplayerApi.RpcMode.Authority, CallLocal = false, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
+	public void SyncInventoryState(byte[] inventoryData)
+	{
+		if (!IsMultiplayerAuthority()) return;
+		var serverInv = new PlayerInventory();
+		serverInv.Deserialize(inventoryData);
+		Inventory.CopyFrom(serverInv);
+	}
 
     private void UpdateWeaponZIndex(string dirName)
     {

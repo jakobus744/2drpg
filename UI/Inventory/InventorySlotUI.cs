@@ -1,4 +1,5 @@
 using Godot;
+using RPG2d.Player;
 using RPG2d.World.Items.Data;
 using RPG2d.World.Items.Inventory;
 
@@ -127,21 +128,29 @@ public partial class InventorySlotUI : Control
 
     private bool _dragging;
 
-    // Drag endete: wenn auf KEINEM Slot gedroppt (außerhalb Panel/auf Welt) → Item auf Boden werfen
+    // Drag endete: wenn auf KEINEM Slot gedroppt → predicted + queued für Server-Validierung
     public override void _Notification(int what)
     {
         if (what != NotificationDragEnd || !_dragging) return;
         _dragging = false;
 
-        if (GetViewport().GuiIsDragSuccessful()) return; // wurde auf einem Slot abgelegt → nichts tun
+        if (GetViewport().GuiIsDragSuccessful()) return;
 
         var stack = GetStack();
         if (stack == null || stack.IsEmpty) return;
 
         var data = stack.Data;
-        int count = stack.Count;          // ganzer Stapel inkl. Rest-Nutzungen
-        _inventory.RemoveFromSlot(Address, count);
-        Player.Player.LocalPlayer?.DropToGround(data, count);
+        int count = stack.Count;
+        if (!(Multiplayer.HasMultiplayerPeer() && Multiplayer.IsServer())) _inventory.RemoveFromSlot(Address, count);
+
+        var player = Player.Player.LocalPlayer;
+        player?.Input?.QueueInventoryAction(new PlayerInput.PendingInvAction
+        {
+            Action = InvActionType.Drop,
+            SlotA = Address,
+            ItemId = data.ItemId,
+            Count = count
+        });
     }
 
     // Darf hier abgelegt werden? Equipment-Slots filtern nach passendem EquipSlot
@@ -160,12 +169,22 @@ public partial class InventorySlotUI : Control
         return true;
     }
 
-    // Drop ausführen: Inhalt tauschen/stapeln (Inventory feuert Changed → UI refresht)
+    // Drop ausführen: predicted + queued für Server-Validierung
     public override void _DropData(Vector2 atPosition, Variant data)
     {
         var src = data.As<InventorySlotUI>();
         if (src == null) return;
-        _inventory.SwapSlots(src.Address, Address);
+        var itemId = src.GetStack()?.Data?.ItemId ?? "";
+        if (!(Multiplayer.HasMultiplayerPeer() && Multiplayer.IsServer())) _inventory.SwapSlots(src.Address, Address);
+
+        var player = Player.Player.LocalPlayer;
+        player?.Input?.QueueInventoryAction(new PlayerInput.PendingInvAction
+        {
+            Action = InvActionType.Swap,
+            SlotA = src.Address,
+            SlotB = Address,
+            ItemId = itemId
+        });
     }
 
     // Passt das Item in den Equipment-Slot? Ringe passen in beide Ring-Slots

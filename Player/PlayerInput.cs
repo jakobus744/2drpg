@@ -15,6 +15,22 @@ public partial class PlayerInput : Node
 
     private readonly Queue<PlayerCmd> _serverCommandQueue = new Queue<PlayerCmd>();
 
+    public struct PendingInvAction
+    {
+        public InvActionType Action;
+        public SlotAddress SlotA;
+        public SlotAddress SlotB;
+        public string ItemId;
+        public int Count;
+    }
+
+    private PendingInvAction? _pendingInvAction;
+
+    public void QueueInventoryAction(PendingInvAction action)
+    {
+        _pendingInvAction = action;
+    }
+
     private PredictionDebug _debugDrawer;
 
     public uint CurrentTick = 0;
@@ -62,6 +78,13 @@ public partial class PlayerInput : Node
                 var state = player.StateBuffer.Get(CurrentTick);
                 RpcId(Multiplayer.GetRemoteSenderId(), MethodName.ReceivePlayerState,
                     CurrentTick, player.StateBuffer.ToBytes(state));
+
+                if (player.InventoryDirty)
+                {
+                    player.InventoryDirty = false;
+                    player.RpcId(Multiplayer.GetRemoteSenderId(), "SyncInventoryState",
+                        player.Inventory.Serialize());
+                }
             }
         }
     }
@@ -114,13 +137,30 @@ public partial class PlayerInput : Node
         playerCmd.EquippedWeaponPath = GetEquipPath(EquipSlot.Weapon);
         playerCmd.EquippedOffhandPath = GetEquipPath(EquipSlot.Offhand);
 
-        // Consumable nutzen (Rechtsklick auf aktivem Hotbar-Slot)
+        var inv = GetParent<Player>().Inventory;
+
+        // Consumable nutzen — predicted + queued
         if (Input.IsActionJustPressed("use_item"))
             TryUseActiveConsumable(ref playerCmd);
 
-        // Item droppen (aktives Hotbar-Item auf Boden)
+        // Item droppen — predicted + queued
         if (Input.IsActionJustPressed("drop"))
-            DropActiveHotbarItem();
+            TryDropActiveHotbarItem();
+
+        // Pending action vom UI (Drag&Drop Swap/Drop) in cmd codieren
+        if (_pendingInvAction.HasValue)
+        {
+            var a = _pendingInvAction.Value;
+            playerCmd.InvAction = (byte)a.Action;
+            playerCmd.InvSlotA = a.SlotA.ToIndexByte();
+            if (a.Action == InvActionType.Swap)
+                playerCmd.InvSlotB = a.SlotB.ToIndexByte();
+            playerCmd.InvItemId = a.ItemId ?? "";
+            playerCmd.InvCount = (byte)Math.Clamp(a.Count, 0, 255);
+            _pendingInvAction = null;
+        }
+
+        playerCmd.ActiveHotbarIndex = (byte)inv.ActiveHotbarIndex;
 
         return playerCmd;
     }
@@ -133,8 +173,7 @@ public partial class PlayerInput : Node
         return stack?.Data?.DroppedScenePath ?? "";
     }
 
-    // Aktiver Hotbar-Slot ein Consumable? → Effektwerte ins cmd, 1 vom Stapel abziehen.
-    // Removal hier (einmalig pro Tick), NICHT in ProcessCommand → kein Doppelverbrauch bei Reprediction.
+    // Consumable predicted + queued für Server-Validierung.
     private void TryUseActiveConsumable(ref PlayerCmd cmd)
     {
         var inv = GetParent<Player>().Inventory;
@@ -147,11 +186,19 @@ public partial class PlayerInput : Node
         cmd.IsUseItemPressed = true;
         cmd.UseStaminaRestore = stack.Data.StaminaRestore;
         cmd.UseHealthRestore = stack.Data.HealthRestore;
-        inv.RemoveFromSlot(addr, 1);
+        if (!(Multiplayer.HasMultiplayerPeer() && Multiplayer.IsServer())) inv.RemoveFromSlot(addr, 1);
+
+        _pendingInvAction = new PendingInvAction
+        {
+            Action = InvActionType.Consume,
+            SlotA = addr,
+            ItemId = stack.Data.ItemId,
+            Count = 1
+        };
     }
 
-    // Wirft das aktive Hotbar-Item auf den Boden (spawnt es via RPC für alle).
-    private void DropActiveHotbarItem()
+    // Drop predicted + queued für Server-Validierung.
+    private void TryDropActiveHotbarItem()
     {
         var player = GetParent<Player>();
         var inv = player.Inventory;
@@ -162,9 +209,16 @@ public partial class PlayerInput : Node
         if (stack == null || stack.IsEmpty) return;
 
         var data = stack.Data;
-        int count = stack.Count;          // ganzer Stapel inkl. Rest-Nutzungen
-        inv.RemoveFromSlot(addr, count);
-        player.DropToGround(data, count);
+        int count = stack.Count;
+        if (!(Multiplayer.HasMultiplayerPeer() && Multiplayer.IsServer())) inv.RemoveFromSlot(addr, count);
+
+        _pendingInvAction = new PendingInvAction
+        {
+            Action = InvActionType.Drop,
+            SlotA = addr,
+            ItemId = data.ItemId,
+            Count = count
+        };
     }
 
     private void AddDirection(string dir)

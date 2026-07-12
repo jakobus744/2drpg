@@ -43,4 +43,5 @@ public class ItemStack
         return new ItemStack(Data, amount);
     }
 
+    public ItemStack Clone() => IsEmpty ? null : new ItemStack(Data, Count);
 }

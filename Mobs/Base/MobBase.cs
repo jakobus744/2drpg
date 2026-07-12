@@ -4,6 +4,22 @@ using RPG2d.GameManager;
 
 public abstract partial class MobBase : BaseEntity<MobState>
 {
+    private static int _lastPeerCount;
+    private static ulong _peerChangeTick;
+    private const ulong PeerStabilizeFrames = 3;
+
+    private bool PeersStable()
+    {
+        int current = Multiplayer.GetPeers().Length;
+        if (current != _lastPeerCount)
+        {
+            _lastPeerCount = current;
+            _peerChangeTick = Engine.GetPhysicsFrames();
+            return false;
+        }
+        return Engine.GetPhysicsFrames() - _peerChangeTick >= PeerStabilizeFrames;
+    }
+
     [Export] public float MaxHealth    { get; set; } = 100f;
     [Export] public float MoveSpeed    { get; set; } = 60f;
     [Export] public float AttackDamage { get; set; } = 10f;
@@ -172,7 +188,7 @@ public abstract partial class MobBase : BaseEntity<MobState>
                 IsDead = IsDead
             });
 
-            if (Multiplayer.HasMultiplayerPeer())
+            if (Multiplayer.HasMultiplayerPeer() && PeersStable())
                 Rpc(MethodName.SyncStateRpc, Position, Sprite?.Animation ?? "");
         }
         else

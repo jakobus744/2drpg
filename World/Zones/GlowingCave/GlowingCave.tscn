@@ -1384,7 +1384,7 @@ position = Vector2(45, 12)
 position = Vector2(14, -21)
 rotation = -2.104867
 
-[node name="Goblin" parent="TileMap" unique_id=320708107 instance=ExtResource("9_7mhe1")]
+[node name="Goblin" parent="TileMap" instance=ExtResource("9_7mhe1")]
 position = Vector2(26, 8)
 
 [node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="." unique_id=772117944]
