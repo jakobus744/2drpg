@@ -141,7 +141,11 @@ public partial class Player : BaseEntity<PlayerState>
 
 		// ServerSynchronizer gehört dem Server er liest SyncPosition/SyncAnimation und verteilt sie
 		var sync = GetNodeOrNull<MultiplayerSynchronizer>("ServerSynchronizer");
-		sync?.SetMultiplayerAuthority(1);
+		if (sync != null)
+		{
+			sync.SetMultiplayerAuthority(1);
+			sync.ReplicationInterval = 0.1f;
+		}
 
 		// Kamera nur beim lokalen Spieler aktivieren
 		var camera = GetNodeOrNull<Camera2D>("Camera2D");
