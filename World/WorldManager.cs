@@ -92,6 +92,11 @@ public partial class WorldManager : Node2D
             AddChild(inst);
             _loaded[coord] = inst;
             GD.Print($"[WorldManager] geladen: Zelle {coord} @ ({coord.X * ZoneSize},{coord.Y * ZoneSize})");
+
+            // Register zone with NavigationManager for pathfinding
+            var nav = GetNodeOrNull<NavigationManager>("/root/NavigationManager");
+            nav?.RegisterZone(coord, inst);
+
             MeasureZone(inst, coord);
         }
     }
@@ -131,6 +136,10 @@ public partial class WorldManager : Node2D
             var d = coord - current;
             if (Mathf.Abs(d.X) > LoadRadius || Mathf.Abs(d.Y) > LoadRadius)
             {
+                // Unregister zone grid before freeing
+                var nav = GetNodeOrNull<NavigationManager>("/root/NavigationManager");
+                nav?.UnregisterZone(coord);
+
                 node.QueueFree();
                 remove.Add(coord);
                 GD.Print($"[WorldManager] entladen: Zelle {coord}");

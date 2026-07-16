@@ -1,22 +1,35 @@
 using Godot;
+using RPG2d.Player;
 
 public partial class Goblin : MobBase
 {
-    private Vector2 _spawnPos;
-    private float _angle;
+    private const float AggroRange = 300f;
+    private const float AttackRange = 32f;
 
     protected override void OnReady()
     {
-        _spawnPos = Position;
+        UsePathfinding = true;
+        PathRecalcInterval = 0.3f;
+        TargetReachedDistance = AttackRange;
+        MoveSpeed = 60f;
     }
 
     protected override void ProcessAI(double delta)
     {
-        _angle += (float)delta * 2f; // ~1.2s per full revolution at 60fps
-        Vector2 target = _spawnPos + new Vector2(
-            Mathf.Cos(_angle) * 40f,
-            Mathf.Sin(_angle) * 40f
-        );
-        Velocity = (target - Position).Normalized() * MoveSpeed;
+        var player = Player.LocalPlayer;
+        if (player == null || !IsInstanceValid(player))
+            return;
+
+        float dist = GlobalPosition.DistanceTo(player.GlobalPosition);
+
+        if (dist > AggroRange || dist <= AttackRange)
+        {
+            Velocity = Vector2.Zero;
+            return;
+        }
+
+        SetDestination(player.GlobalPosition);
+        MoveAlongPath(delta);
+        CheckStuck();
     }
 }

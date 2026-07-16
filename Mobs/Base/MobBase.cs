@@ -24,6 +24,12 @@ public abstract partial class MobBase : BaseEntity<MobState>
     [Export] public float MoveSpeed    { get; set; } = 60f;
     [Export] public float AttackDamage { get; set; } = 10f;
 
+    [Export] public bool  UsePathfinding        { get; set; } = false;
+    [Export] public float PathRecalcInterval    { get; set; } = 0.5f;
+    [Export] public float TargetReachedDistance { get; set; } = 10f;
+    [Export] public float AvoidanceRadius       { get; set; } = 0f;
+    [Export] public float StuckTimeout          { get; set; } = 1.0f;
+
     private Vector2 _syncPosition  = Vector2.Zero;
     private string  _syncAnimation = "";
 
@@ -33,6 +39,13 @@ public abstract partial class MobBase : BaseEntity<MobState>
     public bool  IsDead                { get; protected set; }
 
     private bool _deathAnimPlaying;
+
+    protected Vector2[] CurrentPath       = System.Array.Empty<Vector2>();
+    protected int       CurrentPathIndex  = 0;
+    protected Vector2   Destination       = Vector2.Zero;
+    private   float     _pathRecalcTimer;
+    private   Vector2   _lastStuckPosition;
+    private   float     _stuckTimer;
 
     public override void _Ready()
     {
@@ -205,5 +218,150 @@ public abstract partial class MobBase : BaseEntity<MobState>
     {
         _syncPosition = pos;
         _syncAnimation = anim;
+    }
+
+    // Pathfinding helpers — call these from subclass ProcessAI() overrides.
+
+    protected void SetDestination(Vector2 worldTarget)
+    {
+        float moved = Destination.DistanceSquaredTo(worldTarget);
+        Destination = worldTarget;
+        if (moved > TargetReachedDistance * TargetReachedDistance)
+            _pathRecalcTimer = PathRecalcInterval;
+    }
+
+    protected void ClearDestination()
+    {
+        Destination = Vector2.Zero;
+        CurrentPath = System.Array.Empty<Vector2>();
+        CurrentPathIndex = 0;
+        Velocity = Vector2.Zero;
+    }
+
+    protected bool MoveAlongPath(double delta)
+    {
+        _pathRecalcTimer += (float)delta;
+        if (_pathRecalcTimer >= PathRecalcInterval && Destination != Vector2.Zero)
+        {
+            _pathRecalcTimer = 0f;
+            CurrentPath = FindPathTo(Destination);
+            CurrentPathIndex = 0;
+        }
+
+        if (CurrentPath.Length == 0 || CurrentPathIndex >= CurrentPath.Length)
+        {
+            Velocity = Vector2.Zero;
+            return false;
+        }
+
+        Vector2 targetWaypoint = CurrentPath[CurrentPathIndex];
+        Vector2 toWaypoint = targetWaypoint - GlobalPosition;
+        float distSq = toWaypoint.LengthSquared();
+
+        if (distSq < TargetReachedDistance * TargetReachedDistance)
+        {
+            CurrentPathIndex++;
+            if (CurrentPathIndex >= CurrentPath.Length)
+            {
+                Velocity = Vector2.Zero;
+                OnDestinationReached();
+                return false;
+            }
+            targetWaypoint = CurrentPath[CurrentPathIndex];
+            toWaypoint = targetWaypoint - GlobalPosition;
+        }
+
+        Vector2 direction = toWaypoint.Normalized();
+
+        if (AvoidanceRadius > 0f)
+            direction += ComputeSeparationForce();
+
+        Velocity = direction.Normalized() * MoveSpeed;
+        return true;
+    }
+
+    protected Vector2[] FindPathTo(Vector2 worldTarget)
+    {
+        var nav = GetNodeOrNull<RPG2d.World.NavigationManager>("/root/NavigationManager");
+        return nav?.FindPath(GlobalPosition, worldTarget) ?? System.Array.Empty<Vector2>();
+    }
+
+    protected bool HasReachedDestination()
+    {
+        if (Destination == Vector2.Zero) return true;
+        return GlobalPosition.DistanceSquaredTo(Destination) < TargetReachedDistance * TargetReachedDistance;
+    }
+
+    protected Vector2 GetRandomWalkablePosition(Vector2 center, float radius)
+    {
+        var nav = GetNodeOrNull<RPG2d.World.NavigationManager>("/root/NavigationManager");
+        if (nav == null) return center;
+        var positions = nav.GetRandomWalkablePositions(center, radius, 1);
+        return positions.Length > 0 ? positions[0] : center;
+    }
+
+    protected virtual void OnDestinationReached() { }
+
+    protected virtual void OnPathStuck()
+    {
+        if (Destination == Vector2.Zero) return;
+        Vector2 jitter = new((float)GD.RandRange(-20f, 20f), (float)GD.RandRange(-20f, 20f));
+        CurrentPath = FindPathTo(Destination + jitter);
+        CurrentPathIndex = 0;
+    }
+
+    protected void CheckStuck()
+    {
+        if (!UsePathfinding || Destination == Vector2.Zero) return;
+
+        if (GlobalPosition.DistanceSquaredTo(_lastStuckPosition) < 1f && Velocity.LengthSquared() > 0.1f)
+        {
+            _stuckTimer += (float)GetPhysicsProcessDeltaTime();
+            if (_stuckTimer >= StuckTimeout)
+            {
+                OnPathStuck();
+                _stuckTimer = 0f;
+            }
+        }
+        else
+        {
+            _stuckTimer = 0f;
+            _lastStuckPosition = GlobalPosition;
+        }
+    }
+
+    private Vector2 ComputeSeparationForce()
+    {
+        Vector2 separation = Vector2.Zero;
+        int count = 0;
+
+        var spaceState = GetWorld2D().DirectSpaceState;
+        if (spaceState == null) return Vector2.Zero;
+
+        var query = new PhysicsShapeQueryParameters2D();
+        var circle = new CircleShape2D { Radius = AvoidanceRadius };
+        query.Shape = circle;
+        query.Transform = new Transform2D(0, GlobalPosition);
+        query.CollideWithBodies = true;
+        query.CollisionMask = 1;
+
+        var results = spaceState.IntersectShape(query);
+        foreach (var result in results)
+        {
+            var collider = result["collider"].AsGodotObject();
+            if (collider == this) continue;
+            if (collider is MobBase other && other.IsDead) continue;
+
+            Vector2 otherPos = collider is Node2D n ? n.GlobalPosition : GlobalPosition;
+            Vector2 away = GlobalPosition - otherPos;
+            float dist = away.Length();
+            if (dist > 0.01f && dist < AvoidanceRadius)
+            {
+                separation += away.Normalized() * (1f - dist / AvoidanceRadius);
+                count++;
+            }
+        }
+
+        return count > 0 ? separation / count * 0.3f : Vector2.Zero;
     }
 }
