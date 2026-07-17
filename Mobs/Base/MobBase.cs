@@ -283,7 +283,10 @@ public abstract partial class MobBase : BaseEntity<MobState>
     protected Vector2[] FindPathTo(Vector2 worldTarget)
     {
         var nav = GetNodeOrNull<RPG2d.World.NavigationManager>("/root/NavigationManager");
-        return nav?.FindPath(GlobalPosition, worldTarget) ?? System.Array.Empty<Vector2>();
+        var path = nav?.FindPath(GlobalPosition, worldTarget) ?? System.Array.Empty<Vector2>();
+        if (path.Length == 0)
+            OnPathfindingFailed();
+        return path;
     }
 
     protected bool HasReachedDestination()
@@ -301,6 +304,8 @@ public abstract partial class MobBase : BaseEntity<MobState>
     }
 
     protected virtual void OnDestinationReached() { }
+
+    protected virtual void OnPathfindingFailed() { }
 
     protected virtual void OnPathStuck()
     {

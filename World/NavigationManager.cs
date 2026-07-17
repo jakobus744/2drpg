@@ -1,533 +1,612 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Godot;
 
 namespace RPG2d.World;
 
 public partial class NavigationManager : Node
 {
-    private readonly Dictionary<Vector2I, WalkabilityGrid> _zoneGrids = new();
-    private readonly Dictionary<string, WalkabilityGrid> _templateCache = new();
+    private static readonly Vector2I[] ZoneSteps = { new(1, 0), new(-1, 0), new(0, 1), new(0, -1) };
 
-    private static readonly HashSet<Vector2I> ZoneCoordinates = new()
+    private const string BlockedNameParts = "wall,obstacle,collision,water,ground2";
+    private const string IgnoredNameParts = "ysort,y-sort,decoration,detail";
+    private const int NearestSearchLimit = 48;
+
+    private readonly Dictionary<Vector2I, ZoneData> _zones = new();
+
+    private sealed class ZoneData
     {
-        new(0, 0), new(1, 0), new(2, 0),
-        new(0, 1), new(1, 1), new(2, 1),
-        new(0, 2), new(1, 2), new(2, 2),
-        new(0, 3), new(1, 3), new(2, 3),
-    };
+        public AStarGrid2D Grid;
+        public TileMapLayer Layer;
+        public Vector2I CellOffset;
+    }
 
-    private static readonly Vector2I[] AdjacencyDeltas =
-    {
-        new(1, 0), new(-1, 0), new(0, 1), new(0, -1),
-    };
-
-    [Export] public int ZoneSize { get; set; } = 3424;
+    // Zone registration
 
     public void RegisterZone(Vector2I coord, Node zoneRoot)
     {
-        string scenePath = zoneRoot.SceneFilePath;
-        if (string.IsNullOrEmpty(scenePath))
+        if (zoneRoot == null)
             return;
 
-        if (_templateCache.TryGetValue(scenePath, out var cached))
-        {
-            _zoneGrids[coord] = cached;
+        var layers = new List<TileMapLayer>();
+        CollectLayers(zoneRoot, layers);
+        if (layers.Count == 0)
             return;
+
+        var blockedParts = BlockedNameParts.Split(',', StringSplitOptions.TrimEntries);
+        var ignoredParts = IgnoredNameParts.Split(',', StringSplitOptions.TrimEntries);
+
+        var refLayer = layers.FirstOrDefault(l => !NameMatches(l.Name, ignoredParts));
+        if (refLayer == null)
+            return;
+
+        int cellSize = Math.Max(1, refLayer.TileSet?.TileSize.X ?? 16);
+
+        Rect2I bounds = default;
+        bool hasBounds = false;
+        foreach (var layer in layers)
+        {
+            if (NameMatches(layer.Name, ignoredParts))
+                continue;
+            var used = layer.GetUsedRect();
+            if (used.Size.X <= 0 || used.Size.Y <= 0)
+                continue;
+            bounds = hasBounds ? Union(bounds, used) : used;
+            hasBounds = true;
+        }
+        if (!hasBounds)
+            return;
+
+        var cellOffset = -bounds.Position;
+
+        var astar = new AStarGrid2D();
+        astar.Region = new Rect2I(Vector2I.Zero, bounds.Size);
+        astar.CellSize = new Vector2(cellSize, cellSize);
+        astar.DiagonalMode = AStarGrid2D.DiagonalModeEnum.OnlyIfNoObstacles;
+        astar.Update();
+
+        foreach (var layer in layers)
+        {
+            if (NameMatches(layer.Name, ignoredParts) || !NameMatches(layer.Name, blockedParts))
+                continue;
+            foreach (var cell in layer.GetUsedCells())
+            {
+                var offsetCell = cell + cellOffset;
+                if (astar.IsInBounds(offsetCell.X, offsetCell.Y))
+                    astar.SetPointSolid(offsetCell);
+            }
         }
 
-        var grid = WalkabilityGrid.Build(zoneRoot, coord);
-        if (grid != null)
+        var data = new ZoneData { Grid = astar, Layer = refLayer, CellOffset = cellOffset };
+        _zones[coord] = data;
+
+        MarkPhysicsBodies(data, zoneRoot);
+        InflateBlocked(astar);
+
+        GD.Print($"[Nav] zone {coord}: cellSize={cellSize}");
+
+        int blocked = 0;
+        foreach (var layer in layers)
         {
-            _zoneGrids[coord] = grid;
-            _templateCache[scenePath] = grid;
+            if (NameMatches(layer.Name, ignoredParts) || !NameMatches(layer.Name, blockedParts))
+                continue;
+            blocked += layer.GetUsedCells().Count;
         }
+        if (blocked > 0)
+            GD.Print($"[Nav] zone {coord}: {blocked} blocked cells across layers");
     }
 
     public void UnregisterZone(Vector2I coord)
     {
-        _zoneGrids.Remove(coord);
+        _zones.Remove(coord);
     }
+
+    // Public API
 
     public Vector2[] FindPath(Vector2 fromWorld, Vector2 toWorld)
     {
-        Vector2I fromZone = WorldToZoneCoord(fromWorld);
-        Vector2I toZone = WorldToZoneCoord(toWorld);
-
-        if (fromZone == toZone)
-            return FindPathInZone(fromZone, WorldToLocal(fromWorld, fromZone), WorldToLocal(toWorld, toZone));
-
-        var zoneSequence = FindZonePath(fromZone, toZone);
-        if (zoneSequence == null || zoneSequence.Length == 0)
-            return Array.Empty<Vector2>();
-
-        var allWaypoints = new List<Vector2>();
-
-        for (int i = 0; i < zoneSequence.Length; i++)
+        if (!TryFindZone(fromWorld, out var startZone, out var startData))
         {
-            Vector2I curZone = zoneSequence[i];
-            if (!_zoneGrids.TryGetValue(curZone, out var grid))
-                return allWaypoints.Count > 0 ? allWaypoints.ToArray() : Array.Empty<Vector2>();
+            GD.Print($"[Nav] FindPath failed: no zone for fromWorld={fromWorld}");
+            return Array.Empty<Vector2>();
+        }
+        if (!TryFindZone(toWorld, out var targetZone, out var targetData))
+        {
+            GD.Print($"[Nav] FindPath failed: no zone for toWorld={toWorld}");
+            return Array.Empty<Vector2>();
+        }
 
-            Vector2 entryWorld = i == 0 ? fromWorld : GetZoneBoundaryPoint(curZone, zoneSequence[i - 1]);
-            Vector2 exitWorld = i == zoneSequence.Length - 1 ? toWorld : GetZoneBoundaryPoint(curZone, zoneSequence[i + 1]);
+        if (startZone == targetZone)
+            return FindPathInZone(startData, fromWorld, toWorld);
 
-            var segment = grid.FindPath(WorldToLocal(entryWorld, curZone), WorldToLocal(exitWorld, curZone));
-            if (segment == null || segment.Length == 0)
-                return allWaypoints.Count > 0 ? allWaypoints.ToArray() : Array.Empty<Vector2>();
+        var zoneRoute = FindZoneRoute(startZone, targetZone);
+        if (zoneRoute.Length == 0)
+        {
+            GD.Print($"[Nav] No zone route from {startZone} to {targetZone}");
+            return Array.Empty<Vector2>();
+        }
 
-            for (int j = 0; j < segment.Length; j++)
+        var points = new List<Vector2>();
+
+        for (int i = 0; i < zoneRoute.Length; i++)
+        {
+            if (!_zones.TryGetValue(zoneRoute[i], out var data))
+                return Array.Empty<Vector2>();
+
+            Vector2 entry = i == 0 ? fromWorld : GetBorderPoint(zoneRoute[i], zoneRoute[i - 1]);
+            Vector2 exit = i == zoneRoute.Length - 1 ? toWorld : GetBorderPoint(zoneRoute[i], zoneRoute[i + 1]);
+
+            var segment = FindPathInZone(data, entry, exit);
+            if (segment.Length == 0)
             {
-                Vector2 wp = LocalToWorld(segment[j], curZone);
-                if (allWaypoints.Count == 0 || allWaypoints[^1].DistanceSquaredTo(wp) > 0.1f)
-                    allWaypoints.Add(wp);
+                GD.Print($"[Nav] Cross-zone segment {i} failed in zone {zoneRoute[i]}: entry={entry} exit={exit}");
+                return Array.Empty<Vector2>();
+            }
+
+            foreach (var pt in segment)
+            {
+                if (points.Count == 0 || points[^1].DistanceSquaredTo(pt) > 0.25f)
+                    points.Add(pt);
             }
         }
 
-        return allWaypoints.ToArray();
-    }
-
-    public Vector2[] FindPathInZone(Vector2I zoneCoord, Vector2 fromLocal, Vector2 toLocal)
-    {
-        if (!_zoneGrids.TryGetValue(zoneCoord, out var grid))
-            return Array.Empty<Vector2>();
-
-        var segment = grid.FindPath(fromLocal, toLocal);
-        if (segment == null || segment.Length == 0)
-            return Array.Empty<Vector2>();
-
-        var worldPath = new Vector2[segment.Length];
-        for (int i = 0; i < segment.Length; i++)
-            worldPath[i] = LocalToWorld(segment[i], zoneCoord);
-
-        return worldPath;
+        return points.ToArray();
     }
 
     public bool IsWalkable(Vector2 worldPos)
     {
-        Vector2I zoneCoord = WorldToZoneCoord(worldPos);
-        if (!_zoneGrids.TryGetValue(zoneCoord, out var grid))
+        if (!TryFindZone(worldPos, out _, out var data))
             return false;
-        return grid.IsWalkable(WorldToLocal(worldPos, zoneCoord));
+        var cell = WorldToCell(worldPos, data);
+        return data.Grid.IsInBounds(cell.X, cell.Y) && !data.Grid.IsPointSolid(cell);
     }
 
     public Vector2 FindNearestWalkableCell(Vector2 worldPos)
     {
-        Vector2I zoneCoord = WorldToZoneCoord(worldPos);
-        if (!_zoneGrids.TryGetValue(zoneCoord, out var grid))
+        if (!TryFindZone(worldPos, out _, out var data))
             return worldPos;
-        return LocalToWorld(grid.FindNearestWalkable(WorldToLocal(worldPos, zoneCoord)), zoneCoord);
+        var cell = WorldToCell(worldPos, data);
+        if (TryFindNearestWalkable(data.Grid, cell, out var nearest))
+            return CellToWorld(nearest, data);
+        return worldPos;
     }
 
     public Vector2[] GetRandomWalkablePositions(Vector2 center, float radius, int count)
     {
-        var results = new List<Vector2>();
-        int attempts = 0;
-        while (results.Count < count && attempts < count * 20)
+        if (count <= 0 || radius <= 0f)
+            return Array.Empty<Vector2>();
+
+        var positions = new List<Vector2>(count);
+        int maxAttempts = Math.Max(32, count * 64);
+
+        for (int i = 0; i < maxAttempts && positions.Count < count; i++)
         {
-            attempts++;
-            float angle = (float)GD.RandRange(0, Mathf.Pi * 2);
-            float dist = (float)GD.RandRange(0, radius);
-            Vector2 candidate = center + new Vector2(Mathf.Cos(angle) * dist, Mathf.Sin(angle) * dist);
+            float angle = (float)GD.RandRange(0.0, Math.PI * 2.0);
+            float dist = radius * Mathf.Sqrt(GD.Randf());
+            var candidate = center + new Vector2(Mathf.Cos(angle) * dist, Mathf.Sin(angle) * dist);
             if (IsWalkable(candidate))
-                results.Add(candidate);
+                positions.Add(candidate);
         }
-        return results.ToArray();
+
+        return positions.ToArray();
     }
 
-    public Vector2I WorldToZoneCoord(Vector2 worldPos)
+    // Single-zone path
+
+    private Vector2[] FindPathInZone(ZoneData data, Vector2 fromWorld, Vector2 toWorld)
     {
-        return new Vector2I(
-            Mathf.RoundToInt(worldPos.X / ZoneSize),
-            Mathf.RoundToInt(worldPos.Y / ZoneSize));
+        var fromCell = WorldToCell(fromWorld, data);
+        var toCell = WorldToCell(toWorld, data);
+
+        if (!TryFindNearestWalkable(data.Grid, fromCell, out var start))
+            return Array.Empty<Vector2>();
+        if (!TryFindNearestWalkable(data.Grid, toCell, out var target))
+            return Array.Empty<Vector2>();
+        if (!data.Grid.IsInBounds(start.X, start.Y) || !data.Grid.IsInBounds(target.X, target.Y))
+            return Array.Empty<Vector2>();
+        if (data.Grid.IsPointSolid(start) || data.Grid.IsPointSolid(target))
+            return Array.Empty<Vector2>();
+
+        var cells = FindPathOnGrid(data.Grid, start, target);
+        if (cells.Count == 0)
+            return Array.Empty<Vector2>();
+
+        cells = RemoveCollinear(cells);
+
+        var points = new Vector2[cells.Count];
+        for (int i = 0; i < cells.Count; i++)
+            points[i] = CellToWorld(cells[i], data);
+
+        return points;
     }
 
-    private static Vector2 WorldToLocal(Vector2 worldPos, Vector2I zoneCoord)
+    // Coordinate conversion using TileMapLayer transform hierarchy
+
+    private static Vector2I WorldToCell(Vector2 worldPos, ZoneData data)
     {
-        return worldPos - new Vector2(zoneCoord.X * 3424f, zoneCoord.Y * 3424f);
+        return data.Layer.LocalToMap(data.Layer.ToLocal(worldPos)) + data.CellOffset;
     }
 
-    private static Vector2 LocalToWorld(Vector2 localPos, Vector2I zoneCoord)
+    private static Vector2 CellToWorld(Vector2I cell, ZoneData data)
     {
-        return localPos + new Vector2(zoneCoord.X * 3424f, zoneCoord.Y * 3424f);
+        return data.Layer.ToGlobal(data.Layer.MapToLocal(cell - data.CellOffset));
     }
 
-    private static Vector2I[] FindZonePath(Vector2I from, Vector2I to)
-    {
-        if (from == to) return new[] { from };
+    // Zone lookup
 
-        var visited = new HashSet<Vector2I> { from };
-        var cameFrom = new Dictionary<Vector2I, Vector2I>();
+    private int _zoneSize = 3424;
+
+    public override void _Ready()
+    {
+        var wm = GetNodeOrNull<WorldManager>("/root/MainWorld");
+        if (wm != null)
+            _zoneSize = wm.ZoneSize;
+    }
+
+    private bool TryFindZone(Vector2 worldPos, out Vector2I coord, out ZoneData data)
+    {
+        coord = new Vector2I(
+            Mathf.RoundToInt(worldPos.X / _zoneSize),
+            Mathf.RoundToInt(worldPos.Y / _zoneSize));
+
+        if (_zones.TryGetValue(coord, out data))
+            return true;
+
+        foreach (var step in ZoneSteps)
+        {
+            if (_zones.TryGetValue(coord + step, out data))
+                return true;
+        }
+
+        foreach (var (zCoord, zData) in _zones)
+        {
+            coord = zCoord;
+            data = zData;
+            return true;
+        }
+
+        data = null;
+        return false;
+    }
+
+    // Cross-zone routing
+
+    private Vector2I[] FindZoneRoute(Vector2I start, Vector2I target)
+    {
+        if (!_zones.ContainsKey(start) || !_zones.ContainsKey(target))
+            return Array.Empty<Vector2I>();
+
         var queue = new Queue<Vector2I>();
-        queue.Enqueue(from);
+        var visited = new HashSet<Vector2I> { start };
+        var previous = new Dictionary<Vector2I, Vector2I>();
+        queue.Enqueue(start);
 
         while (queue.Count > 0)
         {
             var current = queue.Dequeue();
-            if (current == to)
+            if (current == target)
             {
-                var path = new List<Vector2I> { to };
-                while (cameFrom.ContainsKey(path[^1]))
-                    path.Add(cameFrom[path[^1]]);
-                path.Reverse();
-                return path.ToArray();
+                var route = new List<Vector2I> { target };
+                while (previous.TryGetValue(route[^1], out var parent))
+                    route.Add(parent);
+                route.Reverse();
+                return route.ToArray();
             }
 
-            foreach (var delta in AdjacencyDeltas)
+            foreach (var step in ZoneSteps)
             {
-                var neighbor = current + delta;
-                if (!ZoneCoordinates.Contains(neighbor)) continue;
-                if (!visited.Add(neighbor)) continue;
-                cameFrom[neighbor] = current;
-                queue.Enqueue(neighbor);
+                var next = current + step;
+                if (!_zones.ContainsKey(next) || !visited.Add(next))
+                    continue;
+                previous[next] = current;
+                queue.Enqueue(next);
             }
         }
 
         return Array.Empty<Vector2I>();
     }
 
-    private static Vector2 GetZoneBoundaryPoint(Vector2I zoneA, Vector2I zoneB)
+    private Vector2 GetBorderPoint(Vector2I fromZone, Vector2I toZone)
     {
-        Vector2I delta = zoneB - zoneA;
-        Vector2 centerA = new(zoneA.X * 3424f, zoneA.Y * 3424f);
-        return centerA + new Vector2(delta.X * 1712f, delta.Y * 1712f);
+        if (!_zones.TryGetValue(fromZone, out var data))
+            return Vector2.Zero;
+
+        Vector2I dir = toZone - fromZone;
+        var region = data.Grid.Region;
+
+        int edgeX = dir.X > 0 ? region.Size.X - 1 :
+                    dir.X < 0 ? 0 :
+                    region.Size.X / 2;
+        int edgeY = dir.Y > 0 ? region.Size.Y - 1 :
+                    dir.Y < 0 ? 0 :
+                    region.Size.Y / 2;
+
+        var edgeCell = new Vector2I(edgeX, edgeY);
+        if (TryFindNearestWalkable(data.Grid, edgeCell, out var nearest))
+            return CellToWorld(nearest, data);
+
+        return CellToWorld(edgeCell, data);
     }
 
-    // ── WalkabilityGrid ─────────────────────────────────────────────
+    // Nearest-walkable search
 
-    private class WalkabilityGrid
+    private static bool TryFindNearestWalkable(AStarGrid2D grid, Vector2I start, out Vector2I result)
     {
-        private readonly bool[,] _solid;
-        private readonly Vector2I _origin;
-        private readonly int _cellSize;
-        private readonly int _width;
-        private readonly int _height;
-
-        private WalkabilityGrid(bool[,] solid, Vector2I origin, int cellSize)
+        if (grid.IsInBounds(start.X, start.Y) && !grid.IsPointSolid(start))
         {
-            _solid = solid;
-            _origin = origin;
-            _cellSize = cellSize;
-            _width = solid.GetLength(0);
-            _height = solid.GetLength(1);
-        }
-
-        public static WalkabilityGrid Build(Node zoneRoot, Vector2I coord)
-        {
-            var layers = FindTileMapLayers(zoneRoot);
-            if (layers.Count == 0) return null;
-
-            TileSet tileSet = null;
-            foreach (var layer in layers)
-            {
-                tileSet = layer.TileSet;
-                if (tileSet != null) break;
-            }
-            if (tileSet == null && zoneRoot is TileMap tm)
-                tileSet = tm.TileSet;
-
-            int cellSize = tileSet?.TileSize.X ?? 16;
-
-            Rect2I usedRect = default;
-            bool rectSet = false;
-            foreach (var layer in layers)
-            {
-                if (IsDecorationLayer(layer)) continue;
-                var r = layer.GetUsedRect();
-                if (r.Size == Vector2I.Zero) continue;
-                usedRect = rectSet ? usedRect.Merge(r) : r;
-                rectSet = true;
-            }
-
-            if (!rectSet) return null;
-
-            // Expand by 1 cell in each direction for zone boundary margin
-            Vector2I origin = usedRect.Position - Vector2I.One;
-            int w = usedRect.Size.X + 2;
-            int h = usedRect.Size.Y + 2;
-            var solid = new bool[w, h];
-
-            int solidCount = 0;
-            foreach (var layer in layers)
-            {
-                if (IsDecorationLayer(layer)) continue;
-                if (!IsObstacleLayer(layer) && !IsWaterLayer(layer)) continue;
-
-                foreach (var cell in layer.GetUsedCells())
-                {
-                    int x = cell.X - origin.X;
-                    int y = cell.Y - origin.Y;
-                    if (x >= 0 && x < w && y >= 0 && y < h)
-                    {
-                        solid[x, y] = true;
-                        solidCount++;
-                    }
-                }
-            }
-
-            GD.Print($"[Nav] Zone {coord}: size=({w},{h}) origin={origin} cellSize={cellSize} solids={solidCount}");
-            return new WalkabilityGrid(solid, origin, cellSize);
-        }
-
-        public bool IsWalkable(Vector2 localPos)
-        {
-            var (x, y) = LocalToIndex(localPos);
-            if (x < 0 || x >= _width || y < 0 || y >= _height) return false;
-            return !_solid[x, y];
-        }
-
-        public Vector2[] FindPath(Vector2 fromLocal, Vector2 toLocal)
-        {
-            var (fx, fy) = LocalToIndex(fromLocal);
-            var (tx, ty) = LocalToIndex(toLocal);
-
-            // Clamp out-of-bounds cells
-            if (fx < 0 || fx >= _width || fy < 0 || fy >= _height)
-                (fx, fy) = FindNearestWalkableIndex(fx, fy);
-            if (tx < 0 || tx >= _width || ty < 0 || ty >= _height)
-                (tx, ty) = FindNearestWalkableIndex(tx, ty);
-
-            // Only clamp start if solid (can't start on a wall)
-            if (_solid[fx, fy]) (fx, fy) = FindNearestWalkableIndex(fx, fy);
-
-            // If target is solid, path to nearest walkable then add actual target at end
-            int origTx = tx, origTy = ty;
-            if (_solid[tx, ty])
-            {
-                var (ntx, nty) = FindNearestWalkableIndex(tx, ty);
-                tx = ntx; ty = nty;
-            }
-
-            var cells = AStar.FindPath(_solid, _width, _height, fx, fy, tx, ty);
-            if (cells == null || cells.Count == 0)
-                return Array.Empty<Vector2>();
-
-            cells = SmoothPath(cells);
-
-            if (_solid[origTx, origTy])
-                cells.Add((origTx, origTy));
-
-            var result = new Vector2[cells.Count];
-            for (int i = 0; i < cells.Count; i++)
-                result[i] = IndexToLocal(cells[i].Item1, cells[i].Item2);
-            return result;
-        }
-
-        public Vector2 FindNearestWalkable(Vector2 localPos)
-        {
-            var (x, y) = LocalToIndex(localPos);
-            if (x >= 0 && x < _width && y >= 0 && y < _height && !_solid[x, y])
-                return localPos;
-            var (nx, ny) = FindNearestWalkableIndex(x, y);
-            return IndexToLocal(nx, ny);
-        }
-
-        private (int, int) LocalToIndex(Vector2 localPos)
-        {
-            return (
-                Mathf.FloorToInt(localPos.X / _cellSize) - _origin.X,
-                Mathf.FloorToInt(localPos.Y / _cellSize) - _origin.Y
-            );
-        }
-
-        private Vector2 IndexToLocal(int x, int y)
-        {
-            return new Vector2(
-                (x + _origin.X) * _cellSize + _cellSize * 0.5f,
-                (y + _origin.Y) * _cellSize + _cellSize * 0.5f
-            );
-        }
-
-        private List<(int, int)> SmoothPath(List<(int, int)> path)
-        {
-            if (path.Count <= 2) return path;
-
-            var smoothed = new List<(int, int)> { path[0] };
-            int anchor = 0;
-
-            for (int i = 1; i < path.Count; i++)
-            {
-                if (i == path.Count - 1 || !LineOfSight(path[anchor].Item1, path[anchor].Item2, path[i + 1].Item1, path[i + 1].Item2))
-                {
-                    smoothed.Add(path[i]);
-                    anchor = i;
-                }
-            }
-
-            return smoothed;
-        }
-
-        private bool LineOfSight(int x0, int y0, int x1, int y1)
-        {
-            int dx = Math.Abs(x1 - x0);
-            int dy = Math.Abs(y1 - y0);
-            int stepX = x0 < x1 ? 1 : -1;
-            int stepY = y0 < y1 ? 1 : -1;
-            float tDeltaX = dx > 0 ? 1f / dx : float.MaxValue;
-            float tDeltaY = dy > 0 ? 1f / dy : float.MaxValue;
-            float tMaxX = dx > 0 ? (0.5f + 0.5f * stepX) * tDeltaX : float.MaxValue;
-            float tMaxY = dy > 0 ? (0.5f + 0.5f * stepY) * tDeltaY : float.MaxValue;
-
-            int x = x0, y = y0;
-            while (x != x1 || y != y1)
-            {
-                if (tMaxX < tMaxY)
-                {
-                    x += stepX;
-                    tMaxX += tDeltaX;
-                }
-                else
-                {
-                    y += stepY;
-                    tMaxY += tDeltaY;
-                }
-
-                if ((x != x1 || y != y1) && _solid[x, y])
-                    return false;
-            }
-
+            result = start;
             return true;
         }
 
-        private (int, int) FindNearestWalkableIndex(int sx, int sy)
+        for (int radius = 1; radius <= NearestSearchLimit; radius++)
         {
-            if (sx >= 0 && sx < _width && sy >= 0 && sy < _height && !_solid[sx, sy])
-                return (sx, sy);
+            int minX = start.X - radius, maxX = start.X + radius;
+            int minY = start.Y - radius, maxY = start.Y + radius;
 
-            for (int r = 1; r <= 30; r++)
+            for (int x = minX; x <= maxX; x++)
             {
-                for (int dx = -r; dx <= r; dx++)
-                {
-                    for (int dy = -r; dy <= r; dy++)
-                    {
-                        if (Math.Abs(dx) != r && Math.Abs(dy) != r) continue;
-                        int nx = sx + dx;
-                        int ny = sy + dy;
-                        if (nx >= 0 && nx < _width && ny >= 0 && ny < _height && !_solid[nx, ny])
-                            return (nx, ny);
-                    }
-                }
+                if (TryCell(grid, new Vector2I(x, minY), out result) ||
+                    TryCell(grid, new Vector2I(x, maxY), out result))
+                    return true;
             }
-
-            return (sx, sy);
+            for (int y = minY + 1; y <= maxY - 1; y++)
+            {
+                if (TryCell(grid, new Vector2I(minX, y), out result) ||
+                    TryCell(grid, new Vector2I(maxX, y), out result))
+                    return true;
+            }
         }
 
-        private static List<TileMapLayer> FindTileMapLayers(Node root)
-        {
-            var result = new List<TileMapLayer>();
-            FindTileMapLayersRecursive(root, result);
-            return result;
-        }
-
-        private static void FindTileMapLayersRecursive(Node node, List<TileMapLayer> result)
-        {
-            if (node is TileMapLayer layer)
-                result.Add(layer);
-            foreach (var child in node.GetChildren())
-                FindTileMapLayersRecursive(child, result);
-        }
-
-        private static bool IsDecorationLayer(TileMapLayer layer)
-        {
-            string name = layer.Name.ToString().ToLowerInvariant();
-            return name.Contains("y-sort") || name.Contains("ysort");
-        }
-
-        private static bool IsObstacleLayer(TileMapLayer layer)
-        {
-            return layer.Name.ToString().ToLowerInvariant().Contains("ground2");
-        }
-
-        private static bool IsWaterLayer(TileMapLayer layer)
-        {
-            return layer.Name.ToString().ToLowerInvariant().Contains("water");
-        }
+        result = default;
+        return false;
     }
 
-    // ── A* Pathfinder ───────────────────────────────────────────────
-
-    private static class AStar
+    private static bool TryCell(AStarGrid2D grid, Vector2I cell, out Vector2I result)
     {
-        private static readonly (int dx, int dy, float cost)[] Neighbors =
+        if (grid.IsInBounds(cell.X, cell.Y) && !grid.IsPointSolid(cell))
         {
-            ( 0, -1, 1f), ( 1,  0, 1f), ( 0,  1, 1f), (-1,  0, 1f),  // cardinal
-            (-1, -1, 1.414f), ( 1, -1, 1.414f), ( 1,  1, 1.414f), (-1,  1, 1.414f),  // diagonal
-        };
+            result = cell;
+            return true;
+        }
+        result = default;
+        return false;
+    }
 
-        public static List<(int, int)> FindPath(bool[,] solid, int w, int h, int sx, int sy, int tx, int ty)
+    // Pathfinding on AStarGrid2D solid data
+
+    private static readonly Vector2I[] PathSteps =
+    {
+        new(0, -1), new(1, 0), new(0, 1), new(-1, 0),
+        new(-1, -1), new(1, -1), new(1, 1), new(-1, 1),
+    };
+
+    private static List<Vector2I> FindPathOnGrid(AStarGrid2D grid, Vector2I start, Vector2I target)
+    {
+        if (start == target)
+            return new List<Vector2I> { start };
+
+        var open = new PriorityQueue<Vector2I, float>();
+        var cameFrom = new Dictionary<Vector2I, Vector2I>();
+        var costSoFar = new Dictionary<Vector2I, float>();
+        var closed = new HashSet<Vector2I>();
+
+        open.Enqueue(start, 0f);
+        costSoFar[start] = 0f;
+        int iterations = 0;
+        const int maxIterations = 5000;
+
+        while (open.Count > 0 && ++iterations < maxIterations)
         {
-            if (sx < 0 || sx >= w || sy < 0 || sy >= h) return null;
-            if (tx < 0 || tx >= w || ty < 0 || ty >= h) return null;
-            if (solid[sx, sy] || solid[tx, ty]) return null;
+            var current = open.Dequeue();
+            if (!closed.Add(current))
+                continue;
 
-            var open = new PriorityQueue<int, float>();
-            var gScore = new Dictionary<int, float>();
-            var cameFrom = new Dictionary<int, int>();
-            var closed = new HashSet<int>();
-
-            int startKey = sy * w + sx;
-            int targetKey = ty * w + tx;
-
-            open.Enqueue(startKey, 0);
-            gScore[startKey] = 0;
-
-            while (open.Count > 0)
+            if (current == target)
             {
-                int current = open.Dequeue();
-                if (!closed.Add(current)) continue;
-                if (current == targetKey)
-                    return ReconstructPath(cameFrom, current, w);
-
-                int cx = current % w;
-                int cy = current / w;
-                float currentG = gScore[current];
-
-                foreach (var (dx, dy, moveCost) in Neighbors)
+                var path = new List<Vector2I> { current };
+                while (cameFrom.TryGetValue(current, out var prev))
                 {
-                    int nx = cx + dx;
-                    int ny = cy + dy;
-                    if (nx < 0 || nx >= w || ny < 0 || ny >= h) continue;
-                    if (solid[nx, ny]) continue;
+                    current = prev;
+                    path.Add(current);
+                }
+                path.Reverse();
+                return path;
+            }
 
-                    // Block diagonal if either adjacent cardinal is solid (no corner cutting)
-                    if (dx != 0 && dy != 0)
+            for (int i = 0; i < PathSteps.Length; i++)
+            {
+                var next = current + PathSteps[i];
+                if (!grid.IsInBounds(next.X, next.Y) || grid.IsPointSolid(next) || closed.Contains(next))
+                    continue;
+
+                bool diagonal = i >= 4;
+                if (diagonal)
+                {
+                    var horiz = current + new Vector2I(PathSteps[i].X, 0);
+                    var vert = current + new Vector2I(0, PathSteps[i].Y);
+                    if (grid.IsPointSolid(horiz) || grid.IsPointSolid(vert))
+                        continue;
+                }
+
+                float stepCost = diagonal ? 1.4142135f : 1f;
+                float newCost = costSoFar[current] + stepCost;
+
+                if (costSoFar.TryGetValue(next, out var known) && newCost >= known)
+                    continue;
+
+                costSoFar[next] = newCost;
+                cameFrom[next] = current;
+                float priority = newCost + Heuristic(next, target);
+                open.Enqueue(next, priority);
+            }
+        }
+
+        return new List<Vector2I>();
+    }
+
+    private static float Heuristic(Vector2I a, Vector2I b)
+    {
+        int dx = Math.Abs(a.X - b.X);
+        int dy = Math.Abs(a.Y - b.Y);
+        int diag = Math.Min(dx, dy);
+        int straight = Math.Max(dx, dy) - diag;
+        return diag * 1.4142135f + straight;
+    }
+
+    // Helpers
+
+    private static void MarkPhysicsBodies(ZoneData data, Node root)
+    {
+        var bodies = new List<Node>();
+        CollectBodies(root, bodies);
+
+        int marked = 0;
+
+        foreach (var body in bodies)
+        {
+            if (body is not CollisionShape2D shape || shape.Shape == null)
+                continue;
+
+            if (IsMobShape(shape))
+                continue;
+
+            Vector2 halfSize;
+
+            if (shape.Shape is RectangleShape2D rect)
+                halfSize = rect.Size * 0.5f;
+            else if (shape.Shape is CircleShape2D circle)
+                halfSize = new Vector2(circle.Radius, circle.Radius);
+            else if (shape.Shape is CapsuleShape2D capsule)
+                halfSize = new Vector2(capsule.Radius, capsule.Radius + capsule.Height * 0.5f);
+            else
+                continue;
+
+            var worldCenter = shape.GlobalPosition;
+            var tileTopLeft = data.Layer.LocalToMap(data.Layer.ToLocal(worldCenter - halfSize));
+            var tileBottomRight = data.Layer.LocalToMap(data.Layer.ToLocal(worldCenter + halfSize));
+            var topLeft = tileTopLeft + data.CellOffset;
+            var bottomRight = tileBottomRight + data.CellOffset;
+
+            for (int x = topLeft.X; x <= bottomRight.X; x++)
+                for (int y = topLeft.Y; y <= bottomRight.Y; y++)
+                    if (data.Grid.IsInBounds(x, y) && !data.Grid.IsPointSolid(new Vector2I(x, y)))
                     {
-                        if (solid[cx + dx, cy] || solid[cx, cy + dy]) continue;
+                        data.Grid.SetPointSolid(new Vector2I(x, y));
+                        marked++;
                     }
+        }
 
-                    int neighborKey = ny * w + nx;
-                    float tentativeG = currentG + moveCost;
+        if (marked > 0)
+            GD.Print($"[Nav] Marked {marked} physics cells blocked");
+    }
 
-                    if (!gScore.TryGetValue(neighborKey, out float existing) || tentativeG < existing)
-                    {
-                        gScore[neighborKey] = tentativeG;
-                        cameFrom[neighborKey] = current;
-                        float heuristic = Heuristic(nx, ny, tx, ty);
-                        open.Enqueue(neighborKey, tentativeG + heuristic);
-                    }
+    private static bool IsMobShape(CollisionShape2D shape)
+    {
+        var parent = shape.GetParent();
+        while (parent != null)
+        {
+            if (parent is CharacterBody2D)
+                return true;
+            parent = parent.GetParent();
+        }
+        return false;
+    }
+
+    private static readonly Vector2I[] NeighborOffsets =
+    {
+        new(-1,-1), new(0,-1), new(1,-1),
+        new(-1, 0),            new(1, 0),
+        new(-1, 1), new(0, 1), new(1, 1),
+    };
+
+    private static void InflateBlocked(AStarGrid2D grid)
+    {
+        var region = grid.Region;
+        var toBlock = new HashSet<Vector2I>();
+
+        for (int x = 0; x < region.Size.X; x++)
+        {
+            for (int y = 0; y < region.Size.Y; y++)
+            {
+                var cell = new Vector2I(x, y);
+                if (!grid.IsPointSolid(cell))
+                    continue;
+
+                foreach (var offset in NeighborOffsets)
+                {
+                    var neighbor = cell + offset;
+                    if (grid.IsInBounds(neighbor.X, neighbor.Y) && !grid.IsPointSolid(neighbor))
+                        toBlock.Add(neighbor);
                 }
             }
-
-            return null;
         }
 
-        private static float Heuristic(int x1, int y1, int x2, int y2)
-        {
-            int dx = Math.Abs(x1 - x2);
-            int dy = Math.Abs(y1 - y2);
-            return (dx + dy) + (1.414f - 2f) * Math.Min(dx, dy);
-        }
+        foreach (var cell in toBlock)
+            grid.SetPointSolid(cell);
+    }
 
-        private static List<(int, int)> ReconstructPath(Dictionary<int, int> cameFrom, int current, int w)
+    private static void CollectBodies(Node node, List<Node> bodies)
+    {
+        if (node is CollisionShape2D)
+            bodies.Add(node);
+        foreach (Node child in node.GetChildren())
+            CollectBodies(child, bodies);
+    }
+
+    private static void CollectLayers(Node node, List<TileMapLayer> layers)
+    {
+        if (node is TileMapLayer layer)
+            layers.Add(layer);
+        foreach (Node child in node.GetChildren())
+            CollectLayers(child, layers);
+    }
+
+    private static bool NameMatches(string name, string[] parts)
+    {
+        var lower = name.ToLowerInvariant();
+        foreach (var p in parts)
+            if (lower.Contains(p.Trim().ToLowerInvariant()))
+                return true;
+        return false;
+    }
+
+    private static Rect2I Union(Rect2I a, Rect2I b)
+    {
+        int left = Math.Min(a.Position.X, b.Position.X);
+        int top = Math.Min(a.Position.Y, b.Position.Y);
+        int right = Math.Max(a.Position.X + a.Size.X, b.Position.X + b.Size.X);
+        int bottom = Math.Max(a.Position.Y + a.Size.Y, b.Position.Y + b.Size.Y);
+        return new Rect2I(left, top, right - left, bottom - top);
+    }
+
+    // Path simplification
+
+    private static List<Vector2I> RemoveCollinear(List<Vector2I> cells)
+    {
+        if (cells.Count <= 2)
+            return cells;
+
+        var result = new List<Vector2I> { cells[0] };
+        var prevDir = Direction(cells[0], cells[1]);
+
+        for (int i = 2; i < cells.Count; i++)
         {
-            var path = new List<(int, int)>();
-            while (cameFrom.ContainsKey(current))
+            var dir = Direction(cells[i - 1], cells[i]);
+            if (dir != prevDir)
             {
-                path.Add((current % w, current / w));
-                current = cameFrom[current];
+                result.Add(cells[i - 1]);
+                prevDir = dir;
             }
-            path.Reverse();
-            return path;
         }
+
+        result.Add(cells[^1]);
+        return result;
+    }
+
+    private static Vector2I Direction(Vector2I from, Vector2I to)
+    {
+        var delta = to - from;
+        return new Vector2I(Math.Sign(delta.X), Math.Sign(delta.Y));
     }
 }
