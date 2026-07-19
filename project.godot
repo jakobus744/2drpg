@@ -98,3 +98,8 @@ drop={
 
 textures/canvas_textures/default_texture_filter=0
 rendering_device/driver.windows="d3d12"
+
+[navigation]
+
+2d/warnings/navmesh_edge_merge_errors=false
+

@@ -47,6 +47,7 @@ public partial class NavigationManager : Node
         }
 
         var navPoly = new NavigationPolygon();
+        navPoly.CellSize = cellSize;
         navPoly.AgentRadius = AgentRadius;
         navPoly.ParsedGeometryType = NavigationPolygon.ParsedGeometryTypeEnum.StaticColliders;
         navPoly.SourceGeometryMode = NavigationPolygon.SourceGeometryModeEnum.RootNodeChildren;
@@ -59,11 +60,10 @@ public partial class NavigationManager : Node
 
         if (hasBounds)
         {
-            float margin = cellSize * 2;
-            float minX = bounds.Position.X * cellSize - margin;
-            float minY = bounds.Position.Y * cellSize - margin;
-            float maxX = (bounds.Position.X + bounds.Size.X) * cellSize + margin;
-            float maxY = (bounds.Position.Y + bounds.Size.Y) * cellSize + margin;
+            float minX = bounds.Position.X * cellSize;
+            float minY = bounds.Position.Y * cellSize;
+            float maxX = (bounds.Position.X + bounds.Size.X) * cellSize;
+            float maxY = (bounds.Position.Y + bounds.Size.Y) * cellSize;
 
             sourceGeometry.AddTraversableOutline(new Vector2[]
             {
