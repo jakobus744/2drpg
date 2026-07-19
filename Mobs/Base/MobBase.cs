@@ -34,6 +34,7 @@ public abstract partial class MobBase : BaseEntity<MobState>
     private string  _syncAnimation = "";
 
     protected AnimatedSprite2D Sprite { get; private set; }
+    protected NavigationAgent2D NavAgent { get; private set; }
     protected string FacingDirection   { get; private set; } = "down";
     public float CurrentHealth         { get; protected set; }
     public bool  IsDead                { get; protected set; }
@@ -53,6 +54,23 @@ public abstract partial class MobBase : BaseEntity<MobState>
         CurrentHealth = MaxHealth;
 
         Sprite = GetNode<AnimatedSprite2D>("AnimatedSprite2D");
+
+        NavAgent = GetNodeOrNull<NavigationAgent2D>("NavigationAgent2D");
+        if (NavAgent == null)
+        {
+            NavAgent = new NavigationAgent2D();
+            NavAgent.Name = "NavigationAgent2D";
+            AddChild(NavAgent);
+        }
+
+        NavAgent.TargetDesiredDistance = TargetReachedDistance;
+        NavAgent.PathDesiredDistance = 12f;
+        if (AvoidanceRadius > 0f)
+        {
+            NavAgent.AvoidanceEnabled = true;
+            NavAgent.Radius = AvoidanceRadius;
+            NavAgent.VelocityComputed += OnVelocityComputed;
+        }
 
         // Seed tick 0 so ProcessCommand-style reads don't fail if ever used
         StateBuffer.Set(0, new MobState
@@ -224,75 +242,94 @@ public abstract partial class MobBase : BaseEntity<MobState>
 
     protected void SetDestination(Vector2 worldTarget)
     {
-        float moved = Destination.DistanceSquaredTo(worldTarget);
         Destination = worldTarget;
-        if (moved > TargetReachedDistance * TargetReachedDistance)
-            _pathRecalcTimer = PathRecalcInterval;
+        if (NavAgent != null)
+            NavAgent.TargetPosition = worldTarget;
     }
 
     protected void ClearDestination()
     {
         Destination = Vector2.Zero;
-        CurrentPath = System.Array.Empty<Vector2>();
-        CurrentPathIndex = 0;
         Velocity = Vector2.Zero;
+        if (NavAgent != null)
+            NavAgent.TargetPosition = GlobalPosition;
     }
 
     protected bool MoveAlongPath(double delta)
     {
+        if (Destination == Vector2.Zero)
+        {
+            Velocity = Vector2.Zero;
+            return false;
+        }
+
+        float distToDestSq = GlobalPosition.DistanceSquaredTo(Destination);
+        float stopDist = TargetReachedDistance > 0f ? TargetReachedDistance : 10f;
+
+        if (distToDestSq <= stopDist * stopDist)
+        {
+            Velocity = Vector2.Zero;
+            OnDestinationReached();
+            return false;
+        }
+
         _pathRecalcTimer += (float)delta;
-        if (_pathRecalcTimer >= PathRecalcInterval && Destination != Vector2.Zero)
+        if (_pathRecalcTimer >= PathRecalcInterval || CurrentPath.Length == 0)
         {
             _pathRecalcTimer = 0f;
             CurrentPath = FindPathTo(Destination);
             CurrentPathIndex = 0;
         }
 
-        if (CurrentPath.Length == 0 || CurrentPathIndex >= CurrentPath.Length)
+        if (CurrentPath.Length > 0 && CurrentPathIndex < CurrentPath.Length)
         {
-            Velocity = Vector2.Zero;
-            return false;
-        }
+            Vector2 targetWaypoint = CurrentPath[CurrentPathIndex];
+            Vector2 toWaypoint = targetWaypoint - GlobalPosition;
 
-        Vector2 targetWaypoint = CurrentPath[CurrentPathIndex];
-        Vector2 toWaypoint = targetWaypoint - GlobalPosition;
-        float distSq = toWaypoint.LengthSquared();
-
-        if (distSq < TargetReachedDistance * TargetReachedDistance)
-        {
-            CurrentPathIndex++;
-            if (CurrentPathIndex >= CurrentPath.Length)
+            if (toWaypoint.LengthSquared() < 16f * 16f)
             {
-                Velocity = Vector2.Zero;
-                OnDestinationReached();
-                return false;
+                CurrentPathIndex++;
+                if (CurrentPathIndex < CurrentPath.Length)
+                {
+                    targetWaypoint = CurrentPath[CurrentPathIndex];
+                    toWaypoint = targetWaypoint - GlobalPosition;
+                }
             }
-            targetWaypoint = CurrentPath[CurrentPathIndex];
-            toWaypoint = targetWaypoint - GlobalPosition;
+
+            Vector2 direction = toWaypoint.Normalized();
+            Vector2 targetVelocity = direction * MoveSpeed;
+
+            if (NavAgent != null && NavAgent.AvoidanceEnabled)
+            {
+                NavAgent.Velocity = targetVelocity;
+            }
+            else
+            {
+                Velocity = targetVelocity;
+            }
+
+            return true;
         }
 
-        Vector2 direction = toWaypoint.Normalized();
+        Velocity = Vector2.Zero;
+        return false;
+    }
 
-        if (AvoidanceRadius > 0f)
-            direction += ComputeSeparationForce();
-
-        Velocity = direction.Normalized() * MoveSpeed;
-        return true;
+    private void OnVelocityComputed(Vector2 safeVelocity)
+    {
+        Velocity = safeVelocity;
     }
 
     protected Vector2[] FindPathTo(Vector2 worldTarget)
     {
         var nav = GetNodeOrNull<RPG2d.World.NavigationManager>("/root/NavigationManager");
-        var path = nav?.FindPath(GlobalPosition, worldTarget) ?? System.Array.Empty<Vector2>();
-        if (path.Length == 0)
-            OnPathfindingFailed();
-        return path;
+        return nav?.FindPath(GlobalPosition, worldTarget) ?? System.Array.Empty<Vector2>();
     }
 
     protected bool HasReachedDestination()
     {
-        if (Destination == Vector2.Zero) return true;
-        return GlobalPosition.DistanceSquaredTo(Destination) < TargetReachedDistance * TargetReachedDistance;
+        if (Destination == Vector2.Zero || NavAgent == null) return true;
+        return NavAgent.IsTargetReached();
     }
 
     protected Vector2 GetRandomWalkablePosition(Vector2 center, float radius)
@@ -309,10 +346,9 @@ public abstract partial class MobBase : BaseEntity<MobState>
 
     protected virtual void OnPathStuck()
     {
-        if (Destination == Vector2.Zero) return;
+        if (Destination == Vector2.Zero || NavAgent == null) return;
         Vector2 jitter = new((float)GD.RandRange(-20f, 20f), (float)GD.RandRange(-20f, 20f));
-        CurrentPath = FindPathTo(Destination + jitter);
-        CurrentPathIndex = 0;
+        NavAgent.TargetPosition = Destination + jitter;
     }
 
     protected void CheckStuck()
