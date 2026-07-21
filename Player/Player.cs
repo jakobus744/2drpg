@@ -566,6 +566,8 @@ public partial class Player : BaseEntity<PlayerState>
 		// Attack-Animation ist, Lock aufheben (verhindert stuck nach Reconciliation)
 		if (_isAttacking && !_anim.Animation.ToString().Contains("attack"))
 			CancelAttack();
+		if (_isHurt && !_anim.Animation.ToString().Contains("hurt"))
+			_isHurt = false;
 
 		// Während Angriff/Rolle/Tod läuft die Animation bereits nicht unterbrechen
 		if (IsActionLocked) return;
@@ -645,7 +647,8 @@ public partial class Player : BaseEntity<PlayerState>
 		// Action-Locks zurücksetzen, damit Reprediction nicht mit veralteten States startet
 		_isAttacking = false;
 		_isRolling = false;
-		_isHurt = false;
+		if (_anim == null || !_anim.IsPlaying() || !_anim.Animation.ToString().Contains("hurt"))
+			_isHurt = false;
 
 		// Weapon-Reconciliation: falls Server eine andere Waffe hat als angezeigt
 		string currentWeaponPath = _currentWeapon?.SceneFilePath ?? "";
