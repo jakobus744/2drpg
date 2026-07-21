@@ -31,8 +31,54 @@ public partial class WorldManager : Node2D
     private readonly Dictionary<Vector2I, PackedScene> _registry = new();
     private readonly Dictionary<Vector2I, Node> _loaded = new();
 
+    private static readonly Dictionary<long, HashSet<Vector2I>> _peerLoadedZones = new();
+
+    public static bool IsZoneLoadedForPeer(long peerId, Vector2I coord)
+    {
+        if (peerId <= 1) return true;
+        return _peerLoadedZones.TryGetValue(peerId, out var set) && set.Contains(coord);
+    }
+
+    public static void ClearPeerZones(long peerId)
+    {
+        _peerLoadedZones.Remove(peerId);
+    }
+
+    [Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = false, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
+    private void ClientNotifyZoneLoaded(int x, int y)
+    {
+        long senderId = Multiplayer.GetRemoteSenderId();
+        if (!_peerLoadedZones.TryGetValue(senderId, out var set))
+        {
+            set = new HashSet<Vector2I>();
+            _peerLoadedZones[senderId] = set;
+        }
+        set.Add(new Vector2I(x, y));
+    }
+
+    [Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = false, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
+    private void ClientNotifyZoneUnloaded(int x, int y)
+    {
+        long senderId = Multiplayer.GetRemoteSenderId();
+        if (_peerLoadedZones.TryGetValue(senderId, out var set))
+        {
+            set.Remove(new Vector2I(x, y));
+        }
+    }
+
+    public static WorldManager Instance { get; private set; }
+
+    public static Vector2I WorldToZoneCell(Vector2 worldPos)
+    {
+        int size = Instance != null ? Instance.ZoneSize : 3424;
+        return new Vector2I(
+            Mathf.RoundToInt(worldPos.X / size),
+            Mathf.RoundToInt(worldPos.Y / size));
+    }
+
     public override void _Ready()
     {
+        Instance = this;
         // Registry aus Export-Array ODER (wenn leer) aus dem Standard-Layout bauen
         if (Zones.Length > 0)
         {
@@ -94,6 +140,11 @@ public partial class WorldManager : Node2D
             _loaded[coord] = inst;
             GD.Print($"[WorldManager] geladen: Zelle {coord} @ ({coord.X * ZoneSize},{coord.Y * ZoneSize})");
 
+            if (Multiplayer.HasMultiplayerPeer() && !Multiplayer.IsServer())
+            {
+                RpcId(1, MethodName.ClientNotifyZoneLoaded, coord.X, coord.Y);
+            }
+
             // Register zone with NavigationManager for pathfinding
             var nav = GetNodeOrNull<NavigationManager>("/root/NavigationManager");
             nav?.RegisterZone(coord, inst);
@@ -140,6 +191,11 @@ public partial class WorldManager : Node2D
                 // Unregister zone grid before freeing
                 var nav = GetNodeOrNull<NavigationManager>("/root/NavigationManager");
                 nav?.UnregisterZone(coord);
+
+                if (Multiplayer.HasMultiplayerPeer() && !Multiplayer.IsServer())
+                {
+                    RpcId(1, MethodName.ClientNotifyZoneUnloaded, coord.X, coord.Y);
+                }
 
                 node.QueueFree();
                 remove.Add(coord);

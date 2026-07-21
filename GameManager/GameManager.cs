@@ -98,6 +98,7 @@ public partial class GameManager : Node
 			return;
 
 		GD.Print($"Spieler {id} hat das Spiel verlassen.");
+		World.WorldManager.ClearPeerZones(id);
 		var playerNode = GetTree().CurrentScene.GetNodeOrNull(id.ToString());
 		playerNode?.QueueFree();
 	}

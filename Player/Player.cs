@@ -96,6 +96,7 @@ public partial class Player : BaseEntity<PlayerState>
 	[Export] public string SyncOffhandPath = "";
 
 	public static Player LocalPlayer { get; private set; }
+	public static readonly List<Player> AllPlayers = new();
 	public PlayerInput Input { get; private set; }
 
 	public override void _EnterTree()
@@ -156,10 +157,14 @@ public partial class Player : BaseEntity<PlayerState>
 		Input = GetNodeOrNull<PlayerInput>("Input");
 		if (IsMultiplayerAuthority())
 			LocalPlayer = this;
+
+		if (!AllPlayers.Contains(this))
+			AllPlayers.Add(this);
 	}
 
 	public override void _ExitTree()
 	{
+		AllPlayers.Remove(this);
 		if (LocalPlayer == this)
 			LocalPlayer = null;
 	}

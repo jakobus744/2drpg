@@ -1,6 +1,9 @@
+using System.Linq;
 using Godot;
 using RPG2d.Entity;
 using RPG2d.GameManager;
+using RPG2d.Player;
+using RPG2d.World;
 
 public abstract partial class MobBase : BaseEntity<MobState>
 {
@@ -17,36 +20,37 @@ public abstract partial class MobBase : BaseEntity<MobState>
             _peerChangeTick = Engine.GetPhysicsFrames();
             return false;
         }
+
         return Engine.GetPhysicsFrames() - _peerChangeTick >= PeerStabilizeFrames;
     }
 
-    [Export] public float MaxHealth    { get; set; } = 100f;
-    [Export] public float MoveSpeed    { get; set; } = 60f;
+    [Export] public float MaxHealth { get; set; } = 100f;
+    [Export] public float MoveSpeed { get; set; } = 60f;
     [Export] public float AttackDamage { get; set; } = 10f;
 
-    [Export] public bool  UsePathfinding        { get; set; } = false;
-    [Export] public float PathRecalcInterval    { get; set; } = 0.5f;
+    [Export] public bool UsePathfinding { get; set; } = false;
+    [Export] public float PathRecalcInterval { get; set; } = 0.5f;
     [Export] public float TargetReachedDistance { get; set; } = 10f;
-    [Export] public float AvoidanceRadius       { get; set; } = 0f;
-    [Export] public float StuckTimeout          { get; set; } = 1.0f;
+    [Export] public float AvoidanceRadius { get; set; } = 0f;
+    [Export] public float StuckTimeout { get; set; } = 1.0f;
 
-    private Vector2 _syncPosition  = Vector2.Zero;
-    private string  _syncAnimation = "";
+    private Vector2 _syncPosition = Vector2.Zero;
+    private string _syncAnimation = "";
 
     protected AnimatedSprite2D Sprite { get; private set; }
     protected NavigationAgent2D NavAgent { get; private set; }
-    protected string FacingDirection   { get; private set; } = "down";
-    public float CurrentHealth         { get; protected set; }
-    public bool  IsDead                { get; protected set; }
+    protected string FacingDirection { get; private set; } = "down";
+    public float CurrentHealth { get; protected set; }
+    public bool IsDead { get; protected set; }
 
     private bool _deathAnimPlaying;
 
-    protected Vector2[] CurrentPath       = System.Array.Empty<Vector2>();
-    protected int       CurrentPathIndex  = 0;
-    protected Vector2   Destination       = Vector2.Zero;
-    private   float     _pathRecalcTimer;
-    private   Vector2   _lastStuckPosition;
-    private   float     _stuckTimer;
+    protected Vector2[] CurrentPath = System.Array.Empty<Vector2>();
+    protected int CurrentPathIndex = 0;
+    protected Vector2 Destination = Vector2.Zero;
+    private float _pathRecalcTimer;
+    private Vector2 _lastStuckPosition;
+    private float _stuckTimer;
 
     public override void _Ready()
     {
@@ -86,7 +90,9 @@ public abstract partial class MobBase : BaseEntity<MobState>
         OnReady();
     }
 
-    protected virtual void OnReady() { }
+    protected virtual void OnReady()
+    {
+    }
 
     private void OnSpriteAnimFinished()
     {
@@ -95,9 +101,13 @@ public abstract partial class MobBase : BaseEntity<MobState>
             PlayAnim("idle");
     }
 
-    protected virtual void ProcessAI(double delta) { }
+    protected virtual void ProcessAI(double delta)
+    {
+    }
 
-    protected virtual void OnHit(float amount) { }
+    protected virtual void OnHit(float amount)
+    {
+    }
 
     protected virtual void OnDeathAnimationFinished()
     {
@@ -146,11 +156,11 @@ public abstract partial class MobBase : BaseEntity<MobState>
 
     protected static Vector2 DirToVec(string dir) => dir switch
     {
-        "up"    => Vector2.Up,
-        "down"  => Vector2.Down,
-        "left"  => Vector2.Left,
+        "up" => Vector2.Up,
+        "down" => Vector2.Down,
+        "left" => Vector2.Left,
         "right" => Vector2.Right,
-        _       => Vector2.Zero,
+        _ => Vector2.Zero,
     };
 
     protected virtual void Die()
@@ -166,7 +176,7 @@ public abstract partial class MobBase : BaseEntity<MobState>
     }
 
     [Rpc(MultiplayerApi.RpcMode.Authority, CallLocal = true,
-         TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
+        TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
     private void DieRpc()
     {
         IsDead = true;
@@ -220,8 +230,20 @@ public abstract partial class MobBase : BaseEntity<MobState>
                 IsDead = IsDead
             });
 
-            if (Multiplayer.HasMultiplayerPeer() && PeersStable())
-                Rpc(MethodName.SyncStateRpc, Position, Sprite?.Animation ?? "");
+            if (!Multiplayer.HasMultiplayerPeer() || !PeersStable()) return;
+            var mobCell = WorldManager.WorldToZoneCell(GlobalPosition);
+
+            var players = RPG2d.Player.Player.AllPlayers;
+            foreach (var peerId in from p in players
+                     where p != null && IsInstanceValid(p)
+                     select p.GetMultiplayerAuthority()
+                     into peerId
+                     where (long)peerId > 1
+                     where WorldManager.IsZoneLoadedForPeer(peerId, mobCell)
+                     select peerId)
+            {
+                RpcId(peerId, MethodName.SyncStateRpc, Position, Sprite?.Animation ?? "");
+            }
         }
         else
         {
@@ -232,7 +254,7 @@ public abstract partial class MobBase : BaseEntity<MobState>
     }
 
     [Rpc(MultiplayerApi.RpcMode.Authority, CallLocal = false,
-         TransferMode = MultiplayerPeer.TransferModeEnum.Unreliable)]
+        TransferMode = MultiplayerPeer.TransferModeEnum.Unreliable)]
     private void SyncStateRpc(Vector2 pos, string anim)
     {
         _syncPosition = pos;
@@ -341,9 +363,13 @@ public abstract partial class MobBase : BaseEntity<MobState>
         return positions.Length > 0 ? positions[0] : center;
     }
 
-    protected virtual void OnDestinationReached() { }
+    protected virtual void OnDestinationReached()
+    {
+    }
 
-    protected virtual void OnPathfindingFailed() { }
+    protected virtual void OnPathfindingFailed()
+    {
+    }
 
     protected virtual void OnPathStuck()
     {
