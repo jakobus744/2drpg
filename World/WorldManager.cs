@@ -85,6 +85,7 @@ public partial class WorldManager : Node2D
             if (Mathf.Abs(d.X) > LoadRadius || Mathf.Abs(d.Y) > LoadRadius) continue;
 
             var inst = scene.Instantiate();
+            inst.Name = $"Zone_{coord.X}_{coord.Y}";
             if (inst is Node2D n2d)
                 n2d.Position = new Vector2(coord.X * ZoneSize, coord.Y * ZoneSize);
             else

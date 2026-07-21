@@ -52,6 +52,7 @@ public abstract partial class MobBase : BaseEntity<MobState>
     {
         YSortEnabled = false;
         CurrentHealth = MaxHealth;
+        _syncPosition = Position;
 
         Sprite = GetNode<AnimatedSprite2D>("AnimatedSprite2D");
 
