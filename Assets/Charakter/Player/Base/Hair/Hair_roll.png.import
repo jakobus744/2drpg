@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://ckkexilxb8okq"
-path="res://.godot/imported/man_lvl2_Run_Attack_with_shadow.png-b415888a0eec82ad58de0754f2a11863.ctex"
+uid="uid://dau8ucv55dqsk"
+path="res://.godot/imported/Hair_roll.png-0cfc6ca976c5857845d2ec8d562d9ddc.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Assets/Charakter/Player/without_sword/man_lvl2_Run_Attack_with_shadow.png"
-dest_files=["res://.godot/imported/man_lvl2_Run_Attack_with_shadow.png-b415888a0eec82ad58de0754f2a11863.ctex"]
+source_file="res://Assets/Charakter/Player/Amor/Base/Hair/Hair_roll.png"
+dest_files=["res://.godot/imported/Hair_roll.png-0cfc6ca976c5857845d2ec8d562d9ddc.ctex"]
 
 [params]
 

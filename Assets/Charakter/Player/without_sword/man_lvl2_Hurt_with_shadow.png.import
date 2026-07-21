@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://cdagiag3ea10s"
-path="res://.godot/imported/man_lvl2_Hurt_with_shadow.png-cd906dec1c567fd1ac56ad7cd305c61b.ctex"
+path="res://.godot/imported/man_lvl2_Hurt_with_shadow.png-2206d12ae67f96835d7195d6d8b74207.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Assets/Charakter/Player/new/man_lvl2_Hurt_with_shadow.png"
-dest_files=["res://.godot/imported/man_lvl2_Hurt_with_shadow.png-cd906dec1c567fd1ac56ad7cd305c61b.ctex"]
+source_file="res://Assets/Charakter/Player/without_sword/man_lvl2_Hurt_with_shadow.png"
+dest_files=["res://.godot/imported/man_lvl2_Hurt_with_shadow.png-2206d12ae67f96835d7195d6d8b74207.ctex"]
 
 [params]
 

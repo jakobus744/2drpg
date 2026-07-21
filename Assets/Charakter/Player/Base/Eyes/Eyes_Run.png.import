@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://ckkexilxb8okq"
-path="res://.godot/imported/man_lvl2_Run_Attack_with_shadow.png-b415888a0eec82ad58de0754f2a11863.ctex"
+uid="uid://diyq6wo4rwfnj"
+path="res://.godot/imported/Eyes_Run.png-027a708f1c6fd6788067c602caaa682c.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Assets/Charakter/Player/without_sword/man_lvl2_Run_Attack_with_shadow.png"
-dest_files=["res://.godot/imported/man_lvl2_Run_Attack_with_shadow.png-b415888a0eec82ad58de0754f2a11863.ctex"]
+source_file="res://Assets/Charakter/Player/Amor/Base/Eyes/Eyes_Run.png"
+dest_files=["res://.godot/imported/Eyes_Run.png-027a708f1c6fd6788067c602caaa682c.ctex"]
 
 [params]
 

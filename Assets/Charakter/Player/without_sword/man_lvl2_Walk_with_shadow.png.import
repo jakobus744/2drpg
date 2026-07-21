@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://b0jb6koqgdaos"
-path="res://.godot/imported/man_lvl2_Walk_with_shadow.png-94b15e7ed10df1ee00263e7951aed0ac.ctex"
+path="res://.godot/imported/man_lvl2_Walk_with_shadow.png-3fa50515133ef7903c0b0a1aeb333d87.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Assets/Charakter/Player/new/man_lvl2_Walk_with_shadow.png"
-dest_files=["res://.godot/imported/man_lvl2_Walk_with_shadow.png-94b15e7ed10df1ee00263e7951aed0ac.ctex"]
+source_file="res://Assets/Charakter/Player/without_sword/man_lvl2_Walk_with_shadow.png"
+dest_files=["res://.godot/imported/man_lvl2_Walk_with_shadow.png-3fa50515133ef7903c0b0a1aeb333d87.ctex"]
 
 [params]
 

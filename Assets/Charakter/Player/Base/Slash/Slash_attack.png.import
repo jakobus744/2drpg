@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://ckkexilxb8okq"
-path="res://.godot/imported/man_lvl2_Run_Attack_with_shadow.png-b415888a0eec82ad58de0754f2a11863.ctex"
+uid="uid://b4l1ohrdb35h4"
+path="res://.godot/imported/Slash_attack.png-33a706e8aafa9343a7f49c3e3f5e03fa.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Assets/Charakter/Player/without_sword/man_lvl2_Run_Attack_with_shadow.png"
-dest_files=["res://.godot/imported/man_lvl2_Run_Attack_with_shadow.png-b415888a0eec82ad58de0754f2a11863.ctex"]
+source_file="res://Assets/Charakter/Player/Amor/Base/Slash/Slash_attack.png"
+dest_files=["res://.godot/imported/Slash_attack.png-33a706e8aafa9343a7f49c3e3f5e03fa.ctex"]
 
 [params]
 
