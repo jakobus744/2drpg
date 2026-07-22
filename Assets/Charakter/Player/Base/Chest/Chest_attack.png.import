@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://d0sgc7inn0hvq"
-path="res://.godot/imported/Chest_attack.png-7ab7898f6cea39beac4a65d011d43f01.ctex"
+path="res://.godot/imported/Chest_attack.png-cc2ea4f21fbb94d56fe5a13acfaeb9c0.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Assets/Charakter/Player/Amor/Base/Chest/Chest_attack.png"
-dest_files=["res://.godot/imported/Chest_attack.png-7ab7898f6cea39beac4a65d011d43f01.ctex"]
+source_file="res://Assets/Charakter/Player/Base/Chest/Chest_attack.png"
+dest_files=["res://.godot/imported/Chest_attack.png-cc2ea4f21fbb94d56fe5a13acfaeb9c0.ctex"]
 
 [params]
 

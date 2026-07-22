@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://tygr4a6yjyof"
-path="res://.godot/imported/Face_Walk_Attack.png-1732199ecfd7211e4853c27fb5aebd41.ctex"
+path="res://.godot/imported/Face_Walk_Attack.png-08ac0939c9b25d5cf292ca7c3d5a43ed.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Assets/Charakter/Player/Amor/Base/Face/Face_Walk_Attack.png"
-dest_files=["res://.godot/imported/Face_Walk_Attack.png-1732199ecfd7211e4853c27fb5aebd41.ctex"]
+source_file="res://Assets/Charakter/Player/Base/Face/Face_Walk_Attack.png"
+dest_files=["res://.godot/imported/Face_Walk_Attack.png-08ac0939c9b25d5cf292ca7c3d5a43ed.ctex"]
 
 [params]
 

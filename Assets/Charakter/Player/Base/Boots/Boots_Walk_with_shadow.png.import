@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bp6q4lqh3hf3s"
-path="res://.godot/imported/Boots_Walk_with_shadow.png-1ef29108dd42962143fa868ad232957f.ctex"
+path="res://.godot/imported/Boots_Walk_with_shadow.png-9a28640dec60d703941047e2205e7ca8.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Assets/Charakter/Player/Amor/Base/Boots/Boots_Walk_with_shadow.png"
-dest_files=["res://.godot/imported/Boots_Walk_with_shadow.png-1ef29108dd42962143fa868ad232957f.ctex"]
+source_file="res://Assets/Charakter/Player/Base/Boots/Boots_Walk_with_shadow.png"
+dest_files=["res://.godot/imported/Boots_Walk_with_shadow.png-9a28640dec60d703941047e2205e7ca8.ctex"]
 
 [params]
 

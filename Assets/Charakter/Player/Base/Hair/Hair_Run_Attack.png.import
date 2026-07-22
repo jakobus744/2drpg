@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://vrtvo33mgpyo"
-path="res://.godot/imported/Hair_Run_Attack.png-cf79ad3dd7f0fae2dc67be72d1432811.ctex"
+path="res://.godot/imported/Hair_Run_Attack.png-cd689031a4768548bc4d19c0a6903245.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Assets/Charakter/Player/Amor/Base/Hair/Hair_Run_Attack.png"
-dest_files=["res://.godot/imported/Hair_Run_Attack.png-cf79ad3dd7f0fae2dc67be72d1432811.ctex"]
+source_file="res://Assets/Charakter/Player/Base/Hair/Hair_Run_Attack.png"
+dest_files=["res://.godot/imported/Hair_Run_Attack.png-cd689031a4768548bc4d19c0a6903245.ctex"]
 
 [params]
 

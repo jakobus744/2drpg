@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://clowr13ec4xey"
-path="res://.godot/imported/Chest_Death.png-96b6895fb40d0decd1f781577b7c7cdd.ctex"
+path="res://.godot/imported/Chest_Death.png-a80156869a9a2e7b2ecc7bf50dafd4af.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Assets/Charakter/Player/Amor/Base/Chest/Chest_Death.png"
-dest_files=["res://.godot/imported/Chest_Death.png-96b6895fb40d0decd1f781577b7c7cdd.ctex"]
+source_file="res://Assets/Charakter/Player/Base/Chest/Chest_Death.png"
+dest_files=["res://.godot/imported/Chest_Death.png-a80156869a9a2e7b2ecc7bf50dafd4af.ctex"]
 
 [params]
 

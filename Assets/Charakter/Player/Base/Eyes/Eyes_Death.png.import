@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://cesaple5kfudk"
-path="res://.godot/imported/Eyes_Death.png-4248be7910e41ccc8fc94c20d1509f80.ctex"
+path="res://.godot/imported/Eyes_Death.png-4b376f1423367863c08bb0d973acb89a.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Assets/Charakter/Player/Amor/Base/Eyes/Eyes_Death.png"
-dest_files=["res://.godot/imported/Eyes_Death.png-4248be7910e41ccc8fc94c20d1509f80.ctex"]
+source_file="res://Assets/Charakter/Player/Base/Eyes/Eyes_Death.png"
+dest_files=["res://.godot/imported/Eyes_Death.png-4b376f1423367863c08bb0d973acb89a.ctex"]
 
 [params]
 

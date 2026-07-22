@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://ef7d6jtt6wl6"
-path="res://.godot/imported/Hair_Hurt.png-0d4647a305e5f6b1ed7a9e484644e3d5.ctex"
+path="res://.godot/imported/Hair_Hurt.png-3dd3e626bb7f111e718b2e20b9a41762.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Assets/Charakter/Player/Amor/Base/Hair/Hair_Hurt.png"
-dest_files=["res://.godot/imported/Hair_Hurt.png-0d4647a305e5f6b1ed7a9e484644e3d5.ctex"]
+source_file="res://Assets/Charakter/Player/Base/Hair/Hair_Hurt.png"
+dest_files=["res://.godot/imported/Hair_Hurt.png-3dd3e626bb7f111e718b2e20b9a41762.ctex"]
 
 [params]
 

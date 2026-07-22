@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://c6d7bvpej6pxy"
-path="res://.godot/imported/Face_Hurt.png-92c8d7f86f92198c82a5cc11615b00c1.ctex"
+path="res://.godot/imported/Face_Hurt.png-fbf88b39f12a6455d40aa86e1ae42ba1.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Assets/Charakter/Player/Amor/Base/Face/Face_Hurt.png"
-dest_files=["res://.godot/imported/Face_Hurt.png-92c8d7f86f92198c82a5cc11615b00c1.ctex"]
+source_file="res://Assets/Charakter/Player/Base/Face/Face_Hurt.png"
+dest_files=["res://.godot/imported/Face_Hurt.png-fbf88b39f12a6455d40aa86e1ae42ba1.ctex"]
 
 [params]
 

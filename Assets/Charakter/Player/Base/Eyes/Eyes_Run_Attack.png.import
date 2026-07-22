@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://cfqdtl8cdqv2p"
-path="res://.godot/imported/Eyes_Run_Attack.png-2b59115adb5b05f0935e0805b1594097.ctex"
+path="res://.godot/imported/Eyes_Run_Attack.png-c4c56f196eaebb3026902a6d81ae8574.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Assets/Charakter/Player/Amor/Base/Eyes/Eyes_Run_Attack.png"
-dest_files=["res://.godot/imported/Eyes_Run_Attack.png-2b59115adb5b05f0935e0805b1594097.ctex"]
+source_file="res://Assets/Charakter/Player/Base/Eyes/Eyes_Run_Attack.png"
+dest_files=["res://.godot/imported/Eyes_Run_Attack.png-c4c56f196eaebb3026902a6d81ae8574.ctex"]
 
 [params]
 
