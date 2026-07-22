@@ -61,6 +61,17 @@ public partial class Player : BaseEntity<PlayerState>
 	private PackedScene _currentOffhandScene;
 	private WeaponItem _currentWeapon;
 
+	// Rüstungs-Layer (mit-animierte Overlays über "Base Animation")
+	private AnimatedSprite2D _bootsLayer;
+	private AnimatedSprite2D _armorLayer;
+	private AnimatedSprite2D _helmLayer;
+	// Aktuell angelegte Rüstungs-ItemData-Pfade (für Sync-Export an Remotes)
+	private string _currentHelmetPath = "";
+	private string _currentArmorPath = "";
+	private string _currentBootsPath = "";
+	// Cache: "Teil|Material" -> gebaute SpriteFrames (nicht bei jedem Equip neu bauen)
+	private readonly System.Collections.Generic.Dictionary<string, SpriteFrames> _armorFramesCache = new();
+
 	// Tick-based pickup: zuletzt betretener PickupItem in Reichweite (Input-Sensing)
 	private PickupItem _nearbyPickup;
 
@@ -87,6 +98,9 @@ public partial class Player : BaseEntity<PlayerState>
 	// Remote sync tracking: nur bei Änderung Waffen-Visual neu laden
 	private string _lastSyncWeaponPath = "";
 	private string _lastSyncOffhandPath = "";
+	private string _lastSyncHelmetPath = "";
+	private string _lastSyncArmorPath = "";
+	private string _lastSyncBootsPath = "";
 	private string _lastSyncedAnimation = "";
 
 	// Multiplayer: Server schreibt Position + Animation, Clients lesen und interpolieren
@@ -94,6 +108,9 @@ public partial class Player : BaseEntity<PlayerState>
 	[Export] public string SyncAnimation = "";
 	[Export] public string SyncWeaponPath = "";
 	[Export] public string SyncOffhandPath = "";
+	[Export] public string SyncHelmetPath = "";
+	[Export] public string SyncArmorPath = "";
+	[Export] public string SyncBootsPath = "";
 
 	public static Player LocalPlayer { get; private set; }
 	public static readonly List<Player> AllPlayers = new();
@@ -140,6 +157,14 @@ public partial class Player : BaseEntity<PlayerState>
 		_shieldPivot = GetNodeOrNull<Sprite2D>("OffHandPivot/OffHandSprite");
 		if (_weaponPivot != null) _weaponPivot.Visible = false;
 		if (_shieldPivot != null) _shieldPivot.Visible = false;
+
+		// Rüstungs-Overlay-Layer  starten leer/unsichtbar, werden beim Equip gefüllt
+		_bootsLayer = GetNodeOrNull<AnimatedSprite2D>("BootsLayer");
+		_armorLayer = GetNodeOrNull<AnimatedSprite2D>("ArmorLayer");
+		_helmLayer = GetNodeOrNull<AnimatedSprite2D>("HelmLayer");
+		if (_bootsLayer != null) _bootsLayer.Visible = false;
+		if (_armorLayer != null) _armorLayer.Visible = false;
+		if (_helmLayer != null) _helmLayer.Visible = false;
 
 		// ServerSynchronizer gehört dem Server er liest SyncPosition/SyncAnimation und verteilt sie
 		var sync = GetNodeOrNull<MultiplayerSynchronizer>("ServerSynchronizer");
@@ -197,7 +222,13 @@ public partial class Player : BaseEntity<PlayerState>
 			SyncAnimation = _anim.Animation;
 			SyncWeaponPath = _currentWeapon?.SceneFilePath ?? "";
 			SyncOffhandPath = _currentOffhandScene?.ResourcePath ?? "";
+			SyncHelmetPath = _currentHelmetPath;
+			SyncArmorPath = _currentArmorPath;
+			SyncBootsPath = _currentBootsPath;
 		}
+
+		// Rüstungs-Layer jeden Frame an die Base-Animation koppeln (Owner + Remote)
+		SyncArmorLayers();
 
 		// Lokaler Spieler wird durch ProcessCommand gesteuert, nicht hier
 		if (IsMultiplayerAuthority()) return;
@@ -230,6 +261,23 @@ public partial class Player : BaseEntity<PlayerState>
 			else
 				HideOffhandVisual();
 			_lastSyncOffhandPath = SyncOffhandPath;
+		}
+
+		// Rüstungs-Layer der Remote-Spieler
+		if (SyncHelmetPath != _lastSyncHelmetPath)
+		{
+			ApplyOrHideArmor(_helmLayer, EquipSlot.Helmet, SyncHelmetPath);
+			_lastSyncHelmetPath = SyncHelmetPath;
+		}
+		if (SyncArmorPath != _lastSyncArmorPath)
+		{
+			ApplyOrHideArmor(_armorLayer, EquipSlot.Armor, SyncArmorPath);
+			_lastSyncArmorPath = SyncArmorPath;
+		}
+		if (SyncBootsPath != _lastSyncBootsPath)
+		{
+			ApplyOrHideArmor(_bootsLayer, EquipSlot.Boots, SyncBootsPath);
+			_lastSyncBootsPath = SyncBootsPath;
 		}
 	}
 
@@ -352,6 +400,12 @@ public partial class Player : BaseEntity<PlayerState>
 			cmd.EquippedWeaponPath = wep?.Data?.DroppedScenePath ?? "";
 			var off = Inventory.EquipmentSlots.GetValueOrDefault(EquipSlot.Offhand);
 			cmd.EquippedOffhandPath = off?.Data?.DroppedScenePath ?? "";
+			var helm = Inventory.EquipmentSlots.GetValueOrDefault(EquipSlot.Helmet);
+			cmd.EquippedHelmetPath = helm?.Data?.ResourcePath ?? "";
+			var chest = Inventory.EquipmentSlots.GetValueOrDefault(EquipSlot.Armor);
+			cmd.EquippedArmorPath = chest?.Data?.ResourcePath ?? "";
+			var feet = Inventory.EquipmentSlots.GetValueOrDefault(EquipSlot.Boots);
+			cmd.EquippedBootsPath = feet?.Data?.ResourcePath ?? "";
 
 			if (cmd.IsUseItemPressed)
 			{
@@ -401,6 +455,26 @@ public partial class Player : BaseEntity<PlayerState>
 			}
 
 			state.EquippedOffhandPath = cmd.EquippedOffhandPath;
+		}
+
+		// 0d3. Rüstungs-Layer (Helm/Chest/Boots)  Pfade = ItemData-Ressourcen der Slots.
+		if (cmd.EquippedHelmetPath != state.EquippedHelmetPath)
+		{
+			ApplyOrHideArmor(_helmLayer, EquipSlot.Helmet, cmd.EquippedHelmetPath);
+			_currentHelmetPath = cmd.EquippedHelmetPath;
+			state.EquippedHelmetPath = cmd.EquippedHelmetPath;
+		}
+		if (cmd.EquippedArmorPath != state.EquippedArmorPath)
+		{
+			ApplyOrHideArmor(_armorLayer, EquipSlot.Armor, cmd.EquippedArmorPath);
+			_currentArmorPath = cmd.EquippedArmorPath;
+			state.EquippedArmorPath = cmd.EquippedArmorPath;
+		}
+		if (cmd.EquippedBootsPath != state.EquippedBootsPath)
+		{
+			ApplyOrHideArmor(_bootsLayer, EquipSlot.Boots, cmd.EquippedBootsPath);
+			_currentBootsPath = cmd.EquippedBootsPath;
+			state.EquippedBootsPath = cmd.EquippedBootsPath;
 		}
 
 		// 0d2. Consumable-Effekt (Rechtsklick) — Server validiert + entfernt Item aus autoritativem
@@ -684,6 +758,110 @@ public partial class Player : BaseEntity<PlayerState>
 	{
 		if (_shieldPivot != null) _shieldPivot.Visible = false;
 		_currentOffhandScene = null;
+	}
+
+	// ---- Rüstungs-Layer -------------------------------------------------
+
+	// Koppelt alle sichtbaren Rüstungs-Layer an Animation + Frame der Base.
+	private void SyncArmorLayers()
+	{
+		if (_anim == null) return;
+		MirrorLayer(_helmLayer);
+		MirrorLayer(_armorLayer);
+		MirrorLayer(_bootsLayer);
+	}
+
+	private void MirrorLayer(AnimatedSprite2D layer)
+	{
+		if (layer == null || !layer.Visible || layer.SpriteFrames == null) return;
+		string a = _anim.Animation;
+		if (!layer.SpriteFrames.HasAnimation(a)) return;
+		if (layer.Animation != a) layer.Animation = a;
+		int f = _anim.Frame;
+		if (layer.Frame != f) layer.Frame = f;
+	}
+
+	// Legt einen Rüstungs-Layer an (baut/holt SpriteFrames aus ItemData) oder blendet ihn aus.
+	private void ApplyOrHideArmor(AnimatedSprite2D layer, EquipSlot slot, string itemPath)
+	{
+		if (layer == null) return;
+		if (string.IsNullOrEmpty(itemPath))
+		{
+			layer.Visible = false;
+			layer.SpriteFrames = null;
+			return;
+		}
+
+		var data = GD.Load<ItemData>(itemPath);
+		if (data == null || string.IsNullOrEmpty(data.ArmorMaterial))
+		{
+			layer.Visible = false;
+			return;
+		}
+
+		var frames = GetArmorFrames(ArmorPartForSlot(slot), data.ArmorMaterial);
+		if (frames == null) { layer.Visible = false; return; }
+
+		layer.SpriteFrames = frames;
+		layer.Visible = true;
+		MirrorLayer(layer);
+	}
+
+	private static string ArmorPartForSlot(EquipSlot slot) => slot switch
+	{
+		EquipSlot.Helmet => "Helm",
+		EquipSlot.Armor => "Chest",
+		EquipSlot.Boots => "Boots",
+		_ => ""
+	};
+
+	// Baut die Rüstungs-SpriteFrames aus der Base-SpriteFrames: gleiche Animationen +
+	// Frame-Regionen, aber Textur = die Style-Sheets des Materials. Gecacht pro "Teil|Material".
+	private SpriteFrames GetArmorFrames(string part, string material)
+	{
+		string key = part + "|" + material;
+		if (_armorFramesCache.TryGetValue(key, out var cached)) return cached;
+
+		var baseSf = _anim?.SpriteFrames;
+		if (baseSf == null || string.IsNullOrEmpty(part)) return null;
+
+		var sf = new SpriteFrames();
+		foreach (string anim in baseSf.GetAnimationNames())
+		{
+			if (!sf.HasAnimation(anim)) sf.AddAnimation(anim);
+			sf.SetAnimationLoop(anim, baseSf.GetAnimationLoop(anim));
+			sf.SetAnimationSpeed(anim, baseSf.GetAnimationSpeed(anim));
+
+			int count = baseSf.GetFrameCount(anim);
+			for (int i = 0; i < count; i++)
+			{
+				if (baseSf.GetFrameTexture(anim, i) is not AtlasTexture baseTex) continue;
+				string armorPath = ArmorSheetPath(part, material, baseTex.Atlas?.ResourcePath);
+				if (string.IsNullOrEmpty(armorPath) || !ResourceLoader.Exists(armorPath)) continue;
+				var atlas = new AtlasTexture
+				{
+					Atlas = GD.Load<Texture2D>(armorPath),
+					Region = baseTex.Region
+				};
+				sf.AddFrame(anim, atlas, baseSf.GetFrameDuration(anim, i));
+			}
+		}
+		if (sf.HasAnimation("default")) sf.RemoveAnimation("default");
+
+		_armorFramesCache[key] = sf;
+		return sf;
+	}
+
+	// .../new/man_lvl2_<Action>_with_shadow.png  ->  Style/<Part>/<Material>/<Part>_<Action>[_with_shadow].png
+	private static string ArmorSheetPath(string part, string material, string baseAtlasPath)
+	{
+		if (string.IsNullOrEmpty(baseAtlasPath)) return "";
+		string file = baseAtlasPath.GetFile();                              // man_lvl2_attack_with_shadow.png
+		string action = file.Replace("man_lvl2_", "").Replace("_with_shadow.png", "");
+		string dir = $"res://Assets/Charakter/Player/Style/{part}/{material}";
+		return part == "Boots"
+			? $"{dir}/Boots_{action}_with_shadow.png"
+			: $"{dir}/{part}_{action}.png";
 	}
 
 	private void ProcessServerInventoryAction(PlayerCmd cmd)

@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="ItemData" load_steps=3 format=3]
+
+[ext_resource type="Texture2D" uid="uid://jdxrrcte2eay" path="res://Assets/Ui/icons/Gui_icons_items.png" id="1_icon"]
+[ext_resource type="Script" uid="uid://8m65hgxkrbcb" path="res://World/Items/Data/ItemData.cs" id="2_script"]
+
+[resource]
+script = ExtResource("2_script")
+ItemId = "eisen_helm"
+DisplayName = "Eisen Helm"
+Icon = ExtResource("1_icon")
+IconRegion = Rect2(24, 144, 24, 24)
+Category = 2
+Slot = 3
+MaxStackSize = 1
+PickupAmount = 1
+DroppedScenePath = "res://World/Items/Amor/Helmet/eisen_helm_pickup.tscn"
+ArmorMaterial = "Eisen"

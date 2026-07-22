@@ -5537,6 +5537,15 @@ properties/2/replication_mode = 1
 properties/3/path = NodePath(".:SyncOffhandPath")
 properties/3/spawn = true
 properties/3/replication_mode = 1
+properties/4/path = NodePath(".:SyncHelmetPath")
+properties/4/spawn = true
+properties/4/replication_mode = 1
+properties/5/path = NodePath(".:SyncArmorPath")
+properties/5/spawn = true
+properties/5/replication_mode = 1
+properties/6/path = NodePath(".:SyncBootsPath")
+properties/6/spawn = true
+properties/6/replication_mode = 1
 
 [sub_resource type="AtlasTexture" id="n_at_d_0"]
 atlas = ExtResource("new_attack")
@@ -7610,6 +7619,15 @@ replication_config = SubResource("SceneReplicationConfig_xiiv8")
 sprite_frames = SubResource("SpriteFrames_rkm3v")
 animation = &"walk_right"
 speed_scale = 1.5
+
+[node name="BootsLayer" type="AnimatedSprite2D" parent="." unique_id=846420901]
+visible = false
+
+[node name="ArmorLayer" type="AnimatedSprite2D" parent="." unique_id=846420902]
+visible = false
+
+[node name="HelmLayer" type="AnimatedSprite2D" parent="." unique_id=846420903]
+visible = false
 
 [node name="OffHandPivot" type="Node2D" parent="." unique_id=1752773932]
 position = Vector2(18, -14.000002)
