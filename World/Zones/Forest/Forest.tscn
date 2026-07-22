@@ -6738,6 +6738,7 @@ position = Vector2(14, -21)
 rotation = -2.104867
 
 [node name="Goblin" parent="TileMap" unique_id=2062252707 instance=ExtResource("27_jmfyu")]
+z_index = 2
 position = Vector2(26, 8)
 
 [node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="." unique_id=772117944]
