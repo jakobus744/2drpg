@@ -234,6 +234,7 @@ offset_right = 392.0
 offset_bottom = 229.0
 grow_horizontal = 1
 grow_vertical = 1
+scale = Vector2(3.9598534, 3.9297044)
 DesignEquipSlot = 3
 DesignType = 2
 
@@ -249,6 +250,7 @@ offset_right = 393.0
 offset_bottom = 295.0
 grow_horizontal = 1
 grow_vertical = 1
+scale = Vector2(3.8923056, 3.888212)
 DesignEquipSlot = 4
 DesignType = 2
 
@@ -264,6 +266,7 @@ offset_right = 461.0
 offset_bottom = 427.0
 grow_horizontal = 1
 grow_vertical = 1
+scale = Vector2(3.8561964, 3.9077237)
 DesignEquipSlot = 7
 DesignType = 2
 
@@ -279,6 +282,7 @@ offset_right = 325.0
 offset_bottom = 428.0
 grow_horizontal = 1
 grow_vertical = 1
+scale = Vector2(3.9583147, 3.8577917)
 DesignEquipSlot = 6
 DesignType = 2
 
@@ -294,5 +298,6 @@ offset_right = 394.0
 offset_bottom = 362.0
 grow_horizontal = 1
 grow_vertical = 1
+scale = Vector2(3.8375833, 3.8479204)
 DesignEquipSlot = 5
 DesignType = 2
