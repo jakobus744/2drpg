@@ -78,6 +78,10 @@ using Godot;
 
 public partial class $name : MobBase
 {
+    protected override void OnReady()
+    {
+        UsePathfinding = true;
+    }
 }
 "@
 }
@@ -88,6 +92,11 @@ using Godot;
 
 public partial class $name : MobBase
 {
+    protected override void OnReady()
+    {
+        TargetPolicy = MobTargetPolicy.Passive;
+        RetaliateOnHit = false;
+    }
 }
 "@
 }
