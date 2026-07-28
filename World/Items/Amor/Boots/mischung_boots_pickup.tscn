@@ -13,13 +13,13 @@ script = ExtResource("1_script")
 Item = ExtResource("2_item")
 DroppedScenePath = "res://World/Items/Amor/Boots/mischung_boots_pickup.tscn"
 ItemTexture = ExtResource("3_tex")
-ItemRegion = Rect2(72, 72, 24, 24)
+ItemRegion = Rect2(66, 68, 24, 24)
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
 texture = ExtResource("3_tex")
 region_enabled = true
-region_rect = Rect2(72, 72, 24, 24)
-scale = Vector2(0.5, 0.5)
+region_rect = Rect2(66, 68, 24, 24)
+scale = Vector2(0.75, 0.75)
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 shape = SubResource("CircleShape2D_1")
