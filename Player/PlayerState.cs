@@ -18,4 +18,7 @@ public struct PlayerState
     [NetVar] public bool IsExhausted;
     [NetVar] public string EquippedWeaponPath = "";
     [NetVar] public string EquippedOffhandPath = "";
+    [NetVar] public string EquippedHelmetPath = "";
+    [NetVar] public string EquippedArmorPath = "";
+    [NetVar] public string EquippedBootsPath = "";
 }

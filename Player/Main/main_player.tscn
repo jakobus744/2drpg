@@ -12,15 +12,15 @@
 [ext_resource type="Script" uid="uid://cg1uqlqcfps31" path="res://Player/PlayerInput.cs" id="12_rkm3v"]
 [ext_resource type="Texture2D" uid="uid://co03y2si1klg8" path="res://Assets/Ui/magic/Bottles_icons.png" id="20_8ota3"]
 [ext_resource type="Texture2D" uid="uid://cvhg01km0cxe3" path="res://Assets/Ui/Weapons/Icons.png" id="21_htby4"]
-[ext_resource type="Texture2D" uid="uid://82vj0lbyyghx" path="res://Assets/Charakter/Player/new/man_lvl2_attack_with_shadow.png" id="new_attack"]
-[ext_resource type="Texture2D" uid="uid://d1dxcyvcrmtpn" path="res://Assets/Charakter/Player/new/man_lvl2_Death_with_shadow.png" id="new_death"]
-[ext_resource type="Texture2D" uid="uid://cdagiag3ea10s" path="res://Assets/Charakter/Player/new/man_lvl2_Hurt_with_shadow.png" id="new_hurt"]
-[ext_resource type="Texture2D" uid="uid://df4acy3dffelb" path="res://Assets/Charakter/Player/new/man_lvl2_Idle_with_shadow.png" id="new_idle"]
-[ext_resource type="Texture2D" uid="uid://584koom6ljs6" path="res://Assets/Charakter/Player/new/man_lvl2_roll_with_shadow.png" id="new_roll"]
-[ext_resource type="Texture2D" uid="uid://chv0xex8huwr" path="res://Assets/Charakter/Player/new/man_lvl2_Run_with_shadow.png" id="new_run"]
-[ext_resource type="Texture2D" uid="uid://ckkexilxb8okq" path="res://Assets/Charakter/Player/new/man_lvl2_Run_Attack_with_shadow.png" id="new_runatk"]
-[ext_resource type="Texture2D" uid="uid://b0jb6koqgdaos" path="res://Assets/Charakter/Player/new/man_lvl2_Walk_with_shadow.png" id="new_walk"]
-[ext_resource type="Texture2D" uid="uid://bcuuoq7vy12vu" path="res://Assets/Charakter/Player/new/man_lvl2_Walk_Attack_with_shadow.png" id="new_walkatk"]
+[ext_resource type="Texture2D" uid="uid://82vj0lbyyghx" path="res://Assets/Charakter/Player/without_sword/man_lvl2_attack_with_shadow.png" id="new_attack"]
+[ext_resource type="Texture2D" uid="uid://d1dxcyvcrmtpn" path="res://Assets/Charakter/Player/without_sword/man_lvl2_Death_with_shadow.png" id="new_death"]
+[ext_resource type="Texture2D" uid="uid://cdagiag3ea10s" path="res://Assets/Charakter/Player/without_sword/man_lvl2_Hurt_with_shadow.png" id="new_hurt"]
+[ext_resource type="Texture2D" uid="uid://df4acy3dffelb" path="res://Assets/Charakter/Player/without_sword/man_lvl2_Idle_with_shadow.png" id="new_idle"]
+[ext_resource type="Texture2D" uid="uid://584koom6ljs6" path="res://Assets/Charakter/Player/without_sword/man_lvl2_roll_with_shadow.png" id="new_roll"]
+[ext_resource type="Texture2D" uid="uid://chv0xex8huwr" path="res://Assets/Charakter/Player/without_sword/man_lvl2_Run_with_shadow.png" id="new_run"]
+[ext_resource type="Texture2D" uid="uid://ckkexilxb8okq" path="res://Assets/Charakter/Player/without_sword/man_lvl2_Run_Attack_with_shadow.png" id="new_runatk"]
+[ext_resource type="Texture2D" uid="uid://b0jb6koqgdaos" path="res://Assets/Charakter/Player/without_sword/man_lvl2_Walk_with_shadow.png" id="new_walk"]
+[ext_resource type="Texture2D" uid="uid://bcuuoq7vy12vu" path="res://Assets/Charakter/Player/without_sword/man_lvl2_Walk_Attack_with_shadow.png" id="new_walkatk"]
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_ur7pv"]
 radius = 4.0
@@ -5537,6 +5537,24 @@ properties/2/replication_mode = 1
 properties/3/path = NodePath(".:SyncOffhandPath")
 properties/3/spawn = true
 properties/3/replication_mode = 1
+properties/4/path = NodePath(".:SyncHelmetPath")
+properties/4/spawn = true
+properties/4/replication_mode = 1
+properties/5/path = NodePath(".:SyncArmorPath")
+properties/5/spawn = true
+properties/5/replication_mode = 1
+properties/6/path = NodePath(".:SyncBootsPath")
+properties/6/spawn = true
+properties/6/replication_mode = 1
+properties/7/path = NodePath(".:SyncHairStyle")
+properties/7/spawn = true
+properties/7/replication_mode = 1
+properties/8/path = NodePath(".:SyncEyeStyle")
+properties/8/spawn = true
+properties/8/replication_mode = 1
+properties/9/path = NodePath(".:SyncFaceStyle")
+properties/9/spawn = true
+properties/9/replication_mode = 1
 
 [sub_resource type="AtlasTexture" id="n_at_d_0"]
 atlas = ExtResource("new_attack")
@@ -7610,6 +7628,24 @@ replication_config = SubResource("SceneReplicationConfig_xiiv8")
 sprite_frames = SubResource("SpriteFrames_rkm3v")
 animation = &"walk_right"
 speed_scale = 1.5
+
+[node name="FaceLayer" type="AnimatedSprite2D" parent="."]
+visible = false
+
+[node name="EyesLayer" type="AnimatedSprite2D" parent="."]
+visible = false
+
+[node name="HairLayer" type="AnimatedSprite2D" parent="."]
+visible = false
+
+[node name="BootsLayer" type="AnimatedSprite2D" parent="." unique_id=846420901]
+visible = false
+
+[node name="ArmorLayer" type="AnimatedSprite2D" parent="." unique_id=846420902]
+visible = false
+
+[node name="HelmLayer" type="AnimatedSprite2D" parent="." unique_id=846420903]
+visible = false
 
 [node name="OffHandPivot" type="Node2D" parent="." unique_id=1752773932]
 position = Vector2(18, -14.000002)

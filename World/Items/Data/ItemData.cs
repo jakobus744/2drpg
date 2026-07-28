@@ -22,4 +22,9 @@ public partial class ItemData : Resource
     // Pro Nutzung wird 1 vom Stapel verbraucht und diese Effekte angewendet.
     [Export] public float StaminaRestore = 0f;
     [Export] public float HealthRestore = 0f;
+
+    // Rüstungs-Material (nur relevant wenn Slot == Helmet/Armor/Boots).
+    // Bestimmt welche Style-Sheets als Layer über den Charakter gelegt werden
+    // (z.B. "Lila" -> Style/Helm/Lila/Helm_<anim>.png). Teil ergibt sich aus Slot.
+    [Export] public string ArmorMaterial = "";
 }

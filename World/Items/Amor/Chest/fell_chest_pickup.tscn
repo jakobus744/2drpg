@@ -1,0 +1,25 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://World/Items/ArmorItem.cs" id="1_script"]
+[ext_resource type="Resource" path="res://World/Items/Amor/Chest/fell_chest.tres" id="2_item"]
+[ext_resource type="Texture2D" uid="uid://jdxrrcte2eay" path="res://Assets/Ui/icons/Gui_icons_items.png" id="3_tex"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_1"]
+radius = 6.0
+
+[node name="FellChest" type="Area2D"]
+z_index = 1
+script = ExtResource("1_script")
+Item = ExtResource("2_item")
+DroppedScenePath = "res://World/Items/Amor/Chest/fell_chest_pickup.tscn"
+ItemTexture = ExtResource("3_tex")
+ItemRegion = Rect2(96, 48, 24, 24)
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+texture = ExtResource("3_tex")
+region_enabled = true
+region_rect = Rect2(96, 48, 24, 24)
+scale = Vector2(0.5, 0.5)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("CircleShape2D_1")

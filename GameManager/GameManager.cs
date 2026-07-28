@@ -13,8 +13,10 @@ public partial class GameManager : Node
 	private PackedScene _hudScene;
 
 	private const int Port = 8910;
+	private const string MainMenuPath = "res://UI/MainMenu/MainMenu.tscn";
 
 	private static readonly HashSet<string> _removedItemScenes = new();
+	private bool _returningToMainMenu;
 
 	public static uint ServerTick { get; private set; }
 
@@ -22,6 +24,8 @@ public partial class GameManager : Node
 	{
 		Multiplayer.PeerConnected += AddPlayer;
 		Multiplayer.PeerDisconnected += RemovePlayer;
+		Multiplayer.ServerDisconnected += OnServerDisconnected;
+		Multiplayer.ConnectionFailed += OnConnectionFailed;
 	}
 
 	public override void _PhysicsProcess(double delta)
@@ -32,6 +36,10 @@ public partial class GameManager : Node
 
 	public void StartHost()
 	{
+		_returningToMainMenu = false;
+		ServerTick = 0;
+		_removedItemScenes.Clear();
+
 		var peer = new ENetMultiplayerPeer();
 		var error = peer.CreateServer(Port, 4);
 
@@ -57,8 +65,16 @@ public partial class GameManager : Node
 
 	public void JoinGame()
 	{
+		_returningToMainMenu = false;
+
 		var peer = new ENetMultiplayerPeer();
-		peer.CreateClient("127.0.0.1", Port);
+		var error = peer.CreateClient("127.0.0.1", Port);
+		if (error != Error.Ok)
+		{
+			GD.PrintErr("Client konnte nicht gestartet werden: " + error);
+			ReturnToMainMenu("Verbindung konnte nicht gestartet werden.");
+			return;
+		}
 
 		Multiplayer.MultiplayerPeer = peer;
 		GD.Print("Verbinde als Client...");
@@ -69,6 +85,42 @@ public partial class GameManager : Node
 		GetTree().CurrentScene = newLevel;
 
 		SpawnHud(newLevel);
+	}
+
+	private void OnServerDisconnected()
+	{
+		ReturnToMainMenu("Verbindung zum Host wurde getrennt.");
+	}
+
+	private void OnConnectionFailed()
+	{
+		ReturnToMainMenu("Verbindung zum Host ist fehlgeschlagen.");
+	}
+
+	private void ReturnToMainMenu(string reason)
+	{
+		if (_returningToMainMenu) return;
+		_returningToMainMenu = true;
+		GD.Print(reason);
+
+		// Ein Szenenwechsel direkt aus einem Multiplayer-Signal kann noch während
+		// der Netzwerkverarbeitung erfolgen. Deshalb einen Frame zurückstellen.
+		CallDeferred(MethodName.ReturnToMainMenuDeferred);
+	}
+
+	private void ReturnToMainMenuDeferred()
+	{
+		GetTree().Paused = false;
+		Player.PlayerInput.GameplayInputBlocked = false;
+
+		if (Multiplayer.MultiplayerPeer != null)
+		{
+			Multiplayer.MultiplayerPeer.Close();
+			Multiplayer.MultiplayerPeer = null;
+		}
+
+		if (GetTree().CurrentScene?.SceneFilePath != MainMenuPath)
+			GetTree().ChangeSceneToFile(MainMenuPath);
 	}
 
 	private void AddPlayer(long id)

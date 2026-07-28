@@ -20,6 +20,10 @@ public struct PlayerCmd
     // "" = nichts angelegt. Treibt state.EquippedWeaponPath/Offhand in ProcessCommand.
     public string EquippedWeaponPath;
     public string EquippedOffhandPath;
+    // Rüstungs-Layer (ItemData-Ressourcenpfad, "" = nichts). Treibt state.Equipped*Path.
+    public string EquippedHelmetPath;
+    public string EquippedArmorPath;
+    public string EquippedBootsPath;
 
     // Consumable-Nutzung (Rechtsklick auf aktivem Hotbar-Slot).
     public bool IsUseItemPressed;
@@ -51,6 +55,9 @@ public struct PlayerCmd
         writer.Write(InteractTargetPath ?? "");
         writer.Write(EquippedWeaponPath ?? "");
         writer.Write(EquippedOffhandPath ?? "");
+        writer.Write(EquippedHelmetPath ?? "");
+        writer.Write(EquippedArmorPath ?? "");
+        writer.Write(EquippedBootsPath ?? "");
         writer.Write(IsUseItemPressed);
         writer.Write(UseStaminaRestore);
         writer.Write(UseHealthRestore);
@@ -85,6 +92,9 @@ public struct PlayerCmd
             InteractTargetPath = reader.ReadString(),
             EquippedWeaponPath = reader.ReadString(),
             EquippedOffhandPath = reader.ReadString(),
+            EquippedHelmetPath = reader.ReadString(),
+            EquippedArmorPath = reader.ReadString(),
+            EquippedBootsPath = reader.ReadString(),
             IsUseItemPressed = reader.ReadBoolean(),
             UseStaminaRestore = reader.ReadSingle(),
             UseHealthRestore = reader.ReadSingle(),

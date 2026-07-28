@@ -8,6 +8,7 @@
 [ext_resource type="Texture2D" uid="uid://syxcjfpcpl0u" path="res://Assets/Ui/hud/playericon.png" id="6_vb885"]
 [ext_resource type="PackedScene" uid="uid://dtffopxags5aa" path="res://UI/Inventory/HotbarUI.tscn" id="7_hotbar"]
 [ext_resource type="PackedScene" uid="uid://dqwqlaimr84o7" path="res://UI/Inventory/InventoryPanelUI.tscn" id="8_invpanel"]
+[ext_resource type="PackedScene" uid="uid://cru4t4pp34r4nc3" path="res://UI/CharacterCustomization/CharacterCustomizationUI.tscn" id="9_character"]
 
 [node name="Hud" type="CanvasLayer" unique_id=1097936745 node_paths=PackedStringArray("_healthBar", "_staminaBar", "_expBar")]
 layer = 999
@@ -74,3 +75,5 @@ offset_bottom = 3.0
 _slotSize = 60
 
 [node name="InventoryPanelUI" parent="." unique_id=700469630 instance=ExtResource("8_invpanel")]
+
+[node name="CharacterCustomizationUI" parent="." instance=ExtResource("9_character")]
