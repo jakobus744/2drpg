@@ -1,0 +1,185 @@
+[gd_scene load_steps=5 format=3 uid="uid://cru4t4pp34r4nc3"]
+
+[ext_resource type="Script" uid="uid://dg4t7xw1ps8ca" path="res://UI/CharacterCustomization/CharacterCustomizationUI.cs" id="1_script"]
+[ext_resource type="Texture2D" uid="uid://c36rwbtoixtda" path="res://Assets/Ui/Menü/Escp2.png" id="2_frame"]
+[ext_resource type="Texture2D" uid="uid://dqo7ij017m2fh" path="res://Assets/Ui/Menü/close.png" id="4_close"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBox_button"]
+bg_color = Color(0.18, 0.49, 0.3, 1)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.05, 0.19, 0.08, 1)
+corner_radius_top_left = 2
+corner_radius_top_right = 2
+corner_radius_bottom_right = 2
+corner_radius_bottom_left = 2
+
+[node name="CharacterCustomizationUI" type="Control" node_paths=PackedStringArray("_hairOptions", "_eyeOptions", "_faceOptions", "_saveButton", "_resetButton", "_closeButton", "_statusLabel")]
+process_mode = 3
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 1
+script = ExtResource("1_script")
+_hairOptions = NodePath("Dimmer/Center/Panel/Margin/Content/HairRow/HairOptions")
+_eyeOptions = NodePath("Dimmer/Center/Panel/Margin/Content/EyeRow/EyeOptions")
+_faceOptions = NodePath("Dimmer/Center/Panel/Margin/Content/FaceRow/FaceOptions")
+_saveButton = NodePath("Dimmer/Center/Panel/Margin/Content/Buttons/Save")
+_resetButton = NodePath("Dimmer/Center/Panel/Margin/Content/Buttons/Reset")
+_closeButton = NodePath("Dimmer/Center/Panel/Margin/Content/Header/Close")
+_statusLabel = NodePath("Dimmer/Center/Panel/Margin/Content/Status")
+
+[node name="Dimmer" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 0.45)
+mouse_filter = 0
+
+[node name="Center" type="CenterContainer" parent="Dimmer"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Panel" type="Control" parent="Dimmer/Center"]
+custom_minimum_size = Vector2(430, 520)
+layout_mode = 2
+
+[node name="Background" type="TextureRect" parent="Dimmer/Center/Panel"]
+texture_filter = 1
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("2_frame")
+expand_mode = 1
+
+[node name="Margin" type="MarginContainer" parent="Dimmer/Center/Panel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 46.0
+offset_top = 44.0
+offset_right = -46.0
+offset_bottom = -52.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Content" type="VBoxContainer" parent="Dimmer/Center/Panel/Margin"]
+layout_mode = 2
+theme_override_constants/separation = 20
+
+[node name="Header" type="HBoxContainer" parent="Dimmer/Center/Panel/Margin/Content"]
+layout_mode = 2
+
+[node name="Title" type="Label" parent="Dimmer/Center/Panel/Margin/Content/Header"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0.19, 0.11, 0.055, 1)
+theme_override_colors/font_shadow_color = Color(0.88, 0.74, 0.48, 0.8)
+theme_override_constants/shadow_offset_x = 1
+theme_override_constants/shadow_offset_y = 1
+theme_override_font_sizes/font_size = 23
+text = "Charakter anpassen"
+
+[node name="Close" type="Button" parent="Dimmer/Center/Panel/Margin/Content/Header"]
+texture_filter = 1
+custom_minimum_size = Vector2(30, 30)
+layout_mode = 2
+icon = ExtResource("4_close")
+flat = true
+expand_icon = true
+
+[node name="Hint" type="Label" parent="Dimmer/Center/Panel/Margin/Content"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.25, 0.15, 0.08, 1)
+text = "Wähle dein Aussehen. Die Änderung ist sofort am Spieler sichtbar."
+autowrap_mode = 2
+
+[node name="HairRow" type="HBoxContainer" parent="Dimmer/Center/Panel/Margin/Content"]
+layout_mode = 2
+theme_override_constants/separation = 16
+
+[node name="HairLabel" type="Label" parent="Dimmer/Center/Panel/Margin/Content/HairRow"]
+custom_minimum_size = Vector2(150, 0)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.2, 0.11, 0.055, 1)
+text = "Haarfarbe"
+
+[node name="HairOptions" type="OptionButton" parent="Dimmer/Center/Panel/Margin/Content/HairRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0.96, 0.9, 0.69, 1)
+theme_override_styles/normal = SubResource("StyleBox_button")
+
+[node name="EyeRow" type="HBoxContainer" parent="Dimmer/Center/Panel/Margin/Content"]
+layout_mode = 2
+theme_override_constants/separation = 16
+
+[node name="EyeLabel" type="Label" parent="Dimmer/Center/Panel/Margin/Content/EyeRow"]
+custom_minimum_size = Vector2(150, 0)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.2, 0.11, 0.055, 1)
+text = "Augenfarbe"
+
+[node name="EyeOptions" type="OptionButton" parent="Dimmer/Center/Panel/Margin/Content/EyeRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0.96, 0.9, 0.69, 1)
+theme_override_styles/normal = SubResource("StyleBox_button")
+
+[node name="FaceRow" type="HBoxContainer" parent="Dimmer/Center/Panel/Margin/Content"]
+layout_mode = 2
+theme_override_constants/separation = 16
+
+[node name="FaceLabel" type="Label" parent="Dimmer/Center/Panel/Margin/Content/FaceRow"]
+custom_minimum_size = Vector2(150, 0)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.2, 0.11, 0.055, 1)
+text = "Hautfarbe"
+
+[node name="FaceOptions" type="OptionButton" parent="Dimmer/Center/Panel/Margin/Content/FaceRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0.96, 0.9, 0.69, 1)
+theme_override_styles/normal = SubResource("StyleBox_button")
+
+[node name="Status" type="Label" parent="Dimmer/Center/Panel/Margin/Content"]
+custom_minimum_size = Vector2(0, 36)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.12, 0.34, 0.17, 1)
+text = "Auswahl wird direkt am Charakter angezeigt."
+autowrap_mode = 2
+
+[node name="Buttons" type="HBoxContainer" parent="Dimmer/Center/Panel/Margin/Content"]
+layout_mode = 2
+theme_override_constants/separation = 12
+alignment = 2
+
+[node name="Reset" type="Button" parent="Dimmer/Center/Panel/Margin/Content/Buttons"]
+custom_minimum_size = Vector2(120, 40)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.96, 0.9, 0.69, 1)
+theme_override_styles/normal = SubResource("StyleBox_button")
+text = "Standard"
+
+[node name="Save" type="Button" parent="Dimmer/Center/Panel/Margin/Content/Buttons"]
+custom_minimum_size = Vector2(190, 40)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.96, 0.9, 0.69, 1)
+theme_override_styles/normal = SubResource("StyleBox_button")
+text = "Übernehmen & speichern"

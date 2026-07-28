@@ -9,7 +9,10 @@ namespace RPG2d.Player;
 
 public partial class PlayerInput : Node
 {
+    public static bool GameplayInputBlocked { get; set; }
+
     private readonly List<string> _pressedDirections = [];
+    private bool _wasGameplayInputBlocked;
     private const int BufferSize = 128;
     private readonly PlayerCmd[] _commandBuffer = new PlayerCmd[BufferSize];
 
@@ -102,16 +105,35 @@ public partial class PlayerInput : Node
     private PlayerCmd BuildPlayerCommand()
     {
         var playerCmd = new PlayerCmd();
+        bool inputBlocked = GameplayInputBlocked;
 
-        if (Input.IsActionJustPressed("up")) AddDirection("up");
-        if (Input.IsActionJustPressed("down")) AddDirection("down");
-        if (Input.IsActionJustPressed("left")) AddDirection("left");
-        if (Input.IsActionJustPressed("right")) AddDirection("right");
+        if (inputBlocked)
+        {
+            _pressedDirections.Clear();
+        }
+        else
+        {
+            // Nach dem Schließen eines Fensters bereits gehaltene Tasten wieder übernehmen.
+            if (_wasGameplayInputBlocked)
+            {
+                if (Input.IsActionPressed("up")) AddDirection("up");
+                if (Input.IsActionPressed("down")) AddDirection("down");
+                if (Input.IsActionPressed("left")) AddDirection("left");
+                if (Input.IsActionPressed("right")) AddDirection("right");
+            }
 
-        if (Input.IsActionJustReleased("up")) RemoveDirection("up");
-        if (Input.IsActionJustReleased("down")) RemoveDirection("down");
-        if (Input.IsActionJustReleased("left")) RemoveDirection("left");
-        if (Input.IsActionJustReleased("right")) RemoveDirection("right");
+            if (Input.IsActionJustPressed("up")) AddDirection("up");
+            if (Input.IsActionJustPressed("down")) AddDirection("down");
+            if (Input.IsActionJustPressed("left")) AddDirection("left");
+            if (Input.IsActionJustPressed("right")) AddDirection("right");
+
+            if (Input.IsActionJustReleased("up")) RemoveDirection("up");
+            if (Input.IsActionJustReleased("down")) RemoveDirection("down");
+            if (Input.IsActionJustReleased("left")) RemoveDirection("left");
+            if (Input.IsActionJustReleased("right")) RemoveDirection("right");
+        }
+
+        _wasGameplayInputBlocked = inputBlocked;
 
         playerCmd.MovementVector = GetCombinedMovementVector();
 
@@ -126,10 +148,10 @@ public partial class PlayerInput : Node
                 : GetCommand(CurrentTick - 1).FacingDirection;
         }
 
-        playerCmd.IsRunPressed = Input.IsActionPressed("run");
-        playerCmd.IsRollPressed = Input.IsActionJustPressed("roll");
-        playerCmd.IsAttackPressed = Input.IsActionJustPressed("attack");
-        playerCmd.IsInteractPressed = Input.IsActionJustPressed("interact");
+        playerCmd.IsRunPressed = !inputBlocked && Input.IsActionPressed("run");
+        playerCmd.IsRollPressed = !inputBlocked && Input.IsActionJustPressed("roll");
+        playerCmd.IsAttackPressed = !inputBlocked && Input.IsActionJustPressed("attack");
+        playerCmd.IsInteractPressed = !inputBlocked && Input.IsActionJustPressed("interact");
         if (playerCmd.IsInteractPressed)
             playerCmd.InteractTargetPath = GetParent<Player>().NearbyPickupPath;
 
@@ -140,11 +162,11 @@ public partial class PlayerInput : Node
         var inv = GetParent<Player>().Inventory;
 
         // Consumable nutzen — predicted + queued
-        if (Input.IsActionJustPressed("use_item"))
+        if (!inputBlocked && Input.IsActionJustPressed("use_item"))
             TryUseActiveConsumable(ref playerCmd);
 
         // Item droppen — predicted + queued
-        if (Input.IsActionJustPressed("drop"))
+        if (!inputBlocked && Input.IsActionJustPressed("drop"))
             TryDropActiveHotbarItem();
 
         // Pending action vom UI (Drag&Drop Swap/Drop) in cmd codieren

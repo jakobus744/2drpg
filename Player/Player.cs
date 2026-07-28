@@ -65,12 +65,34 @@ public partial class Player : BaseEntity<PlayerState>
 	private AnimatedSprite2D _bootsLayer;
 	private AnimatedSprite2D _armorLayer;
 	private AnimatedSprite2D _helmLayer;
+	private AnimatedSprite2D _faceLayer;
+	private AnimatedSprite2D _eyesLayer;
+	private AnimatedSprite2D _hairLayer;
 	// Aktuell angelegte Rüstungs-ItemData-Pfade (für Sync-Export an Remotes)
 	private string _currentHelmetPath = "";
 	private string _currentArmorPath = "";
 	private string _currentBootsPath = "";
 	// Cache: "Teil|Material" -> gebaute SpriteFrames (nicht bei jedem Equip neu bauen)
-	private readonly System.Collections.Generic.Dictionary<string, SpriteFrames> _armorFramesCache = new();
+	private readonly Dictionary<string, SpriteFrames> _styleFramesCache = new();
+
+	public static readonly string[] HairStyles =
+		{ "Standard", "Blau", "Blond", "Braun", "Gruen", "Lila", "Pink", "Rot", "Schwarz", "Tuerkis", "Weiss" };
+	public static readonly string[] EyeStyles =
+		{ "Standard", "Bernstein", "Braun", "Cyan", "Grau", "Gruen", "Rot", "Violett" };
+	public static readonly string[] FaceStyles =
+		{ "Standard", "Blass", "Dunkel", "Gebraeunt", "Hell", "Sehr_Dunkel" };
+
+	public const string DefaultHairStyle = "Standard";
+	public const string DefaultEyeStyle = "Standard";
+	public const string DefaultFaceStyle = "Standard";
+
+	private string _currentHairStyle = DefaultHairStyle;
+	private string _currentEyeStyle = DefaultEyeStyle;
+	private string _currentFaceStyle = DefaultFaceStyle;
+
+	public string CurrentHairStyle => _currentHairStyle;
+	public string CurrentEyeStyle => _currentEyeStyle;
+	public string CurrentFaceStyle => _currentFaceStyle;
 
 	// Tick-based pickup: zuletzt betretener PickupItem in Reichweite (Input-Sensing)
 	private PickupItem _nearbyPickup;
@@ -101,6 +123,9 @@ public partial class Player : BaseEntity<PlayerState>
 	private string _lastSyncHelmetPath = "";
 	private string _lastSyncArmorPath = "";
 	private string _lastSyncBootsPath = "";
+	private string _lastSyncHairStyle = "";
+	private string _lastSyncEyeStyle = "";
+	private string _lastSyncFaceStyle = "";
 	private string _lastSyncedAnimation = "";
 
 	// Multiplayer: Server schreibt Position + Animation, Clients lesen und interpolieren
@@ -111,6 +136,9 @@ public partial class Player : BaseEntity<PlayerState>
 	[Export] public string SyncHelmetPath = "";
 	[Export] public string SyncArmorPath = "";
 	[Export] public string SyncBootsPath = "";
+	[Export] public string SyncHairStyle = DefaultHairStyle;
+	[Export] public string SyncEyeStyle = DefaultEyeStyle;
+	[Export] public string SyncFaceStyle = DefaultFaceStyle;
 
 	public static Player LocalPlayer { get; private set; }
 	public static readonly List<Player> AllPlayers = new();
@@ -162,9 +190,13 @@ public partial class Player : BaseEntity<PlayerState>
 		_bootsLayer = GetNodeOrNull<AnimatedSprite2D>("BootsLayer");
 		_armorLayer = GetNodeOrNull<AnimatedSprite2D>("ArmorLayer");
 		_helmLayer = GetNodeOrNull<AnimatedSprite2D>("HelmLayer");
+		_faceLayer = GetNodeOrNull<AnimatedSprite2D>("FaceLayer");
+		_eyesLayer = GetNodeOrNull<AnimatedSprite2D>("EyesLayer");
+		_hairLayer = GetNodeOrNull<AnimatedSprite2D>("HairLayer");
 		if (_bootsLayer != null) _bootsLayer.Visible = false;
 		if (_armorLayer != null) _armorLayer.Visible = false;
 		if (_helmLayer != null) _helmLayer.Visible = false;
+		ApplyAppearanceInternal(DefaultHairStyle, DefaultEyeStyle, DefaultFaceStyle);
 
 		// ServerSynchronizer gehört dem Server er liest SyncPosition/SyncAnimation und verteilt sie
 		var sync = GetNodeOrNull<MultiplayerSynchronizer>("ServerSynchronizer");
@@ -225,10 +257,13 @@ public partial class Player : BaseEntity<PlayerState>
 			SyncHelmetPath = _currentHelmetPath;
 			SyncArmorPath = _currentArmorPath;
 			SyncBootsPath = _currentBootsPath;
+			SyncHairStyle = _currentHairStyle;
+			SyncEyeStyle = _currentEyeStyle;
+			SyncFaceStyle = _currentFaceStyle;
 		}
 
 		// Rüstungs-Layer jeden Frame an die Base-Animation koppeln (Owner + Remote)
-		SyncArmorLayers();
+		SyncVisualLayers();
 
 		// Lokaler Spieler wird durch ProcessCommand gesteuert, nicht hier
 		if (IsMultiplayerAuthority()) return;
@@ -278,6 +313,16 @@ public partial class Player : BaseEntity<PlayerState>
 		{
 			ApplyOrHideArmor(_bootsLayer, EquipSlot.Boots, SyncBootsPath);
 			_lastSyncBootsPath = SyncBootsPath;
+		}
+
+		if (SyncHairStyle != _lastSyncHairStyle
+			|| SyncEyeStyle != _lastSyncEyeStyle
+			|| SyncFaceStyle != _lastSyncFaceStyle)
+		{
+			ApplyAppearanceInternal(SyncHairStyle, SyncEyeStyle, SyncFaceStyle);
+			_lastSyncHairStyle = SyncHairStyle;
+			_lastSyncEyeStyle = SyncEyeStyle;
+			_lastSyncFaceStyle = SyncFaceStyle;
 		}
 	}
 
@@ -763,9 +808,12 @@ public partial class Player : BaseEntity<PlayerState>
 	// ---- Rüstungs-Layer -------------------------------------------------
 
 	// Koppelt alle sichtbaren Rüstungs-Layer an Animation + Frame der Base.
-	private void SyncArmorLayers()
+	private void SyncVisualLayers()
 	{
 		if (_anim == null) return;
+		MirrorLayer(_faceLayer);
+		MirrorLayer(_eyesLayer);
+		MirrorLayer(_hairLayer);
 		MirrorLayer(_helmLayer);
 		MirrorLayer(_armorLayer);
 		MirrorLayer(_bootsLayer);
@@ -782,6 +830,79 @@ public partial class Player : BaseEntity<PlayerState>
 	}
 
 	// Legt einen Rüstungs-Layer an (baut/holt SpriteFrames aus ItemData) oder blendet ihn aus.
+	public void SetAppearanceFromUi(string hairStyle, string eyeStyle, string faceStyle)
+	{
+		if (!IsValidAppearance(hairStyle, eyeStyle, faceStyle)) return;
+
+		// Die lokale Vorschau reagiert sofort; der Server validiert und repliziert anschließend.
+		ApplyAppearanceInternal(hairStyle, eyeStyle, faceStyle);
+
+		if (!Multiplayer.HasMultiplayerPeer() || Multiplayer.IsServer())
+		{
+			SyncHairStyle = _currentHairStyle;
+			SyncEyeStyle = _currentEyeStyle;
+			SyncFaceStyle = _currentFaceStyle;
+			return;
+		}
+
+		RpcId(1, MethodName.RequestAppearanceRpc, hairStyle, eyeStyle, faceStyle);
+	}
+
+	[Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = false,
+		TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
+	private void RequestAppearanceRpc(string hairStyle, string eyeStyle, string faceStyle)
+	{
+		if (!Multiplayer.IsServer()) return;
+		if (Multiplayer.GetRemoteSenderId() != GetMultiplayerAuthority()) return;
+		if (!IsValidAppearance(hairStyle, eyeStyle, faceStyle)) return;
+
+		ApplyAppearanceInternal(hairStyle, eyeStyle, faceStyle);
+		SyncHairStyle = _currentHairStyle;
+		SyncEyeStyle = _currentEyeStyle;
+		SyncFaceStyle = _currentFaceStyle;
+	}
+
+	private static bool IsValidAppearance(string hairStyle, string eyeStyle, string faceStyle)
+	{
+		return Array.IndexOf(HairStyles, hairStyle) >= 0
+			&& Array.IndexOf(EyeStyles, eyeStyle) >= 0
+			&& Array.IndexOf(FaceStyles, faceStyle) >= 0;
+	}
+
+	private void ApplyAppearanceInternal(string hairStyle, string eyeStyle, string faceStyle)
+	{
+		if (!IsValidAppearance(hairStyle, eyeStyle, faceStyle)) return;
+
+		_currentHairStyle = hairStyle;
+		_currentEyeStyle = eyeStyle;
+		_currentFaceStyle = faceStyle;
+
+		ApplyStyleLayer(_faceLayer, "Face", faceStyle);
+		ApplyStyleLayer(_eyesLayer, "Eyes", eyeStyle);
+		ApplyStyleLayer(_hairLayer, "Hair", hairStyle);
+	}
+
+	private void ApplyStyleLayer(AnimatedSprite2D layer, string part, string variant)
+	{
+		if (layer == null) return;
+		if (variant == "Standard")
+		{
+			layer.Visible = false;
+			return;
+		}
+
+		var frames = GetStyleFrames(part, variant);
+		if (frames == null)
+		{
+			layer.Visible = false;
+			return;
+		}
+
+		layer.SpriteFrames = frames;
+		layer.Visible = true;
+		MirrorLayer(layer);
+	}
+
 	private void ApplyOrHideArmor(AnimatedSprite2D layer, EquipSlot slot, string itemPath)
 	{
 		if (layer == null) return;
@@ -799,7 +920,7 @@ public partial class Player : BaseEntity<PlayerState>
 			return;
 		}
 
-		var frames = GetArmorFrames(ArmorPartForSlot(slot), data.ArmorMaterial);
+		var frames = GetStyleFrames(ArmorPartForSlot(slot), data.ArmorMaterial);
 		if (frames == null) { layer.Visible = false; return; }
 
 		layer.SpriteFrames = frames;
@@ -817,10 +938,10 @@ public partial class Player : BaseEntity<PlayerState>
 
 	// Baut die Rüstungs-SpriteFrames aus der Base-SpriteFrames: gleiche Animationen +
 	// Frame-Regionen, aber Textur = die Style-Sheets des Materials. Gecacht pro "Teil|Material".
-	private SpriteFrames GetArmorFrames(string part, string material)
+	private SpriteFrames GetStyleFrames(string part, string variant)
 	{
-		string key = part + "|" + material;
-		if (_armorFramesCache.TryGetValue(key, out var cached)) return cached;
+		string key = part + "|" + variant;
+		if (_styleFramesCache.TryGetValue(key, out var cached)) return cached;
 
 		var baseSf = _anim?.SpriteFrames;
 		if (baseSf == null || string.IsNullOrEmpty(part)) return null;
@@ -836,11 +957,11 @@ public partial class Player : BaseEntity<PlayerState>
 			for (int i = 0; i < count; i++)
 			{
 				if (baseSf.GetFrameTexture(anim, i) is not AtlasTexture baseTex) continue;
-				string armorPath = ArmorSheetPath(part, material, baseTex.Atlas?.ResourcePath);
-				if (string.IsNullOrEmpty(armorPath) || !ResourceLoader.Exists(armorPath)) continue;
+				string stylePath = StyleSheetPath(part, variant, baseTex.Atlas?.ResourcePath);
+				if (string.IsNullOrEmpty(stylePath) || !ResourceLoader.Exists(stylePath)) continue;
 				var atlas = new AtlasTexture
 				{
-					Atlas = GD.Load<Texture2D>(armorPath),
+					Atlas = GD.Load<Texture2D>(stylePath),
 					Region = baseTex.Region
 				};
 				sf.AddFrame(anim, atlas, baseSf.GetFrameDuration(anim, i));
@@ -848,17 +969,17 @@ public partial class Player : BaseEntity<PlayerState>
 		}
 		if (sf.HasAnimation("default")) sf.RemoveAnimation("default");
 
-		_armorFramesCache[key] = sf;
+		_styleFramesCache[key] = sf;
 		return sf;
 	}
 
 	// .../new/man_lvl2_<Action>_with_shadow.png  ->  Style/<Part>/<Material>/<Part>_<Action>[_with_shadow].png
-	private static string ArmorSheetPath(string part, string material, string baseAtlasPath)
+	private static string StyleSheetPath(string part, string variant, string baseAtlasPath)
 	{
 		if (string.IsNullOrEmpty(baseAtlasPath)) return "";
 		string file = baseAtlasPath.GetFile();                              // man_lvl2_attack_with_shadow.png
 		string action = file.Replace("man_lvl2_", "").Replace("_with_shadow.png", "");
-		string dir = $"res://Assets/Charakter/Player/Style/{part}/{material}";
+		string dir = $"res://Assets/Charakter/Player/Style/{part}/{variant}";
 		return part == "Boots"
 			? $"{dir}/Boots_{action}_with_shadow.png"
 			: $"{dir}/{part}_{action}.png";
