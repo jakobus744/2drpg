@@ -1,4 +1,4 @@
-[gd_resource type="Resource" script_class="ItemData" load_steps=3 format=3]
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://b7ckcjbjfgbcy"]
 
 [ext_resource type="Texture2D" uid="uid://jdxrrcte2eay" path="res://Assets/Ui/icons/Gui_icons_items.png" id="1_icon"]
 [ext_resource type="Script" uid="uid://8m65hgxkrbcb" path="res://World/Items/Data/ItemData.cs" id="2_script"]
@@ -12,7 +12,5 @@ IconRegion = Rect2(92, 204, 24, 24)
 IconScale = 2.0
 Category = 3
 Slot = 4
-MaxStackSize = 1
-PickupAmount = 1
 DroppedScenePath = "res://World/Items/Amor/Chest/goldstahl_chest_pickup.tscn"
 ArmorMaterial = "Goldstahl"
