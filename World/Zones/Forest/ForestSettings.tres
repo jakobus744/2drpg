@@ -1,0 +1,11 @@
+[gd_resource type="Resource" script_class="ZoneSettings" format=3 uid="uid://1flhr87q7pia"]
+
+[ext_resource type="Script" uid="uid://dtcordhrxsbx1" path="res://World/Generation/Data/FoliageEntry.cs" id="1_g8d1t"]
+[ext_resource type="Script" uid="uid://bb0lnrgjknb5k" path="res://World/Generation/Data/ZoneSettings.cs" id="1_settings"]
+[ext_resource type="Script" uid="uid://b1yy2cfo37i3q" path="res://World/Generation/Data/LandmarkSettings.cs" id="2_b0qp0"]
+
+[resource]
+script = ExtResource("1_settings")
+Moisture = 0.6
+VegetationDensity = 0.4
+VegetationNoiseScale = 0.05
