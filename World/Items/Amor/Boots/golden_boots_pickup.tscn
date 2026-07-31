@@ -19,7 +19,7 @@ ItemRegion = Rect2(66, 196, 24, 24)
 texture = ExtResource("3_tex")
 region_enabled = true
 region_rect = Rect2(66, 196, 24, 24)
-scale = Vector2(0.75, 0.75)
+scale = Vector2(0.65, 0.65)
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 shape = SubResource("CircleShape2D_1")

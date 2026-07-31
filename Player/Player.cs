@@ -1239,13 +1239,29 @@ public partial class Player : BaseEntity<PlayerState>
     {
         if (_weaponPivotNode == null) return;
 
-        bool inFront = _moveState == MoveState.Idle && dirName == "down" || dirName == "right";
-        bool currentlyInFront = _weaponPivotNode.GetIndex() > _anim.GetIndex();
-
-        if (inFront == currentlyInFront) return;
-
-        _weaponPivotNode.GetParent().MoveChild(_weaponPivotNode, _anim.GetIndex());
+        // z_index bleibt 0 (Spieler-Ebene) -> korrekte Tiefe gegenueber der Welt (Baeume etc.).
+        // Vorne/Hinten wird ueber die Baum-Reihenfolge gesteuert, damit die Waffe VOR den
+        // Ruestungs-Layern (Boots/Chest/Helm) liegt, ohne ueber Welt-Objekte zu rutschen.
         _weaponPivotNode.ZIndex = 0;
+
+        bool inFront = _moveState == MoveState.Idle && dirName == "down" || dirName == "right";
+        var parent = _weaponPivotNode.GetParent();
+
+        if (inFront)
+        {
+            // hinter den letzten Koerper-/Ruestungs-Layer setzen -> Waffe liegt davor
+            int target = _anim.GetIndex();
+            foreach (Node l in new Node[] { _bootsLayer, _armorLayer, _helmLayer, _hairLayer, _faceLayer, _eyesLayer })
+                if (l != null && l.GetIndex() > target) target = l.GetIndex();
+            if (_weaponPivotNode.GetIndex() < target)
+                parent.MoveChild(_weaponPivotNode, target);
+        }
+        else
+        {
+            // vor die Base Animation -> hinter dem Koerper
+            if (_weaponPivotNode.GetIndex() > _anim.GetIndex())
+                parent.MoveChild(_weaponPivotNode, System.Math.Max(0, _anim.GetIndex()));
+        }
     }
 
     // AnimationPlayer für WeaponPivot abspielen — nur wenn Animation wechselt

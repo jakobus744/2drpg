@@ -6779,18 +6779,15 @@ position = Vector2(26, 8)
 [node name="EisenBoots" parent="TileMap" unique_id=1514950780 instance=ExtResource("28_scs3f")]
 position = Vector2(-63, 1)
 
-[node name="EisenChest" parent="TileMap" unique_id=129773989 instance=ExtResource("29_qnalv")]
-position = Vector2(-167, 168)
-scale = Vector2(2, 2)
-
 [node name="FellChest" parent="TileMap" unique_id=915392061 instance=ExtResource("30_p0ds0")]
-position = Vector2(-139, 175)
+position = Vector2(57, -8)
 
 [node name="GoldenChest" parent="TileMap" unique_id=399198813 instance=ExtResource("31_if6uq")]
 position = Vector2(-115, 155)
 
 [node name="GoldstahlChest" parent="TileMap" unique_id=146975053 instance=ExtResource("32_ia0vj")]
-position = Vector2(-108, 175)
+position = Vector2(-7, 3)
+scale = Vector2(1.2, 1.2)
 
 [node name="KupferChest" parent="TileMap" unique_id=1439980424 instance=ExtResource("33_6dpb5")]
 position = Vector2(-124, 193)
@@ -6855,6 +6852,12 @@ position = Vector2(104, 155)
 [node name="RitterHelm" parent="TileMap" unique_id=944387338 instance=ExtResource("52_v3515")]
 position = Vector2(50, 162)
 
+[node name="EisenBoots2" parent="TileMap" unique_id=1442170882 instance=ExtResource("28_scs3f")]
+position = Vector2(-7, 50)
+
+[node name="GoldenBoots" parent="TileMap" unique_id=438548274 instance=ExtResource("38_4qwk2")]
+position = Vector2(-26, 49)
+
 [node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="." unique_id=772117944]
 stream = ExtResource("28_pcnfm")
 volume_db = -30.0
@@ -6865,21 +6868,13 @@ parameters/looping = true
 [node name="Control" parent="." unique_id=1616275335 instance=ExtResource("29_17crv")]
 visible = false
 
-[node name="PaladinChest" parent="." unique_id=1873330082 instance=ExtResource("30_qu77t")]
-position = Vector2(21, 55)
-scale = Vector2(2, 2)
-
 [node name="LilaBoots" parent="." unique_id=643434019 instance=ExtResource("32_apm3s")]
-position = Vector2(-123, 65)
-scale = Vector2(1.5, 1.5)
-
-[node name="MischungBoots" parent="." unique_id=837686371 instance=ExtResource("33_qlhpp")]
-position = Vector2(106, 68)
-scale = Vector2(1.5, 1.5)
+position = Vector2(-12.000008, -13)
+scale = Vector2(0.8, 0.8)
 
 [node name="GoldenHelm" parent="." unique_id=2005650281 instance=ExtResource("35_qlhpp")]
-position = Vector2(-29, 46)
-scale = Vector2(1.2, 1.2)
+position = Vector2(6.999998, -11.999996)
+scale = Vector2(0.8, 0.8)
 ItemScale = Vector2(2, 2)
 
 [node name="LilaHelm" parent="." unique_id=1198881754 instance=ExtResource("34_2y74d")]
