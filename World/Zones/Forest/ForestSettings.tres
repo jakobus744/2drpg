@@ -6,6 +6,8 @@
 
 [resource]
 script = ExtResource("1_settings")
+PrimaryColor = Color(0.18, 0.48, 0.2, 1)
+SecondaryColor = Color(0.1, 0.3, 0.1, 1)
 Moisture = 0.6
 VegetationDensity = 0.4
 VegetationNoiseScale = 0.05

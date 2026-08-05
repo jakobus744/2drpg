@@ -10,6 +10,9 @@ public partial class WorldManager : Node2D
     [Export] public ZoneEntry[] Zones = System.Array.Empty<ZoneEntry>(); // optionaler Override
     [Export] public int ZoneSize = 3424;   // einheitliche Zonengröße in px (= echte Inhaltsgröße)
     [Export] public int LoadRadius = 1;     // Zonen im Umkreis von N laden
+    [Export] public string SeedString { get; set; } = "LetsGO";
+
+    public int WorldSeed => RPG2d.World.Generation.Logic.SeedUtils.ParseSeed(SeedString, 1337);
 
     // Standard-Layout (3×4 Raster). Wird genutzt wenn Zones leer ist.
     private static readonly (Vector2I Coord, string Path)[] DefaultLayout =
@@ -74,6 +77,40 @@ public partial class WorldManager : Node2D
         return new Vector2I(
             Mathf.RoundToInt(worldPos.X / size),
             Mathf.RoundToInt(worldPos.Y / size));
+    }
+
+    public static Color GetZonePrimaryColor(Vector2I coord)
+    {
+        if (Instance != null && Instance._loaded.TryGetValue(coord, out var zoneNode))
+        {
+            var gen = zoneNode.FindChild("ZoneGenerator", recursive: true) as RPG2d.World.Generation.Logic.ZoneGenerator;
+            if (gen?.Settings != null && gen.Settings.PrimaryColor.A > 0)
+            {
+                return gen.Settings.PrimaryColor;
+            }
+        }
+
+        return GetDefaultBiomeColor(coord);
+    }
+
+    public static Color GetDefaultBiomeColor(Vector2I coord)
+    {
+        return (coord.X, coord.Y) switch
+        {
+            (0, 0) => new Color(0.2f, 0.5f, 0.6f),   // Coast
+            (1, 0) => new Color(0.35f, 0.45f, 0.25f), // Village
+            (2, 0) => new Color(0.75f, 0.85f, 0.9f),  // Winter
+            (0, 1) => new Color(0.15f, 0.1f, 0.3f),   // GlowingCave
+            (1, 1) => new Color(0.18f, 0.48f, 0.2f),  // Forest
+            (2, 1) => new Color(0.2f, 0.3f, 0.15f),   // Swamp
+            (0, 2) => new Color(0.2f, 0.15f, 0.25f), // SkeletonPoison
+            (1, 2) => new Color(0.75f, 0.65f, 0.4f),  // Desert
+            (2, 2) => new Color(0.3f, 0.6f, 0.2f),   // Grassland
+            (0, 3) => new Color(0.4f, 0.1f, 0.05f),  // LavaCave
+            (1, 3) => new Color(0.15f, 0.05f, 0.2f),  // CursedLands
+            (2, 3) => new Color(0.4f, 0.6f, 0.85f),  // SkyEndgame
+            _ => new Color(0.2f, 0.4f, 0.2f)
+        };
     }
 
     public override void _Ready()
