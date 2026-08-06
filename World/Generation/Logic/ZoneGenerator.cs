@@ -162,13 +162,6 @@ public partial class ZoneGenerator : Node
         }
     }
 
-    private void ScanHandPlacedTiles(TileMapLayer layer, HashSet<Vector2I> reserved)
-    {
-        foreach (Vector2I pos in layer.GetUsedCells())
-        {
-            reserved.Add(pos);
-        }
-    }
 
     private (List<Vector2I> BorderWaypoints, List<Vector2I> InternalWaypoints) CollectWaypoints(
         TileMapLayer layer, ZoneSettings settings, HashSet<Vector2I> reserved, Vector2I zoneCoord)
@@ -330,7 +323,18 @@ public partial class ZoneGenerator : Node
         ApplyPathTilesToLayer(layer, settings, allPathTiles);
         ClearObstaclesFromPath(layer, allPathTiles);
 
-        reserved.UnionWith(allPathTiles);
+        // Reserve path tiles plus a 1-2 tile safety margin buffer around roads so foliage stands back from paths
+        int pathBufferMargin = 1;
+        foreach (var pathTile in allPathTiles)
+        {
+            for (int dx = -pathBufferMargin; dx <= pathBufferMargin; dx++)
+            {
+                for (int dy = -pathBufferMargin; dy <= pathBufferMargin; dy++)
+                {
+                    reserved.Add(pathTile + new Vector2I(dx, dy));
+                }
+            }
+        }
     }
 
     private void BuildCrossroadPlazas(HashSet<Vector2I> pathTiles, List<(Vector2I Start, Vector2I End, bool IsHighway)> edges, HashSet<Vector2I> reserved)
@@ -426,14 +430,50 @@ public partial class ZoneGenerator : Node
         return closest;
     }
 
+    private void ScanHandPlacedTiles(TileMapLayer layer, HashSet<Vector2I> reserved)
+    {
+        Node parent = layer?.GetParent();
+        if (parent == null) return;
+
+        foreach (Node child in parent.GetChildren())
+        {
+            if (child is TileMapLayer otherLayer && otherLayer != layer && otherLayer.Name != "Ground")
+            {
+                foreach (Vector2I pos in otherLayer.GetUsedCells())
+                {
+                    reserved.Add(pos);
+                }
+            }
+        }
+    }
+
     private void GenerateFoliage(TileMapLayer groundLayer, ZoneSettings settings, HashSet<Vector2I> reserved, int zoneSeed)
     {
-        if (settings?.FoliageTypes == null || settings.FoliageTypes.Count == 0) return;
-        if (settings.VegetationDensity <= 0f) return;
+        if (settings?.FoliageTypes == null || settings.FoliageTypes.Count == 0)
+        {
+            GD.Print($"[ZoneGenerator] Keine FoliageTypes in ZoneSettings definiert!");
+            return;
+        }
+        if (settings.VegetationDensity <= 0f)
+        {
+            GD.Print($"[ZoneGenerator] VegetationDensity ist 0!");
+            return;
+        }
+
+        var validEntries = settings.FoliageTypes.Where(e => e != null).ToList();
+        if (validEntries.Count == 0)
+        {
+            GD.PrintErr($"[ZoneGenerator] FoliageTypes enthaelt nur null-Eintraege!");
+            return;
+        }
 
         TileMapLayer ySortLayer = AutoDetectYSortLayer(groundLayer);
         Node parentNode = groundLayer?.GetParent() ?? GetParent();
-        if (ySortLayer == null && parentNode == null) return;
+        if (ySortLayer == null && parentNode == null)
+        {
+            GD.PrintErr($"[ZoneGenerator] Weder ySortLayer noch parentNode gefunden!");
+            return;
+        }
 
         FastNoiseLite noise = new FastNoiseLite();
         noise.Seed = zoneSeed;
@@ -441,42 +481,100 @@ public partial class ZoneGenerator : Node
         noise.Frequency = noiseScale;
 
         int halfTiles = ZoneTileSize / 2;
+        int prefabCount = 0;
+        int tileCount = 0;
+        int maxPrefabsPerZone = 250;
 
-        for (int x = -halfTiles; x <= halfTiles; x++)
+        Vector2 playerPos = RPG2d.Player.Player.LocalPlayer != null 
+            ? RPG2d.Player.Player.LocalPlayer.GlobalPosition 
+            : Vector2.Zero;
+
+        for (int x = -halfTiles; x <= halfTiles; x += 2)
         {
-            for (int y = -halfTiles; y <= halfTiles; y++)
+            for (int y = -halfTiles; y <= halfTiles; y += 2)
             {
                 Vector2I cell = new(x, y);
                 if (reserved.Contains(cell)) continue;
 
-                float noiseVal = (noise.GetNoise2D(x * 10f, y * 10f) + 1f) * 0.5f;
+                float noiseVal = (noise.GetNoise2D(x * 3f, y * 3f) + 1f) * 0.5f;
 
                 if (noiseVal < settings.VegetationDensity)
                 {
-                    int foliageIdx = Mathf.Abs((x * 73856093 ^ y * 19349663 ^ zoneSeed) % settings.FoliageTypes.Count);
-                    var entry = settings.FoliageTypes[foliageIdx];
+                    int pseudoRand = Mathf.Abs(x * 73856093 ^ y * 19349663 ^ zoneSeed);
 
-                    if (entry != null)
+                    // ~20% spawn chance per candidate 2x2 grid point for balanced 150-200 trees per zone
+                    if ((pseudoRand % 100) > 20) continue;
+
+                    float totalWeight = 0f;
+                    foreach (var e in validEntries) totalWeight += (e.SpawnWeight > 0 ? e.SpawnWeight : 0.5f);
+
+                    float targetWeight = (pseudoRand % 1000) / 1000f * totalWeight;
+                    FoliageEntry selectedEntry = validEntries[0];
+                    float accumulated = 0f;
+
+                    foreach (var entry in validEntries)
                     {
-                        if (ySortLayer != null && entry.TileCoords != new Vector2I(-1, -1))
+                        float weight = entry.SpawnWeight > 0 ? entry.SpawnWeight : 0.5f;
+                        accumulated += weight;
+                        if (targetWeight <= accumulated)
                         {
-                            ySortLayer.SetCell(cell, 0, entry.TileCoords);
-                            reserved.Add(cell);
+                            selectedEntry = entry;
+                            break;
                         }
-                        else if (entry.PrefabScene != null && parentNode != null)
+                    }
+
+                    if (selectedEntry != null)
+                    {
+                        int radius = selectedEntry.ClearingRadius > 0 
+                            ? Mathf.Clamp(Mathf.CeilToInt(selectedEntry.ClearingRadius / 32f), 2, 4) 
+                            : 2;
+
+                        if (ySortLayer != null && selectedEntry.TileCoords != new Vector2I(-1, -1))
                         {
-                            var instance = entry.PrefabScene.Instantiate<Node2D>();
+                            ySortLayer.SetCell(cell, 0, selectedEntry.TileCoords);
+                            tileCount++;
+
+                            for (int dx = -radius; dx <= radius; dx++)
+                            {
+                                for (int dy = -radius; dy <= radius; dy++)
+                                {
+                                    reserved.Add(cell + new Vector2I(dx, dy));
+                                }
+                            }
+                        }
+                        else if (selectedEntry.PrefabScene != null && parentNode != null && prefabCount < maxPrefabsPerZone)
+                        {
+                            var instance = selectedEntry.PrefabScene.Instantiate<Node2D>();
                             if (instance != null)
                             {
-                                instance.Position = new Vector2(cell.X * 32, cell.Y * 32);
-                                (ySortLayer ?? parentNode).AddChild(instance);
-                                reserved.Add(cell);
+                                Node targetContainer = ySortLayer ?? parentNode;
+                                targetContainer.AddChild(instance);
+
+                                Vector2 localPos = groundLayer.MapToLocal(cell);
+                                instance.GlobalPosition = groundLayer.ToGlobal(localPos);
+                                prefabCount++;
+
+                                float distToPlayer = playerPos.DistanceTo(instance.GlobalPosition);
+                                if (prefabCount <= 10)
+                                {
+                                    GD.Print($"[ZoneGenerator] Tree #{prefabCount} ({selectedEntry.Name}) -> Zelle {cell}, GlobalPos: {instance.GlobalPosition} (Distanz zum Spieler: {distToPlayer:F0}px)");
+                                }
+
+                                for (int dx = -radius; dx <= radius; dx++)
+                                {
+                                    for (int dy = -radius; dy <= radius; dy++)
+                                    {
+                                        reserved.Add(cell + new Vector2I(dx, dy));
+                                    }
+                                }
                             }
                         }
                     }
                 }
             }
         }
+
+        GD.Print($"[ZoneGenerator] Foliage beendet: {prefabCount} Prefabs instanziiert, {tileCount} Tiles platziert. (SpielerPos war {playerPos})");
     }
 
     private TileMapLayer AutoDetectYSortLayer(TileMapLayer groundLayer)
