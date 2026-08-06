@@ -16,19 +16,54 @@ public static class PathGenerator
         int terrain = 0,
         int pathWidth = 2,
         float roughness = 0.2f,
-        int seed = 1337)
+        int seed = 1337,
+        HashSet<Vector2I> obstacles = null,
+        HashSet<Vector2I> existingPaths = null,
+        Rect2I? bounds = null,
+        bool isHighway = false)
     {
         var pathCells = new HashSet<Vector2I>();
-        var linePoints = GenerateCurvedLine(start, end, roughness, seed);
+        float effectiveRoughness = isHighway ? roughness * 0.7f : roughness * 1.3f;
+        List<Vector2I> linePoints = GenerateAStarLine(start, end, obstacles, existingPaths, bounds, seed, effectiveRoughness);
 
-        foreach (var point in linePoints)
+        FastNoiseLite edgeNoise = new FastNoiseLite();
+        edgeNoise.Seed = seed ^ 0x5f3759df;
+        edgeNoise.Frequency = 0.15f;
+
+        int effectiveWidth = isHighway ? Mathf.Max(3, pathWidth + 1) : Mathf.Max(1, pathWidth - 1);
+        int baseHalfWidth = effectiveWidth / 2;
+
+        for (int i = 0; i < linePoints.Count; i++)
         {
-            int halfWidth = pathWidth / 2;
-            for (int dx = -halfWidth; dx <= halfWidth; dx++)
+            var point = linePoints[i];
+            float progress = (float)i / Mathf.Max(1, linePoints.Count - 1);
+            float widthFactor = 1.0f - (isHighway ? 0.15f : 0.35f) * Mathf.Pow(2.0f * (progress - 0.5f), 4);
+            int currentHalfWidth = Mathf.Max(1, Mathf.RoundToInt(baseHalfWidth * widthFactor));
+
+            for (int dx = -currentHalfWidth; dx <= currentHalfWidth; dx++)
             {
-                for (int dy = -halfWidth; dy <= halfWidth; dy++)
+                for (int dy = -currentHalfWidth; dy <= currentHalfWidth; dy++)
                 {
-                    pathCells.Add(point + new Vector2I(dx, dy));
+                    Vector2I cell = point + new Vector2I(dx, dy);
+
+                    if (obstacles != null && obstacles.Contains(cell)) continue;
+
+                    float distFromCenter = Mathf.Sqrt(dx * dx + dy * dy);
+                    float maxDist = currentHalfWidth + 0.5f;
+
+                    if (distFromCenter <= maxDist - 0.5f)
+                    {
+                        pathCells.Add(cell);
+                    }
+                    else if (distFromCenter <= maxDist)
+                    {
+                        float noiseCutoff = isHighway ? -0.05f : -0.3f;
+                        float n = edgeNoise.GetNoise2D(cell.X, cell.Y);
+                        if (n > noiseCutoff)
+                        {
+                            pathCells.Add(cell);
+                        }
+                    }
                 }
             }
         }
@@ -49,13 +84,154 @@ public static class PathGenerator
         else
         {
             Vector2I pathCoords = settings?.PathTileCoords ?? new Vector2I(1, 0);
+            Vector2I detailCoords = settings?.DetailTileCoords ?? new Vector2I(-1, -1);
+            bool hasDetails = detailCoords != new Vector2I(-1, -1);
+
             foreach (var cell in pathCells)
             {
-                layer.SetCell(cell, 0, pathCoords);
+                if (hasDetails && edgeNoise.GetNoise2D(cell.X * 3, cell.Y * 3) > 0.45f)
+                {
+                    layer.SetCell(cell, 0, detailCoords);
+                }
+                else
+                {
+                    layer.SetCell(cell, 0, pathCoords);
+                }
             }
         }
 
         return pathCells;
+    }
+
+    private static List<Vector2I> GenerateAStarLine(
+        Vector2I start,
+        Vector2I end,
+        HashSet<Vector2I> obstacles,
+        HashSet<Vector2I> existingPaths,
+        Rect2I? bounds,
+        int seed,
+        float roughness)
+    {
+        if (start == end) return new List<Vector2I> { start };
+
+        FastNoiseLite terrainNoise = new FastNoiseLite();
+        terrainNoise.Seed = seed ^ (start.X * 73856093) ^ (start.Y * 19349663);
+        terrainNoise.Frequency = 0.04f;
+
+        var openSet = new PriorityQueue<Vector2I, float>();
+        var gScore = new System.Collections.Generic.Dictionary<Vector2I, float>();
+        var cameFrom = new System.Collections.Generic.Dictionary<Vector2I, Vector2I>();
+
+        gScore[start] = 0f;
+        openSet.Enqueue(start, OctileDistance(start, end));
+
+        int maxIterations = 3000;
+        int iterations = 0;
+        bool found = false;
+
+        Vector2I[] neighborDirs = {
+            new Vector2I(1, 0), new Vector2I(-1, 0), new Vector2I(0, 1), new Vector2I(0, -1),
+            new Vector2I(1, 1), new Vector2I(-1, 1), new Vector2I(1, -1), new Vector2I(-1, -1)
+        };
+
+        while (openSet.Count > 0 && iterations++ < maxIterations)
+        {
+            Vector2I current = openSet.Dequeue();
+            if (current == end)
+            {
+                found = true;
+                break;
+            }
+
+            float currentG = gScore[current];
+
+            foreach (var dir in neighborDirs)
+            {
+                Vector2I neighbor = current + dir;
+
+                if (bounds.HasValue && !bounds.Value.HasPoint(neighbor)) continue;
+                if (obstacles != null && obstacles.Contains(neighbor)) continue;
+
+                bool isDiagonal = dir.X != 0 && dir.Y != 0;
+                float stepCost = isDiagonal ? 1.414f : 1.0f;
+
+                float noiseVal = (terrainNoise.GetNoise2D(neighbor.X, neighbor.Y) + 1.0f) * 0.5f;
+                float terrainCostMultiplier = 1.0f + roughness * 3.0f * noiseVal;
+
+                if (existingPaths != null && existingPaths.Contains(neighbor))
+                {
+                    terrainCostMultiplier *= 0.35f;
+                }
+
+                float tentativeG = currentG + stepCost * terrainCostMultiplier;
+
+                if (!gScore.TryGetValue(neighbor, out float existingG) || tentativeG < existingG)
+                {
+                    cameFrom[neighbor] = current;
+                    gScore[neighbor] = tentativeG;
+                    float h = OctileDistance(neighbor, end);
+                    openSet.Enqueue(neighbor, tentativeG + h);
+                }
+            }
+        }
+
+        if (!found)
+        {
+            return GenerateCurvedLine(start, end, roughness, seed);
+        }
+
+        var rawPath = new List<Vector2I>();
+        Vector2I curr = end;
+        while (curr != start)
+        {
+            rawPath.Add(curr);
+            curr = cameFrom[curr];
+        }
+        rawPath.Add(start);
+        rawPath.Reverse();
+
+        return SmoothAStarPath(rawPath);
+    }
+
+    private static List<Vector2I> SmoothAStarPath(List<Vector2I> rawPath)
+    {
+        if (rawPath.Count <= 2) return rawPath;
+
+        var keyPoints = new List<Vector2I> { rawPath[0] };
+        Vector2I lastDir = rawPath[1] - rawPath[0];
+
+        for (int i = 2; i < rawPath.Count; i++)
+        {
+            Vector2I currentDir = rawPath[i] - rawPath[i - 1];
+            if (currentDir != lastDir)
+            {
+                keyPoints.Add(rawPath[i - 1]);
+                lastDir = currentDir;
+            }
+        }
+        keyPoints.Add(rawPath[rawPath.Count - 1]);
+
+        var smoothed = new List<Vector2I>();
+        for (int i = 0; i < keyPoints.Count - 1; i++)
+        {
+            var segment = GenerateBresenhamLine(keyPoints[i], keyPoints[i + 1]);
+            foreach (var pt in segment)
+            {
+                if (smoothed.Count == 0 || smoothed[smoothed.Count - 1] != pt)
+                {
+                    smoothed.Add(pt);
+                }
+            }
+        }
+
+        return smoothed;
+    }
+
+    private static float OctileDistance(Vector2I a, Vector2I b)
+    {
+        int dx = Mathf.Abs(a.X - b.X);
+        int dy = Mathf.Abs(a.Y - b.Y);
+        return 1.0f * (dx + dy) + (1.414f - 2.0f * 1.0f) * Mathf.Min(dx, dy);
     }
 
     private static List<Vector2I> GenerateCurvedLine(Vector2I start, Vector2I end, float roughness, int seed)
@@ -146,3 +322,4 @@ public static class PathGenerator
         return points;
     }
 }
+

@@ -185,7 +185,7 @@ public partial class ZoneGenerator : Node
         }
 
         internalWaypoints.AddRange(markerWaypoints);
-        internalWaypoints.Add(Vector2I.Zero); // Center waypoint
+        internalWaypoints.Add(Vector2I.Zero);
 
         if (ConnectToZoneBorders)
         {
@@ -194,27 +194,23 @@ public partial class ZoneGenerator : Node
                 : SeedUtils.ParseSeed(SeedString, 1337);
 
             int borderThreshold = Mathf.RoundToInt(halfSize * 0.5f);
-            int margin = 8; // Margin away from extreme corner vertices
+            int margin = 8;
 
-            // North boundary
             int seedNorth = SeedUtils.DeriveEdgeSeed(baseSeed, zoneCoord, zoneCoord + Vector2I.Up);
             int offsetNorth = SeedUtils.GetSeedOffset(seedNorth, margin, halfSize);
             bool hasNorth = markerWaypoints.Exists(p => p.Y <= -borderThreshold);
             if (!hasNorth) borderWaypoints.Add(new Vector2I(offsetNorth, -halfSize));
 
-            // South boundary
             int seedSouth = SeedUtils.DeriveEdgeSeed(baseSeed, zoneCoord, zoneCoord + Vector2I.Down);
             int offsetSouth = SeedUtils.GetSeedOffset(seedSouth, margin, halfSize);
             bool hasSouth = markerWaypoints.Exists(p => p.Y >= borderThreshold);
             if (!hasSouth) borderWaypoints.Add(new Vector2I(offsetSouth, halfSize));
 
-            // West boundary
             int seedWest = SeedUtils.DeriveEdgeSeed(baseSeed, zoneCoord, zoneCoord + Vector2I.Left);
             int offsetWest = SeedUtils.GetSeedOffset(seedWest, margin, halfSize);
             bool hasWest = markerWaypoints.Exists(p => p.X <= -borderThreshold);
             if (!hasWest) borderWaypoints.Add(new Vector2I(-halfSize, offsetWest));
 
-            // East boundary
             int seedEast = SeedUtils.DeriveEdgeSeed(baseSeed, zoneCoord, zoneCoord + Vector2I.Right);
             int offsetEast = SeedUtils.GetSeedOffset(seedEast, margin, halfSize);
             bool hasEast = markerWaypoints.Exists(p => p.X >= borderThreshold);
@@ -302,14 +298,10 @@ public partial class ZoneGenerator : Node
 
         var allPathTiles = new HashSet<Vector2I>();
 
-        // 1. Primary Highway connections across opposite borders (North-South, West-East)
-        List<(Vector2I Start, Vector2I End)> highwayEdges = BuildMainHighwayConnections(borderWaypoints, zoneSeed);
+        List<(Vector2I Start, Vector2I End, bool IsHighway)> highwayEdges = BuildMainHighwayConnections(borderWaypoints, zoneSeed);
+        List<(Vector2I Start, Vector2I End, bool IsHighway)> mstEdges = BuildPathConnections(mergedWaypoints, maxProximityDist: 25f);
 
-        // 2. Minimum Spanning Tree across ALL waypoints (ensures 100% connectivity)
-        List<(Vector2I Start, Vector2I End)> mstEdges = BuildPathConnections(mergedWaypoints, maxProximityDist: 25f);
-
-        // Merge highway edges and MST edges
-        var allEdges = new List<(Vector2I Start, Vector2I End)>(highwayEdges);
+        var allEdges = new List<(Vector2I Start, Vector2I End, bool IsHighway)>(highwayEdges);
         foreach (var edge in mstEdges)
         {
             if (!allEdges.Exists(e => (e.Start == edge.Start && e.End == edge.End) || (e.Start == edge.End && e.End == edge.Start)))
@@ -318,16 +310,22 @@ public partial class ZoneGenerator : Node
             }
         }
 
-        foreach (var (start, end) in allEdges)
+        int halfZone = ZoneTileSize / 2;
+        Rect2I zoneBounds = new Rect2I(-halfZone, -halfZone, ZoneTileSize, ZoneTileSize);
+
+        foreach (var edge in allEdges)
         {
             HashSet<Vector2I> pathTiles = PathGenerator.ConnectWaypoints(
-                layer, start, end, settings,
+                layer, edge.Start, edge.End, settings,
                 terrainSet: 0, terrain: 0,
-                pathWidth: PathWidth, roughness: 0.2f, seed: zoneSeed
+                pathWidth: PathWidth, roughness: 0.2f, seed: zoneSeed,
+                obstacles: reserved, existingPaths: allPathTiles, bounds: zoneBounds,
+                isHighway: edge.IsHighway
             );
             allPathTiles.UnionWith(pathTiles);
         }
 
+        BuildCrossroadPlazas(allPathTiles, allEdges, reserved);
         MergeClosePathTiles(allPathTiles);
         ApplyPathTilesToLayer(layer, settings, allPathTiles);
         ClearObstaclesFromPath(layer, allPathTiles);
@@ -335,9 +333,39 @@ public partial class ZoneGenerator : Node
         reserved.UnionWith(allPathTiles);
     }
 
-    private List<(Vector2I Start, Vector2I End)> BuildMainHighwayConnections(List<Vector2I> borderWaypoints, int zoneSeed)
+    private void BuildCrossroadPlazas(HashSet<Vector2I> pathTiles, List<(Vector2I Start, Vector2I End, bool IsHighway)> edges, HashSet<Vector2I> reserved)
     {
-        var edges = new List<(Vector2I Start, Vector2I End)>();
+        var nodeDegrees = new Dictionary<Vector2I, int>();
+        foreach (var edge in edges)
+        {
+            nodeDegrees[edge.Start] = nodeDegrees.GetValueOrDefault(edge.Start, 0) + 1;
+            nodeDegrees[edge.End] = nodeDegrees.GetValueOrDefault(edge.End, 0) + 1;
+        }
+
+        foreach (var (waypoint, degree) in nodeDegrees)
+        {
+            if (degree >= 3)
+            {
+                int plazaRadius = 2;
+                for (int dx = -plazaRadius; dx <= plazaRadius; dx++)
+                {
+                    for (int dy = -plazaRadius; dy <= plazaRadius; dy++)
+                    {
+                        Vector2I plazaCell = waypoint + new Vector2I(dx, dy);
+                        if (reserved != null && reserved.Contains(plazaCell)) continue;
+                        if (dx * dx + dy * dy <= plazaRadius * plazaRadius + 1)
+                        {
+                            pathTiles.Add(plazaCell);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    private List<(Vector2I Start, Vector2I End, bool IsHighway)> BuildMainHighwayConnections(List<Vector2I> borderWaypoints, int zoneSeed)
+    {
+        var edges = new List<(Vector2I Start, Vector2I End, bool IsHighway)>();
         if (borderWaypoints.Count < 2) return edges;
 
         int halfSize = ZoneTileSize / 2;
@@ -351,14 +379,14 @@ public partial class ZoneGenerator : Node
 
         if (north.HasValue && south.HasValue)
         {
-            edges.Add((north.Value, south.Value));
+            edges.Add((north.Value, south.Value, true));
             paired.Add(north.Value);
             paired.Add(south.Value);
         }
 
         if (west.HasValue && east.HasValue)
         {
-            edges.Add((west.Value, east.Value));
+            edges.Add((west.Value, east.Value, true));
             paired.Add(west.Value);
             paired.Add(east.Value);
         }
@@ -370,7 +398,7 @@ public partial class ZoneGenerator : Node
             var closest = borderWaypoints.Where(p => p != wp).OrderBy(p => p.DistanceSquaredTo(wp)).ToList();
             if (closest.Count > 0)
             {
-                edges.Add((wp, closest[0]));
+                edges.Add((wp, closest[0], true));
                 paired.Add(wp);
             }
         }
@@ -462,9 +490,9 @@ public partial class ZoneGenerator : Node
         return parent.FindChild("ysort", recursive: true, owned: false) as TileMapLayer;
     }
 
-    private List<(Vector2I Start, Vector2I End)> BuildPathConnections(List<Vector2I> waypoints, float maxProximityDist)
+    private List<(Vector2I Start, Vector2I End, bool IsHighway)> BuildPathConnections(List<Vector2I> waypoints, float maxProximityDist)
     {
-        var edges = new List<(Vector2I Start, Vector2I End)>();
+        var edges = new List<(Vector2I Start, Vector2I End, bool IsHighway)>();
         if (waypoints.Count < 2) return edges;
 
         int n = waypoints.Count;
@@ -501,7 +529,7 @@ public partial class ZoneGenerator : Node
                 int u = Mathf.Min(bestFrom, bestTo);
                 int v = Mathf.Max(bestFrom, bestTo);
                 edgeSet.Add((u, v));
-                edges.Add((waypoints[bestFrom], waypoints[bestTo]));
+                edges.Add((waypoints[bestFrom], waypoints[bestTo], false));
             }
             else break;
         }
@@ -516,7 +544,7 @@ public partial class ZoneGenerator : Node
                 if (waypoints[i].DistanceSquaredTo(waypoints[j]) <= maxSq)
                 {
                     edgeSet.Add((i, j));
-                    edges.Add((waypoints[i], waypoints[j]));
+                    edges.Add((waypoints[i], waypoints[j], false));
                 }
             }
         }
