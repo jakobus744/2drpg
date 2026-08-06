@@ -6774,7 +6774,7 @@ position = Vector2(14, -21)
 rotation = -2.104867
 
 [node name="Goblin" parent="TileMap" unique_id=2062252707 instance=ExtResource("27_jmfyu")]
-position = Vector2(26, 8)
+position = Vector2(209, 7)
 
 [node name="EisenBoots" parent="TileMap" unique_id=1514950780 instance=ExtResource("28_scs3f")]
 position = Vector2(-63, 1)

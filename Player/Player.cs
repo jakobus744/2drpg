@@ -74,6 +74,9 @@ public partial class Player : BaseEntity<PlayerState>
 	private string _currentBootsPath = "";
 	// Cache: "Teil|Material" -> gebaute SpriteFrames (nicht bei jedem Equip neu bauen)
 	private readonly Dictionary<string, SpriteFrames> _styleFramesCache = new();
+	// Basis-Umschalt: Haar-Version (Original) <-> Glatze (bei Helm)
+	private SpriteFrames _baseFrames;
+	private SpriteFrames _baldFramesCache;
 
 	public static readonly string[] HairStyles =
 		{ "Standard", "Blau", "Blond", "Braun", "Gruen", "Lila", "Pink", "Rot", "Schwarz", "Tuerkis", "Weiss" };
@@ -171,7 +174,13 @@ public partial class Player : BaseEntity<PlayerState>
 
 		// Primärer Sprite: neue Sprites ohne eingebautes Schwert
 		_anim = GetNode<AnimatedSprite2D>("Base Animation");
+		_baseFrames = _anim.SpriteFrames;   // Original-Basis (mit Haaren) merken
 		_anim.AnimationFinished += OnAnimationFinished;
+
+		// Layer sofort mitziehen wenn die Basis den Frame wechselt
+		// AnimatedSprite2D schaltet im Render-Loop weiter der Physics-Tick kaeme zu spaet
+		_anim.FrameChanged += SyncVisualLayers;
+		_anim.AnimationChanged += SyncVisualLayers;
 
 		// Altes Sprite (Swordsman mit eingebautem Schwert) ausblenden  nicht mehr aktiv
 		GetNodeOrNull<AnimatedSprite2D>("AnimatedSprite2D")?.Hide();
@@ -905,6 +914,10 @@ public partial class Player : BaseEntity<PlayerState>
 
 	private void ApplyOrHideArmor(AnimatedSprite2D layer, EquipSlot slot, string itemPath)
 	{
+		// Helm angelegt -> Basis auf Glatze (Haare verschwinden); Helm ab -> zurueck zur Haar-Basis
+		if (slot == EquipSlot.Helmet)
+			SetBaldBase(!string.IsNullOrEmpty(itemPath));
+
 		if (layer == null) return;
 		if (string.IsNullOrEmpty(itemPath))
 		{
@@ -943,7 +956,9 @@ public partial class Player : BaseEntity<PlayerState>
 		string key = part + "|" + variant;
 		if (_styleFramesCache.TryGetValue(key, out var cached)) return cached;
 
-		var baseSf = _anim?.SpriteFrames;
+		// WICHTIG: immer von der Original-Basis bauen (man_lvl2-Pfade). _anim kann auf die
+		// Glatze umgeschaltet sein (man_bald_...) -> dann liefe die Style-Pfad-Ableitung ins Leere.
+		var baseSf = _baseFrames ?? _anim?.SpriteFrames;
 		if (baseSf == null || string.IsNullOrEmpty(part)) return null;
 
 		var sf = new SpriteFrames();
@@ -971,6 +986,61 @@ public partial class Player : BaseEntity<PlayerState>
 
 		_styleFramesCache[key] = sf;
 		return sf;
+	}
+
+	// Glatzen-Basis: gleiche Frames/Regionen wie die Haar-Basis, aber Textur = Bald/Male-Sheets.
+	private SpriteFrames GetBaldFrames()
+	{
+		if (_baldFramesCache != null) return _baldFramesCache;
+		if (_baseFrames == null) return null;
+
+		var sf = new SpriteFrames();
+		foreach (string anim in _baseFrames.GetAnimationNames())
+		{
+			if (!sf.HasAnimation(anim)) sf.AddAnimation(anim);
+			sf.SetAnimationLoop(anim, _baseFrames.GetAnimationLoop(anim));
+			sf.SetAnimationSpeed(anim, _baseFrames.GetAnimationSpeed(anim));
+
+			int count = _baseFrames.GetFrameCount(anim);
+			for (int i = 0; i < count; i++)
+			{
+				if (_baseFrames.GetFrameTexture(anim, i) is not AtlasTexture baseTex) continue;
+				string baldPath = BaldSheetPath(baseTex.Atlas?.ResourcePath);
+				if (string.IsNullOrEmpty(baldPath) || !ResourceLoader.Exists(baldPath)) continue;
+				var atlas = new AtlasTexture { Atlas = GD.Load<Texture2D>(baldPath), Region = baseTex.Region };
+				sf.AddFrame(anim, atlas, _baseFrames.GetFrameDuration(anim, i));
+			}
+		}
+		if (sf.HasAnimation("default")) sf.RemoveAnimation("default");
+
+		_baldFramesCache = sf;
+		return sf;
+	}
+
+	// .../man_lvl2_<Action>_with_shadow.png -> Bald/Male/man_bald_<Action>_with_shadow.png
+	private static string BaldSheetPath(string baseAtlasPath)
+	{
+		if (string.IsNullOrEmpty(baseAtlasPath)) return "";
+		string file = baseAtlasPath.GetFile();
+		string action = file.Replace("man_lvl2_", "").Replace("_with_shadow.png", "");
+		return $"res://Assets/Charakter/Player/Bald/Male/man_bald_{action}_with_shadow.png";
+	}
+
+	// Schaltet die Charakter-Basis zwischen Haar-Version und Glatze um; Animation + Frame bleiben erhalten.
+	private void SetBaldBase(bool bald)
+	{
+		if (_anim == null) return;
+		var target = bald ? GetBaldFrames() : _baseFrames;
+		if (target == null || _anim.SpriteFrames == target) return;
+
+		string a = _anim.Animation;
+		int f = _anim.Frame;
+		_anim.SpriteFrames = target;
+		if (target.HasAnimation(a))
+		{
+			_anim.Animation = a;
+			_anim.Frame = f;
+		}
 	}
 
 	// .../new/man_lvl2_<Action>_with_shadow.png  ->  Style/<Part>/<Material>/<Part>_<Action>[_with_shadow].png
