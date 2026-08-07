@@ -1,0 +1,9 @@
+[gd_resource type="Resource" script_class="FoliageEntry" format=3 uid="uid://dop3vxlne3d4c"]
+
+[ext_resource type="PackedScene" uid="uid://cxoqvsymmdte3" path="res://World/Zones/Forest/animation/trees/small_tree.tscn" id="1_2u5y7"]
+[ext_resource type="Script" uid="uid://dtcordhrxsbx1" path="res://World/Generation/Data/FoliageEntry.cs" id="2_orf2u"]
+
+[resource]
+script = ExtResource("2_orf2u")
+PrefabScene = ExtResource("1_2u5y7")
+metadata/_custom_type_script = "uid://dtcordhrxsbx1"

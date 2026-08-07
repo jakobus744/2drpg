@@ -493,7 +493,7 @@ public abstract partial class MobBase : BaseEntity<MobState>
             if (!Multiplayer.HasMultiplayerPeer() || !PeersStable()) return;
             var mobCell = WorldManager.WorldToZoneCell(GlobalPosition);
 
-            var players = RPG2d.Player.Player.AllPlayers;
+            var players = Player.AllPlayers;
             foreach (var peerId in from p in players
                      where p != null && IsInstanceValid(p)
                      select p.GetMultiplayerAuthority()
@@ -605,7 +605,7 @@ public abstract partial class MobBase : BaseEntity<MobState>
 
     protected Vector2[] FindPathTo(Vector2 worldTarget)
     {
-        var nav = GetNodeOrNull<RPG2d.World.NavigationManager>("/root/NavigationManager");
+        var nav = GetNodeOrNull<NavigationManager>("/root/NavigationManager");
         return nav?.FindPath(GlobalPosition, worldTarget) ?? System.Array.Empty<Vector2>();
     }
 
@@ -617,7 +617,7 @@ public abstract partial class MobBase : BaseEntity<MobState>
 
     protected Vector2 GetRandomWalkablePosition(Vector2 center, float radius)
     {
-        var nav = GetNodeOrNull<RPG2d.World.NavigationManager>("/root/NavigationManager");
+        var nav = GetNodeOrNull<NavigationManager>("/root/NavigationManager");
         if (nav == null) return center;
         var positions = nav.GetRandomWalkablePositions(center, radius, 1);
         return positions.Length > 0 ? positions[0] : center;

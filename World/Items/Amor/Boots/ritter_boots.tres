@@ -1,4 +1,4 @@
-[gd_resource type="Resource" script_class="ItemData" load_steps=3 format=3]
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://dih3d1yvgx3ny"]
 
 [ext_resource type="Texture2D" uid="uid://jdxrrcte2eay" path="res://Assets/Ui/icons/Gui_icons_items.png" id="1_icon"]
 [ext_resource type="Script" uid="uid://8m65hgxkrbcb" path="res://World/Items/Data/ItemData.cs" id="2_script"]
@@ -8,10 +8,9 @@ script = ExtResource("2_script")
 ItemId = "ritter_boots"
 DisplayName = "Ritter Stiefel"
 Icon = ExtResource("1_icon")
-IconRegion = Rect2(72, 96, 24, 24)
+IconRegion = Rect2(68, 100, 24, 24)
+IconScale = 1.0
 Category = 4
 Slot = 5
-MaxStackSize = 1
-PickupAmount = 1
 DroppedScenePath = "res://World/Items/Amor/Boots/ritter_boots_pickup.tscn"
 ArmorMaterial = "Ritter"

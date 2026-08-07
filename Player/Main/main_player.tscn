@@ -7604,7 +7604,7 @@ libraries/ = SubResource("AnimationLibrary_meyvx")
 speed_scale = 1.5
 
 [node name="WeaponPivot" type="Node2D" parent="." unique_id=1074649464]
-z_index = 1
+z_index = 0
 position = Vector2(-1.0000001, 2.9999995)
 rotation = -0.03205731
 scale = Vector2(1e-05, 1e-05)
@@ -7630,24 +7630,31 @@ animation = &"walk_right"
 speed_scale = 1.5
 
 [node name="FaceLayer" type="AnimatedSprite2D" parent="."]
+z_index = 0
 visible = false
 
 [node name="EyesLayer" type="AnimatedSprite2D" parent="."]
+z_index = 0
 visible = false
 
 [node name="HairLayer" type="AnimatedSprite2D" parent="."]
+z_index = 0
 visible = false
 
 [node name="BootsLayer" type="AnimatedSprite2D" parent="." unique_id=846420901]
+z_index = 0
 visible = false
 
 [node name="ArmorLayer" type="AnimatedSprite2D" parent="." unique_id=846420902]
+z_index = 0
 visible = false
 
 [node name="HelmLayer" type="AnimatedSprite2D" parent="." unique_id=846420903]
+z_index = 0
 visible = false
 
 [node name="OffHandPivot" type="Node2D" parent="." unique_id=1752773932]
+z_index = 0
 position = Vector2(18, -14.000002)
 rotation = -1.1358825
 

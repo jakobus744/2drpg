@@ -1,4 +1,4 @@
-[gd_resource type="Resource" script_class="ItemData" load_steps=3 format=3]
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://cf00sp0h2r5ql"]
 
 [ext_resource type="Texture2D" uid="uid://jdxrrcte2eay" path="res://Assets/Ui/icons/Gui_icons_items.png" id="1_icon"]
 [ext_resource type="Script" uid="uid://8m65hgxkrbcb" path="res://World/Items/Data/ItemData.cs" id="2_script"]
@@ -8,10 +8,9 @@ script = ExtResource("2_script")
 ItemId = "metall_helm"
 DisplayName = "Metall Helm"
 Icon = ExtResource("1_icon")
-IconRegion = Rect2(24, 120, 24, 24)
+IconRegion = Rect2(19, 132, 24, 24)
+IconScale = 1.2
 Category = 2
 Slot = 3
-MaxStackSize = 1
-PickupAmount = 1
 DroppedScenePath = "res://World/Items/Amor/Helmet/metall_helm_pickup.tscn"
 ArmorMaterial = "Metall"

@@ -1,0 +1,8 @@
+[gd_resource type="Resource" script_class="FoliageEntry" format=3 uid="uid://cexk1st2a8jks"]
+
+[ext_resource type="Script" uid="uid://dtcordhrxsbx1" path="res://World/Generation/Data/FoliageEntry.cs" id="1_8u32e"]
+
+[resource]
+script = ExtResource("1_8u32e")
+TileCoords = Vector2i(14, 0)
+metadata/_custom_type_script = "uid://dtcordhrxsbx1"

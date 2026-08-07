@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="FoliageEntry" format=3 uid="uid://cuvxyo582r7n4"]
+
+[ext_resource type="Script" uid="uid://dtcordhrxsbx1" path="res://World/Generation/Data/FoliageEntry.cs" id="1_hv0ke"]
+[ext_resource type="PackedScene" uid="uid://bs5b3cgthsbe8" path="res://World/Zones/Forest/animation/trees/big_apple_tree.tscn" id="1_s32aj"]
+
+[resource]
+script = ExtResource("1_hv0ke")
+Name = "Big Apple Tree"
+PrefabScene = ExtResource("1_s32aj")
+metadata/_custom_type_script = "uid://dtcordhrxsbx1"

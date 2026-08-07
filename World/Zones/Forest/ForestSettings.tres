@@ -1,0 +1,19 @@
+[gd_resource type="Resource" script_class="ZoneSettings" format=3 uid="uid://1flhr87q7pia"]
+
+[ext_resource type="Script" uid="uid://dtcordhrxsbx1" path="res://World/Generation/Data/FoliageEntry.cs" id="1_g8d1t"]
+[ext_resource type="Script" uid="uid://bb0lnrgjknb5k" path="res://World/Generation/Data/ZoneSettings.cs" id="1_settings"]
+[ext_resource type="Script" uid="uid://b1yy2cfo37i3q" path="res://World/Generation/Data/LandmarkSettings.cs" id="2_b0qp0"]
+[ext_resource type="Resource" uid="uid://cxr3t2j50j1wm" path="res://World/Zones/Forest/animation/trees/big_tree.tres" id="2_dhent"]
+[ext_resource type="Resource" uid="uid://cuvxyo582r7n4" path="res://World/Zones/Forest/animation/trees/big_apple_tree.tres" id="3_0lx21"]
+
+[sub_resource type="TileSet" id="TileSet_g8d1t"]
+
+[resource]
+script = ExtResource("1_settings")
+PrimaryColor = Color(0.18, 0.48, 0.2, 1)
+SecondaryColor = Color(0.1, 0.3, 0.1, 1)
+Moisture = 0.6
+ZoneTileSet = SubResource("TileSet_g8d1t")
+VegetationDensity = 0.4
+VegetationNoiseScale = 0.05
+FoliageTypes = Array[ExtResource("1_g8d1t")]([ExtResource("2_dhent"), ExtResource("3_0lx21")])
