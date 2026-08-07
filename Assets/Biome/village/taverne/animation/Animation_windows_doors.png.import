@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://b1t2ddqb86hi4"
-path="res://.godot/imported/Animation_windows_doors.png-6d327447201cc220b218865f87f0f06c.ctex"
+uid="uid://csnjgnqyx25iq"
+path="res://.godot/imported/animation_windows_doors.png-ea1cef8712c7bbbb01dd20f70f06110f.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Assets/Biome/village/taverne/animation/Animation_windows_doors.png"
-dest_files=["res://.godot/imported/Animation_windows_doors.png-6d327447201cc220b218865f87f0f06c.ctex"]
+source_file="res://Assets/Biome/village/taverne/animation/animation_windows_doors.png"
+dest_files=["res://.godot/imported/animation_windows_doors.png-ea1cef8712c7bbbb01dd20f70f06110f.ctex"]
 
 [params]
 

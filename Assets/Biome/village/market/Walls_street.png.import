@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://d0ycukg1gks0f"
-path="res://.godot/imported/Walls_street.png-5c72763cb31a32d880fade3232cf68a5.ctex"
+uid="uid://yxwxlvgq6by2"
+path="res://.godot/imported/walls_street.png-f9b2941af52260cf3fff94a5896bc4c0.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Assets/Biome/village/market/Walls_street.png"
-dest_files=["res://.godot/imported/Walls_street.png-5c72763cb31a32d880fade3232cf68a5.ctex"]
+source_file="res://Assets/Biome/village/market/walls_street.png"
+dest_files=["res://.godot/imported/walls_street.png-f9b2941af52260cf3fff94a5896bc4c0.ctex"]
 
 [params]
 

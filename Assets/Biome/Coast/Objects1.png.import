@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://bjhsymjr1q5uq"
-path="res://.godot/imported/Objects1.png-1d4ff345f3d9494071ed0283a78b966b.ctex"
+uid="uid://qma2450v0w82"
+path="res://.godot/imported/objects1.png-5f2bd2bfc5807eaf5832c32b592d690e.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Assets/Biome/Coast/Objects1.png"
-dest_files=["res://.godot/imported/Objects1.png-1d4ff345f3d9494071ed0283a78b966b.ctex"]
+source_file="res://Assets/Biome/coast/objects1.png"
+dest_files=["res://.godot/imported/objects1.png-5f2bd2bfc5807eaf5832c32b592d690e.ctex"]
 
 [params]
 

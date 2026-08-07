@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://cd6vyveloiulg"
-path="res://.godot/imported/Ground_moss.png-c4c547ab7ddd1612f577063b9f43c034.ctex"
+uid="uid://cdgjcojejot2n"
+path="res://.godot/imported/ground_moss.png-349bf04726444f85d0f73b5ee044ddef.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Assets/Biome/Coast/Ground_moss.png"
-dest_files=["res://.godot/imported/Ground_moss.png-c4c547ab7ddd1612f577063b9f43c034.ctex"]
+source_file="res://Assets/Biome/coast/ground_moss.png"
+dest_files=["res://.godot/imported/ground_moss.png-349bf04726444f85d0f73b5ee044ddef.ctex"]
 
 [params]
 

@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://cguj5lgak5ug7"
-path="res://.godot/imported/Objects.png-82bce7a6a3ceec96f659e6e240b933e7.ctex"
+uid="uid://vqr6j7hv6xky"
+path="res://.godot/imported/objects.png-b182d955b60ac71e3d3b8f8df64aea6b.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Assets/Biome/village/market/Objects.png"
-dest_files=["res://.godot/imported/Objects.png-82bce7a6a3ceec96f659e6e240b933e7.ctex"]
+source_file="res://Assets/Biome/village/market/objects.png"
+dest_files=["res://.godot/imported/objects.png-b182d955b60ac71e3d3b8f8df64aea6b.ctex"]
 
 [params]
 

@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://cdio8nflrpos"
-path="res://.godot/imported/Animation_Drinker4.png-010b9d048911137d12498abb8c6ff738.ctex"
+uid="uid://jek1plc65uyx"
+path="res://.godot/imported/animation_drinker4.png-5ebbd0d512a10dafc7a6cb76c1efeb39.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Assets/Biome/village/taverne/animation/Animation_Drinker4.png"
-dest_files=["res://.godot/imported/Animation_Drinker4.png-010b9d048911137d12498abb8c6ff738.ctex"]
+source_file="res://Assets/Biome/village/taverne/animation/animation_drinker4.png"
+dest_files=["res://.godot/imported/animation_drinker4.png-5ebbd0d512a10dafc7a6cb76c1efeb39.ctex"]
 
 [params]
 

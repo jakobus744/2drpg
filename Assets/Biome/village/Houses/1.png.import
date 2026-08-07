@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://boqb7dja7gfjt"
-path="res://.godot/imported/1.png-5e2105243f67c7753e7cbbfa10936430.ctex"
+uid="uid://bdosb8jlqoj8b"
+path="res://.godot/imported/1.png-8d8538587e38e12f7443707389edd467.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Assets/Biome/village/Houses/1.png"
-dest_files=["res://.godot/imported/1.png-5e2105243f67c7753e7cbbfa10936430.ctex"]
+source_file="res://Assets/Biome/village/houses/1.png"
+dest_files=["res://.godot/imported/1.png-8d8538587e38e12f7443707389edd467.ctex"]
 
 [params]
 

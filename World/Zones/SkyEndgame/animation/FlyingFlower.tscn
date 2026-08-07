@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://dfk13sh5uq81p"]
 
-[ext_resource type="Texture2D" uid="uid://l6dhv6wabid1" path="res://Assets/Biome/Flying-endgame/animation/Flying_flowers.png" id="1_5fg8p"]
+[ext_resource type="Texture2D" uid="uid://l6dhv6wabid1" path="res://Assets/Biome/flying/animation/flying_flowers.png" id="1_5fg8p"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_78luy"]
 atlas = ExtResource("1_5fg8p")

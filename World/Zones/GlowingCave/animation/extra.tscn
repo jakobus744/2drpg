@@ -1,7 +1,7 @@
 [gd_scene format=3 uid="uid://dm2o3g3di61aw"]
 
-[ext_resource type="Texture2D" uid="uid://d01tglfo1xra" path="res://Assets/Biome/glowing-cave/animation/Details.png" id="1_gfpkh"]
-[ext_resource type="Texture2D" uid="uid://8juu2nc46bnm" path="res://Assets/Biome/glowing-cave/animation/Water_coasts.png" id="2_0coeb"]
+[ext_resource type="Texture2D" uid="uid://d01tglfo1xra" path="res://Assets/Biome/glowing_cave/animation/details.png" id="1_gfpkh"]
+[ext_resource type="Texture2D" uid="uid://8juu2nc46bnm" path="res://Assets/Biome/glowing_cave/animation/water_coasts.png" id="2_0coeb"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_hyp8f"]
 atlas = ExtResource("1_gfpkh")

@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://7l5e570q440x"
-path="res://.godot/imported/Animation_orc_player.png-4bcfaa16e93fc9fcfea610d32609a4b6.ctex"
+uid="uid://wcismignpnxi"
+path="res://.godot/imported/animation_orc_player.png-b7c0c409ec5153f497285418c863e1d7.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Assets/Biome/village/taverne/animation/Animation_orc_player.png"
-dest_files=["res://.godot/imported/Animation_orc_player.png-4bcfaa16e93fc9fcfea610d32609a4b6.ctex"]
+source_file="res://Assets/Biome/village/taverne/animation/animation_orc_player.png"
+dest_files=["res://.godot/imported/animation_orc_player.png-b7c0c409ec5153f497285418c863e1d7.ctex"]
 
 [params]
 

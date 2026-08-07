@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://d148iec5mn1lt"
-path="res://.godot/imported/Flags_animation.png-26f60351b66b000d60eee241523b6a96.ctex"
+uid="uid://j1cylm34wcho"
+path="res://.godot/imported/flags_animation.png-d04bb98bc5b1f729fbe06644dfeccf27.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Assets/Biome/village/market/animation/Flags_animation.png"
-dest_files=["res://.godot/imported/Flags_animation.png-26f60351b66b000d60eee241523b6a96.ctex"]
+source_file="res://Assets/Biome/village/market/animation/flags_animation.png"
+dest_files=["res://.godot/imported/flags_animation.png-d04bb98bc5b1f729fbe06644dfeccf27.ctex"]
 
 [params]
 

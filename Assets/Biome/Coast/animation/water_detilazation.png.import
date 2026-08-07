@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://csii8o6h46o0w"
-path="res://.godot/imported/water_detilazation.png-d84b679df6084078d3fe1ceaec2a60be.ctex"
+uid="uid://dkh5r0uy008lo"
+path="res://.godot/imported/water_detilazation.png-3fe5f76802626dd7bf9b905edb40a89d.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Assets/Biome/Coast/animation/water_detilazation.png"
-dest_files=["res://.godot/imported/water_detilazation.png-d84b679df6084078d3fe1ceaec2a60be.ctex"]
+source_file="res://Assets/Biome/coast/animation/water_detilazation.png"
+dest_files=["res://.godot/imported/water_detilazation.png-3fe5f76802626dd7bf9b905edb40a89d.ctex"]
 
 [params]
 

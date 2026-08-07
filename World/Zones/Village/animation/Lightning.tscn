@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://dj82bam4f6bfq"]
 
-[ext_resource type="Texture2D" uid="uid://ct1dnj3s176n2" path="res://Assets/Biome/village/magic-tower/animation/Lightning.png" id="1_t2ie8"]
+[ext_resource type="Texture2D" uid="uid://ct1dnj3s176n2" path="res://Assets/Biome/village/magic_tower/animation/lightning.png" id="1_t2ie8"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_re7fb"]
 atlas = ExtResource("1_t2ie8")

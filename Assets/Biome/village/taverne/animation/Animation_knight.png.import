@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://5ybbn2710y6i"
-path="res://.godot/imported/Animation_knight.png-2767145cee8830c20aeb11d6ae1091c3.ctex"
+uid="uid://c5jtjhddpi28x"
+path="res://.godot/imported/animation_knight.png-82e9200fb4fd2af2608ab6a84a1483f6.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Assets/Biome/village/taverne/animation/Animation_knight.png"
-dest_files=["res://.godot/imported/Animation_knight.png-2767145cee8830c20aeb11d6ae1091c3.ctex"]
+source_file="res://Assets/Biome/village/taverne/animation/animation_knight.png"
+dest_files=["res://.godot/imported/animation_knight.png-82e9200fb4fd2af2608ab6a84a1483f6.ctex"]
 
 [params]
 

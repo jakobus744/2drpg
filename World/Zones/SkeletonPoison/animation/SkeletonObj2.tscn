@@ -1,9 +1,9 @@
 [gd_scene format=3 uid="uid://dh8aefljj7dip"]
 
-[ext_resource type="Texture2D" uid="uid://bj4emh7ff8kwf" path="res://Assets/Biome/7.Skelett-Poisen/animation/Animation5.png" id="1_iwuoh"]
-[ext_resource type="Texture2D" uid="uid://din0g3qclppb7" path="res://Assets/Biome/7.Skelett-Poisen/animation/Animation6.png" id="2_14v2d"]
-[ext_resource type="Texture2D" uid="uid://2p8fit75g8my" path="res://Assets/Biome/7.Skelett-Poisen/animation/Animation4.png" id="3_bw0do"]
-[ext_resource type="Texture2D" uid="uid://eg4pku4x8jel" path="res://Assets/Biome/7.Skelett-Poisen/animation/water_detilazation.png" id="4_akhyx"]
+[ext_resource type="Texture2D" uid="uid://bj4emh7ff8kwf" path="res://Assets/Biome/skeleton/animation/animation5.png" id="1_iwuoh"]
+[ext_resource type="Texture2D" uid="uid://din0g3qclppb7" path="res://Assets/Biome/skeleton/animation/animation6.png" id="2_14v2d"]
+[ext_resource type="Texture2D" uid="uid://2p8fit75g8my" path="res://Assets/Biome/skeleton/animation/animation4.png" id="3_bw0do"]
+[ext_resource type="Texture2D" uid="uid://eg4pku4x8jel" path="res://Assets/Biome/skeleton/animation/water_detilazation.png" id="4_akhyx"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_1f1lf"]
 atlas = ExtResource("1_iwuoh")

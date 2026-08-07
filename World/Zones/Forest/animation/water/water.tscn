@@ -1,7 +1,7 @@
 [gd_scene format=3 uid="uid://cog332d4ywx1d"]
 
-[ext_resource type="Texture2D" uid="uid://ccn52wckr8d0k" path="res://Assets/Biome/1.Forest/animation/water_v2.png" id="1_vnxrd"]
-[ext_resource type="Texture2D" uid="uid://bgw05onwu2cjs" path="res://Assets/Biome/1.Forest/animation/Water_detailization1.png" id="2_xrb7k"]
+[ext_resource type="Texture2D" uid="uid://ccn52wckr8d0k" path="res://Assets/Biome/forest/animation/water_v2.png" id="1_vnxrd"]
+[ext_resource type="Texture2D" uid="uid://bgw05onwu2cjs" path="res://Assets/Biome/forest/animation/water_detailization1.png" id="2_xrb7k"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_abbha"]
 atlas = ExtResource("1_vnxrd")

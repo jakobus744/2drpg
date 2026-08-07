@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://e4vwjw5ppv8s"
-path="res://.godot/imported/Animation_client.png-96eae5d135467575c44015f87fef26b9.ctex"
+uid="uid://3wplkiqpjnxy"
+path="res://.godot/imported/animation_client.png-8e6a810d100c2c40f599a41031019348.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Assets/Biome/village/taverne/animation/Animation_client.png"
-dest_files=["res://.godot/imported/Animation_client.png-96eae5d135467575c44015f87fef26b9.ctex"]
+source_file="res://Assets/Biome/village/taverne/animation/animation_client.png"
+dest_files=["res://.godot/imported/animation_client.png-8e6a810d100c2c40f599a41031019348.ctex"]
 
 [params]
 

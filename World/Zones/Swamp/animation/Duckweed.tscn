@@ -1,7 +1,7 @@
 [gd_scene format=3 uid="uid://6vo17fjw1j83"]
 
-[ext_resource type="Texture2D" uid="uid://hod75of2opj5" path="res://Assets/Biome/5.Swamp/animation/water_lilis.png" id="1_jwj6l"]
-[ext_resource type="Texture2D" uid="uid://c85xr32i864q6" path="res://Assets/Biome/5.Swamp/animation/duckweed.png" id="2_0v7f2"]
+[ext_resource type="Texture2D" uid="uid://hod75of2opj5" path="res://Assets/Biome/swamp/animation/water_lilis.png" id="1_jwj6l"]
+[ext_resource type="Texture2D" uid="uid://c85xr32i864q6" path="res://Assets/Biome/swamp/animation/duckweed.png" id="2_0v7f2"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_7oytv"]
 atlas = ExtResource("1_jwj6l")

@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://biiqhx34yldvl"]
 
-[ext_resource type="Texture2D" uid="uid://26c6frgnpfwm" path="res://Assets/Biome/lava-Cave/animation/bubbles_source.png" id="1_cvbpg"]
+[ext_resource type="Texture2D" uid="uid://26c6frgnpfwm" path="res://Assets/Biome/lava_cave/animation/bubbles_source.png" id="1_cvbpg"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_h8vfl"]
 atlas = ExtResource("1_cvbpg")

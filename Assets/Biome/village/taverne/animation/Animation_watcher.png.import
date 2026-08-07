@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://l65sfm5o8jyq"
-path="res://.godot/imported/Animation_watcher.png-36a138f249434d909e1bccd939e86a0e.ctex"
+uid="uid://c5nahnb4hgi5u"
+path="res://.godot/imported/animation_watcher.png-833182eefe115dec6d7495bba53c5b08.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Assets/Biome/village/taverne/animation/Animation_watcher.png"
-dest_files=["res://.godot/imported/Animation_watcher.png-36a138f249434d909e1bccd939e86a0e.ctex"]
+source_file="res://Assets/Biome/village/taverne/animation/animation_watcher.png"
+dest_files=["res://.godot/imported/animation_watcher.png-833182eefe115dec6d7495bba53c5b08.ctex"]
 
 [params]
 

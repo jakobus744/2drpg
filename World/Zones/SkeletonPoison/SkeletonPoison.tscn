@@ -2,8 +2,8 @@
 
 [ext_resource type="Texture2D" uid="uid://dq1jf5cg4whkh" path="res://Assets/Farben/endesga-32-32x.png" id="1_suohs"]
 [ext_resource type="Texture2D" uid="uid://diddgk3igjvdo" path="res://Assets/objects/path/Road4_grass.png" id="2_0uqur"]
-[ext_resource type="Texture2D" uid="uid://bv3tdhisqmyjw" path="res://Assets/Biome/1.Forest/Ground_grass.png" id="3_o3cg8"]
-[ext_resource type="Texture2D" uid="uid://diydebf7rya48" path="res://Assets/Biome/1.Forest/Water_coasts.png" id="4_uapa8"]
+[ext_resource type="Texture2D" uid="uid://bv3tdhisqmyjw" path="res://Assets/Biome/forest/ground_grass.png" id="3_o3cg8"]
+[ext_resource type="Texture2D" uid="uid://diydebf7rya48" path="res://Assets/Biome/forest/water_coasts.png" id="4_uapa8"]
 [ext_resource type="PackedScene" uid="uid://bbmgcpt8086ck" path="res://World/Items/use/magic_drank.tscn" id="5_qs0u3"]
 [ext_resource type="PackedScene" uid="uid://dh4pdkoc04kew" path="res://World/Items/Weapons/Sword.tscn" id="6_jk1ie"]
 [ext_resource type="PackedScene" uid="uid://dguvoym7d7wtj" path="res://World/Items/schield/Schield.tscn" id="7_vbyqk"]

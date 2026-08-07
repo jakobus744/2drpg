@@ -1,7 +1,7 @@
 [gd_scene format=3 uid="uid://dqo58t8v3mgfv"]
 
-[ext_resource type="Texture2D" uid="uid://bl50b0xquruk6" path="res://Assets/Biome/5.Swamp/animation/water_detilazation_v3_swamp.png" id="1_6fq1n"]
-[ext_resource type="Texture2D" uid="uid://3oajfbxt6dmg" path="res://Assets/Biome/5.Swamp/animation/water_detilazation_swamp.png" id="2_dsbnk"]
+[ext_resource type="Texture2D" uid="uid://bl50b0xquruk6" path="res://Assets/Biome/swamp/animation/water_detilazation_v3_swamp.png" id="1_6fq1n"]
+[ext_resource type="Texture2D" uid="uid://3oajfbxt6dmg" path="res://Assets/Biome/swamp/animation/water_detilazation_swamp.png" id="2_dsbnk"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_pgn7y"]
 atlas = ExtResource("1_6fq1n")
