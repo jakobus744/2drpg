@@ -46,6 +46,7 @@ public static class PathGenerator
                 {
                     Vector2I cell = point + new Vector2I(dx, dy);
 
+                    if (bounds.HasValue && !bounds.Value.HasPoint(cell)) continue;
                     if (obstacles != null && obstacles.Contains(cell)) continue;
 
                     float distFromCenter = Mathf.Sqrt(dx * dx + dy * dy);
@@ -322,4 +323,3 @@ public static class PathGenerator
         return points;
     }
 }
-

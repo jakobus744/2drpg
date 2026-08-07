@@ -7,14 +7,7 @@
 [ext_resource type="Texture2D" uid="uid://dr863wljkr0ev" path="res://Assets/Biome/1.Forest/Objects.png" id="5_fxwn2"]
 [ext_resource type="Texture2D" uid="uid://btb8eepqd7by4" path="res://Assets/Biome/1.Forest/Assets_source.png" id="6_kogjl"]
 [ext_resource type="Texture2D" uid="uid://ra3imjtjup1k" path="res://Assets/Biome/1.Forest/Flowers_alternative_fit.png" id="7_qwce1"]
-[ext_resource type="Script" uid="uid://dtcordhrxsbx1" path="res://World/Generation/Data/FoliageEntry.cs" id="14_g0ths"]
-[ext_resource type="Resource" uid="uid://cxr3t2j50j1wm" path="res://World/Zones/Forest/animation/trees/big_tree.tres" id="15_fxwn2"]
 [ext_resource type="Script" uid="uid://cchmahsfxfn64" path="res://World/Generation/Logic/ZoneGenerator.cs" id="15_to3hu"]
-[ext_resource type="Resource" uid="uid://cuvxyo582r7n4" path="res://World/Zones/Forest/animation/trees/big_apple_tree.tres" id="16_l0ivi"]
-[ext_resource type="Script" uid="uid://b1yy2cfo37i3q" path="res://World/Generation/Data/LandmarkSettings.cs" id="17_kogjl"]
-[ext_resource type="Script" uid="uid://bb0lnrgjknb5k" path="res://World/Generation/Data/ZoneSettings.cs" id="18_qwce1"]
-[ext_resource type="Resource" uid="uid://dop3vxlne3d4c" path="res://World/Zones/Forest/animation/trees/small_tree.tres" id="20_qwce1"]
-[ext_resource type="Resource" uid="uid://cexk1st2a8jks" path="res://World/Zones/Forest/TileTree1.tres" id="21_6dhm5"]
 [ext_resource type="PackedScene" uid="uid://bbmgcpt8086ck" path="res://World/Items/use/magic_drank.tscn" id="23_00in4"]
 [ext_resource type="PackedScene" uid="uid://dh4pdkoc04kew" path="res://World/Items/Weapons/Sword.tscn" id="24_lipwo"]
 [ext_resource type="PackedScene" uid="uid://dguvoym7d7wtj" path="res://World/Items/schield/Schield.tscn" id="25_elqh6"]
@@ -23,6 +16,7 @@
 [ext_resource type="AudioStream" uid="uid://by6xm0r2647tk" path="res://Assets/Music/freesound_community-clouds-29191.mp3" id="28_pcnfm"]
 [ext_resource type="PackedScene" uid="uid://b2rwvtixqikfg" path="res://UI/EscapeMenu/EscapeMenu.tscn" id="29_17crv"]
 [ext_resource type="Script" uid="uid://dmki2ji17jifm" path="res://World/Generation/Logic/ZoneBackground.cs" id="30_bgscript"]
+[ext_resource type="Resource" uid="uid://1flhr87q7pia" path="res://World/Zones/Forest/ForestSettings.tres" id="31_settings"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_v5eci"]
 texture = ExtResource("1_a47n8")
@@ -3907,18 +3901,6 @@ sources/1 = SubResource("TileSetAtlasSource_3txig")
 sources/2 = SubResource("TileSetAtlasSource_cbd3l")
 sources/3 = SubResource("TileSetAtlasSource_tqjdn")
 
-[sub_resource type="TileSet" id="TileSet_g8d1t"]
-
-[sub_resource type="Resource" id="Resource_6dhm5"]
-script = ExtResource("18_qwce1")
-PrimaryColor = Color(0.2491996, 0.65534455, 0.27754444, 1)
-SecondaryColor = Color(0.35023198, 0.21578375, 0.09162823, 1)
-Moisture = 0.6
-ZoneTileSet = SubResource("TileSet_g8d1t")
-VegetationDensity = 0.4
-VegetationNoiseScale = 0.05
-FoliageTypes = Array[ExtResource("14_g0ths")]([ExtResource("15_fxwn2"), ExtResource("16_l0ivi"), ExtResource("20_qwce1"), ExtResource("21_6dhm5")])
-
 [node name="Main_World" type="Node2D" unique_id=149295726]
 y_sort_enabled = true
 metadata/_edit_horizontal_guides_ = [102.0]
@@ -3981,5 +3963,5 @@ ZoneCoord = Vector2i(1, 1)
 
 [node name="ZoneGenerator" type="Node" parent="." unique_id=885346296 node_paths=PackedStringArray("GroundLayer")]
 script = ExtResource("15_to3hu")
-Settings = SubResource("Resource_6dhm5")
+Settings = ExtResource("31_settings")
 GroundLayer = NodePath("../TileMap/ground")

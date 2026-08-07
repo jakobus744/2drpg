@@ -170,6 +170,10 @@ public partial class WorldManager : Node2D
     public override void _Ready()
     {
         Instance = this;
+        _zoneSizes.Clear();
+        _zonePositions.Clear();
+        _peerLoadedZones.Clear();
+
         // Registry aus Export-Array ODER (wenn leer) aus dem Standard-Layout bauen
         if (Zones.Length > 0)
         {
@@ -265,19 +269,12 @@ public partial class WorldManager : Node2D
 
         Vector2 detectedSize = Vector2.Zero;
 
-        if (tempNode.FindChild("ZoneBackground", recursive: true) is ZoneBackground { EffectiveZoneSize: { X: > 0, Y: > 0 } } bg)
+        if (tempNode.FindChild("ZoneGenerator", recursive: true) is ZoneGenerator { ZoneTileSize: > 0 } gen)
         {
-            detectedSize = bg.EffectiveZoneSize;
-        }
-        else
-        {
-            if (tempNode.FindChild("ZoneGenerator", recursive: true) is ZoneGenerator { ZoneTileSize: > 0 } gen)
-            {
-                int tileSize = 16;
-                if (gen.GroundLayer?.TileSet != null)
-                    tileSize = gen.GroundLayer.TileSet.TileSize.X;
-                detectedSize = new Vector2(gen.ZoneTileSize * tileSize, gen.ZoneTileSize * tileSize);
-            }
+            int tileSize = 16;
+            if (gen.GroundLayer?.TileSet != null)
+                tileSize = gen.GroundLayer.TileSet.TileSize.X;
+            detectedSize = new Vector2(gen.ZoneTileSize * tileSize, gen.ZoneTileSize * tileSize);
         }
 
         if (detectedSize == Vector2.Zero)
@@ -317,6 +314,12 @@ public partial class WorldManager : Node2D
         GD.Print(
             $"[WorldManager] Zone {coord}: Groesse Fallback -> {new Vector2(DefaultFallbackZoneSize, DefaultFallbackZoneSize)}");
         return new Vector2(DefaultFallbackZoneSize, DefaultFallbackZoneSize);
+    }
+
+    public override void _ExitTree()
+    {
+        if (Instance == this)
+            Instance = null;
     }
 
     private static void CollectLayers(Node node, List<TileMapLayer> layers)

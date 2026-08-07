@@ -42,13 +42,18 @@ public static class SeedUtils
         }
     }
 
-    public static int GetSeedOffset(int edgeSeed, int margin, int halfSize)
+    public static int GetSeedOffset(int edgeSeed, int margin, int minInclusive, int maxInclusive)
     {
-        int minOffset = -halfSize + margin;
-        int maxOffset = halfSize - margin;
+        int minOffset = minInclusive + margin;
+        int maxOffset = maxInclusive - margin;
+        if (minOffset > maxOffset)
+        {
+            return minInclusive + (maxInclusive - minInclusive) / 2;
+        }
+
         int range = Mathf.Max(1, maxOffset - minOffset + 1);
 
-        int positiveHash = Mathf.Abs(edgeSeed);
+        int positiveHash = edgeSeed & int.MaxValue;
         return minOffset + (positiveHash % range);
     }
 

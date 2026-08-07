@@ -5,7 +5,6 @@
 [node name="MainWorld" type="Node2D"]
 y_sort_enabled = true
 script = ExtResource("1_wm")
-ZoneSize = 3424
 
 [node name="MultiplayerSpawner" type="MultiplayerSpawner" parent="."]
 _spawnable_scenes = PackedStringArray("uid://xwhdjjo8ejn2")
