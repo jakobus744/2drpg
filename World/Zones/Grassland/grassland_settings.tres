@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="ZoneSettings" format=3 uid="uid://djcc7owvj6myc"]
+
+[ext_resource type="Script" uid="uid://dtcordhrxsbx1" path="res://World/Generation/Data/FoliageEntry.cs" id="1_j7dev"]
+[ext_resource type="Script" uid="uid://bb0lnrgjknb5k" path="res://World/Generation/Data/ZoneSettings.cs" id="1_script"]
+[ext_resource type="Script" uid="uid://b1yy2cfo37i3q" path="res://World/Generation/Data/LandmarkSettings.cs" id="2_crw16"]
+[ext_resource type="TileSet" uid="uid://cnu3d20syyqp8" path="res://World/Zones/Grassland/grassland_tiles.tres" id="2_tiles"]
+
+[resource]
+script = ExtResource("1_script")
+ZoneName = "Grassland"
+PrimaryColor = Color(0.3, 0.6, 0.2, 1)
+SecondaryColor = Color(0.18, 0.36, 0.12, 1)
+Temperature = 0.55
+ZoneTileSet = ExtResource("2_tiles")
+VegetationDensity = 0.35
+VegetationNoiseScale = 0.05
