@@ -1,4 +1,4 @@
-[gd_scene format=4 uid="uid://cc8qsty6libro"]
+[gd_scene format=4]
 
 [ext_resource type="Texture2D" uid="uid://dq1jf5cg4whkh" path="res://Assets/Farben/endesga-32-32x.png" id="1_4ijhi"]
 [ext_resource type="Texture2D" uid="uid://diddgk3igjvdo" path="res://Assets/objects/path/Road4_grass.png" id="2_gwyep"]
@@ -15,49 +15,6 @@
 [ext_resource type="Texture2D" uid="uid://dr863wljkr0ev" path="res://Assets/Biome/1.Forest/Objects.png" id="13_8d2by"]
 [ext_resource type="Texture2D" uid="uid://btb8eepqd7by4" path="res://Assets/Biome/1.Forest/Assets_source.png" id="14_wr03r"]
 [ext_resource type="Texture2D" uid="uid://ra3imjtjup1k" path="res://Assets/Biome/1.Forest/Flowers_alternative_fit.png" id="15_p2cb6"]
-[ext_resource type="PackedScene" uid="uid://bbmgcpt8086ck" path="res://World/Items/use/magic_drank.tscn" id="16_c2606"]
-[ext_resource type="PackedScene" uid="uid://dh4pdkoc04kew" path="res://World/Items/Weapons/Sword.tscn" id="17_ajyg6"]
-[ext_resource type="PackedScene" uid="uid://dguvoym7d7wtj" path="res://World/Items/schield/Schield.tscn" id="18_rsp3y"]
-[ext_resource type="PackedScene" uid="uid://bpns7mlagug71" path="res://World/Items/Weapons/axt.tscn" id="19_ay3pd"]
-[ext_resource type="PackedScene" uid="uid://csmdj4c81xgvd" path="res://Mobs/Monster/Goblin/Goblin.tscn" id="20_aun88"]
-[ext_resource type="PackedScene" path="res://World/Items/Amor/Boots/eisen_boots_pickup.tscn" id="21_1qubd"]
-[ext_resource type="PackedScene" path="res://World/Items/Amor/Chest/fell_chest_pickup.tscn" id="22_24oh7"]
-[ext_resource type="PackedScene" path="res://World/Items/Amor/Chest/golden_chest_pickup.tscn" id="23_n0jqi"]
-[ext_resource type="PackedScene" path="res://World/Items/Amor/Chest/goldstahl_chest_pickup.tscn" id="24_fkbu2"]
-[ext_resource type="PackedScene" path="res://World/Items/Amor/Chest/kupfer_chest_pickup.tscn" id="25_6n5rj"]
-[ext_resource type="PackedScene" path="res://World/Items/Amor/Chest/landstreicher_chest_pickup.tscn" id="26_gcywe"]
-[ext_resource type="PackedScene" path="res://World/Items/Amor/Chest/lila_chest_pickup.tscn" id="27_vi0sd"]
-[ext_resource type="PackedScene" path="res://World/Items/Amor/Chest/messing_chest_pickup.tscn" id="28_6du5f"]
-[ext_resource type="PackedScene" path="res://World/Items/Amor/Chest/metall_chest_pickup.tscn" id="29_aigdp"]
-[ext_resource type="PackedScene" path="res://World/Items/Amor/Chest/mischung_chest_pickup.tscn" id="30_0nwe4"]
-[ext_resource type="PackedScene" path="res://World/Items/Amor/Chest/paladin_chest_pickup.tscn" id="31_fkka2"]
-[ext_resource type="PackedScene" path="res://World/Items/Amor/Chest/ritter_chest_pickup.tscn" id="32_hghgi"]
-[ext_resource type="PackedScene" path="res://World/Items/Amor/Chest/eisen_chest_pickup.tscn" id="33_gwhlf"]
-[ext_resource type="PackedScene" path="res://World/Items/Amor/Helmet/eisen_helm_pickup.tscn" id="34_1kg0p"]
-[ext_resource type="PackedScene" path="res://World/Items/Amor/Helmet/fell_helm_pickup.tscn" id="35_qq4a0"]
-[ext_resource type="PackedScene" path="res://World/Items/Amor/Helmet/golden_helm_pickup.tscn" id="36_nu4w6"]
-[ext_resource type="PackedScene" path="res://World/Items/Amor/Helmet/goldstahl_helm_pickup.tscn" id="37_1kgwn"]
-[ext_resource type="PackedScene" path="res://World/Items/Amor/Helmet/kupfer_helm_pickup.tscn" id="38_d1c65"]
-[ext_resource type="PackedScene" path="res://World/Items/Amor/Helmet/landstreicher_helm_pickup.tscn" id="39_kt2d8"]
-[ext_resource type="PackedScene" path="res://World/Items/Amor/Helmet/lila_helm_pickup.tscn" id="40_0pek5"]
-[ext_resource type="PackedScene" path="res://World/Items/Amor/Helmet/messing_helm_pickup.tscn" id="41_hl46s"]
-[ext_resource type="PackedScene" path="res://World/Items/Amor/Helmet/metall_helm_pickup.tscn" id="42_cdg50"]
-[ext_resource type="PackedScene" path="res://World/Items/Amor/Helmet/mischung_helm_pickup.tscn" id="43_im7v1"]
-[ext_resource type="PackedScene" path="res://World/Items/Amor/Helmet/paladin_helm_pickup.tscn" id="44_yqf46"]
-[ext_resource type="PackedScene" path="res://World/Items/Amor/Helmet/ritter_helm_pickup.tscn" id="45_hijtc"]
-[ext_resource type="PackedScene" path="res://World/Items/Amor/Boots/golden_boots_pickup.tscn" id="46_rabf2"]
-[ext_resource type="AudioStream" uid="uid://by6xm0r2647tk" path="res://Assets/Music/freesound_community-clouds-29191.mp3" id="47_mwriw"]
-[ext_resource type="PackedScene" uid="uid://b2rwvtixqikfg" path="res://UI/EscapeMenu/EscapeMenu.tscn" id="48_77k5c"]
-[ext_resource type="PackedScene" path="res://World/Items/Amor/Boots/lila_boots_pickup.tscn" id="49_lc2a0"]
-[ext_resource type="PackedScene" path="res://World/Items/Amor/Boots/fell_boots_pickup.tscn" id="50_t2vnw"]
-[ext_resource type="PackedScene" path="res://World/Items/Amor/Boots/goldstahl_boots_pickup.tscn" id="51_byccr"]
-[ext_resource type="PackedScene" path="res://World/Items/Amor/Boots/kupfer_boots_pickup.tscn" id="52_seq25"]
-[ext_resource type="PackedScene" path="res://World/Items/Amor/Boots/landstreicher_boots_pickup.tscn" id="53_fsisu"]
-[ext_resource type="PackedScene" path="res://World/Items/Amor/Boots/messing_boots_pickup.tscn" id="54_xpegm"]
-[ext_resource type="PackedScene" path="res://World/Items/Amor/Boots/metall_boots_pickup.tscn" id="55_hl2j6"]
-[ext_resource type="PackedScene" path="res://World/Items/Amor/Boots/mischung_boots_pickup.tscn" id="56_scxyw"]
-[ext_resource type="PackedScene" path="res://World/Items/Amor/Boots/paladin_boots_pickup.tscn" id="57_l1wrb"]
-[ext_resource type="PackedScene" path="res://World/Items/Amor/Boots/ritter_boots_pickup.tscn" id="58_sakm1"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_v5eci"]
 texture = ExtResource("1_4ijhi")
@@ -6352,12 +6309,13 @@ sources/1 = SubResource("TileSetAtlasSource_2few0")
 sources/2 = SubResource("TileSetAtlasSource_bmqv2")
 sources/3 = SubResource("TileSetAtlasSource_18fdr")
 
-[node name="Main_World" type="Node2D" unique_id=149295726]
+[node name="ForestLake" type="Node2D" unique_id=149295726]
 y_sort_enabled = true
 metadata/_edit_horizontal_guides_ = [102.0]
 
 [node name="TileMap" type="TileMap" parent="." unique_id=542679144]
 y_sort_enabled = true
+position = Vector2(-320, 384)
 tile_set = SubResource("TileSet_ygit2")
 format = 2
 
