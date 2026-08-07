@@ -2149,6 +2149,9 @@ y_sort_enabled = true
 tile_set = SubResource("TileSet_xk8a3")
 format = 2
 
+[node name="Marker2D" type="Marker2D" parent="TileMap" unique_id=1036446083]
+position = Vector2(-947, -957)
+
 [node name="ground" type="TileMapLayer" parent="TileMap" unique_id=1455894015]
 z_index = -1
 tile_set = SubResource("TileSet_xk8a3")
@@ -2166,8 +2169,6 @@ visible = false
 [node name="ZoneBackground" type="Node2D" parent="." unique_id=987654322]
 z_index = -100
 script = ExtResource("30_bgscript")
-Settings = SubResource("Resource_txjpt")
-ZoneSize = 3424
 ZoneCoord = Vector2i(1, 2)
 
 [node name="ZoneGenerator" type="Node" parent="." unique_id=1904866985 node_paths=PackedStringArray("GroundLayer")]

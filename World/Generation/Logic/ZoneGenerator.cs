@@ -210,29 +210,23 @@ public partial class ZoneGenerator : Node
                 ? WorldManager.Instance.WorldSeed 
                 : SeedUtils.ParseSeed(SeedString, 1337);
 
-            int borderThresholdX = Mathf.RoundToInt(halfX * 0.5f);
-            int borderThresholdY = Mathf.RoundToInt(halfY * 0.5f);
             int margin = 8;
 
             int seedNorth = SeedUtils.DeriveEdgeSeed(baseSeed, zoneCoord, zoneCoord + Vector2I.Up);
             int offsetNorth = SeedUtils.GetSeedOffset(seedNorth, margin, halfX);
-            bool hasNorth = markerWaypoints.Exists(p => p.Y <= -borderThresholdY);
-            if (!hasNorth) borderWaypoints.Add(new Vector2I(offsetNorth, -halfY));
+            borderWaypoints.Add(new Vector2I(offsetNorth, -halfY));
 
             int seedSouth = SeedUtils.DeriveEdgeSeed(baseSeed, zoneCoord, zoneCoord + Vector2I.Down);
             int offsetSouth = SeedUtils.GetSeedOffset(seedSouth, margin, halfX);
-            bool hasSouth = markerWaypoints.Exists(p => p.Y >= borderThresholdY);
-            if (!hasSouth) borderWaypoints.Add(new Vector2I(offsetSouth, halfY));
+            borderWaypoints.Add(new Vector2I(offsetSouth, halfY));
 
             int seedWest = SeedUtils.DeriveEdgeSeed(baseSeed, zoneCoord, zoneCoord + Vector2I.Left);
             int offsetWest = SeedUtils.GetSeedOffset(seedWest, margin, halfY);
-            bool hasWest = markerWaypoints.Exists(p => p.X <= -borderThresholdX);
-            if (!hasWest) borderWaypoints.Add(new Vector2I(-halfX, offsetWest));
+            borderWaypoints.Add(new Vector2I(-halfX, offsetWest));
 
             int seedEast = SeedUtils.DeriveEdgeSeed(baseSeed, zoneCoord, zoneCoord + Vector2I.Right);
             int offsetEast = SeedUtils.GetSeedOffset(seedEast, margin, halfY);
-            bool hasEast = markerWaypoints.Exists(p => p.X >= borderThresholdX);
-            if (!hasEast) borderWaypoints.Add(new Vector2I(halfX, offsetEast));
+            borderWaypoints.Add(new Vector2I(halfX, offsetEast));
         }
 
         if (settings?.PossibleLandmarks != null)
@@ -308,24 +302,42 @@ public partial class ZoneGenerator : Node
         int zoneSeed,
         Vector2I tileDims)
     {
-        var allWaypoints = new List<Vector2I>();
-        allWaypoints.AddRange(borderWaypoints);
-        allWaypoints.AddRange(internalWaypoints);
-
-        var mergedWaypoints = MergeCloseWaypoints(allWaypoints, 3f);
-        if (mergedWaypoints.Count < 2) return;
-
         var allPathTiles = new HashSet<Vector2I>();
+        List<(Vector2I Start, Vector2I End, bool IsHighway)> edges = BuildMainHighwayConnections(borderWaypoints, zoneSeed, tileDims);
 
-        List<(Vector2I Start, Vector2I End, bool IsHighway)> highwayEdges = BuildMainHighwayConnections(borderWaypoints, zoneSeed, tileDims);
-        List<(Vector2I Start, Vector2I End, bool IsHighway)> mstEdges = BuildPathConnections(mergedWaypoints, maxProximityDist: 25f);
-
-        var allEdges = new List<(Vector2I Start, Vector2I End, bool IsHighway)>(highwayEdges);
-        foreach (var edge in mstEdges)
+        // Connect internal markers to the nearest point on existing highway segments
+        foreach (var internalWp in internalWaypoints)
         {
-            if (!allEdges.Exists(e => (e.Start == edge.Start && e.End == edge.End) || (e.Start == edge.End && e.End == edge.Start)))
+            Vector2I bestConnectTarget = Vector2I.Zero;
+            float minDistSq = float.MaxValue;
+
+            // Check distance to border waypoints
+            foreach (var wp in borderWaypoints)
             {
-                allEdges.Add(edge);
+                float distSq = internalWp.DistanceSquaredTo(wp);
+                if (distSq < minDistSq)
+                {
+                    minDistSq = distSq;
+                    bestConnectTarget = wp;
+                }
+            }
+
+            // Check distance to nearest point on existing highway edges
+            foreach (var edge in edges)
+            {
+                Vector2I proj = GetClosestPointOnSegment(internalWp, edge.Start, edge.End);
+                float distSq = internalWp.DistanceSquaredTo(proj);
+                if (distSq < minDistSq)
+                {
+                    minDistSq = distSq;
+                    bestConnectTarget = proj;
+                }
+            }
+
+            // Only add branch trail if internal waypoint is not already on/next to the highway (min 3 tiles away)
+            if (minDistSq > 9f && minDistSq < float.MaxValue)
+            {
+                edges.Add((internalWp, bestConnectTarget, false));
             }
         }
 
@@ -333,7 +345,7 @@ public partial class ZoneGenerator : Node
         int halfZoneY = tileDims.Y / 2;
         Rect2I zoneBounds = new Rect2I(-halfZoneX, -halfZoneY, tileDims.X, tileDims.Y);
 
-        foreach (var edge in allEdges)
+        foreach (var edge in edges)
         {
             HashSet<Vector2I> pathTiles = PathGenerator.ConnectWaypoints(
                 layer, edge.Start, edge.End, settings,
@@ -345,12 +357,11 @@ public partial class ZoneGenerator : Node
             allPathTiles.UnionWith(pathTiles);
         }
 
-        BuildCrossroadPlazas(allPathTiles, allEdges, reserved);
+        BuildCrossroadPlazas(allPathTiles, edges, reserved);
         MergeClosePathTiles(allPathTiles);
         ApplyPathTilesToLayer(layer, settings, allPathTiles);
         ClearObstaclesFromPath(layer, allPathTiles);
 
-        // Reserve path tiles plus a 1-2 tile safety margin buffer around roads so foliage stands back from paths
         int pathBufferMargin = 1;
         foreach (var pathTile in allPathTiles)
         {
@@ -436,6 +447,21 @@ public partial class ZoneGenerator : Node
         }
 
         return edges;
+    }
+
+    private Vector2I GetClosestPointOnSegment(Vector2I point, Vector2I segStart, Vector2I segEnd)
+    {
+        Vector2 p = new Vector2(point.X, point.Y);
+        Vector2 a = new Vector2(segStart.X, segStart.Y);
+        Vector2 b = new Vector2(segEnd.X, segEnd.Y);
+
+        Vector2 ab = b - a;
+        float lenSq = ab.LengthSquared();
+        if (lenSq < 0.001f) return segStart;
+
+        float t = Mathf.Clamp((p - a).Dot(ab) / lenSq, 0.0f, 1.0f);
+        Vector2 proj = a + t * ab;
+        return new Vector2I(Mathf.RoundToInt(proj.X), Mathf.RoundToInt(proj.Y));
     }
 
     private Vector2I FindClosestTile(HashSet<Vector2I> pathTiles, Vector2I target)

@@ -3961,6 +3961,18 @@ rotation = -2.104867
 z_index = 2
 position = Vector2(26, 8)
 
+[node name="StartWaypoint5" type="Marker2D" parent="TileMap" unique_id=855248447]
+position = Vector2(-659, -1202)
+
+[node name="StartWaypoint4" type="Marker2D" parent="TileMap" unique_id=48773580]
+position = Vector2(-1416, -963)
+
+[node name="StartWaypoint3" type="Marker2D" parent="TileMap" unique_id=1120467751]
+position = Vector2(-1149, -483)
+
+[node name="StartWaypoint2" type="Marker2D" parent="TileMap" unique_id=1363324429]
+position = Vector2(-467, -410)
+
 [node name="StartWaypoint" type="Marker2D" parent="TileMap" unique_id=1212462688]
 
 [node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="." unique_id=772117944]
