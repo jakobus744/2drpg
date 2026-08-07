@@ -6,31 +6,45 @@ namespace RPG2d.World.Generation.Logic;
 [Tool]
 public partial class ZoneBackground : Node2D
 {
+    private const int GridResolution = 64;
+
     [Export] public ZoneSettings Settings { get; set; }
-    [Export] public int ZoneSize { get; set; } = 3424;
     [Export] public bool UseGradient { get; set; } = true;
     [Export] public Vector2I ZoneCoord { get; set; } = Vector2I.Zero;
+
+    public Vector2 EffectiveZoneSize => WorldManager.GetZoneSize(GetEffectiveZoneCoord());
+
+    private ImageTexture _texture;
+    private Vector2I _renderedCoord = new(int.MinValue, int.MinValue);
 
     public override void _Ready()
     {
         ZIndex = -100;
+        TextureFilter = TextureFilterEnum.Nearest;
+    }
+
+    public void Setup(ZoneSettings settings, Vector2 zoneSize, Vector2I zoneCoord, bool useGradient)
+    {
+        Settings = settings;
+        ZoneCoord = zoneCoord;
+        UseGradient = useGradient;
+        RebuildTexture();
+        QueueRedraw();
     }
 
     public void Setup(ZoneSettings settings, int zoneSize, Vector2I zoneCoord, bool useGradient)
     {
-        Settings = settings;
-        ZoneSize = zoneSize;
-        ZoneCoord = zoneCoord;
-        UseGradient = useGradient;
-        QueueRedraw();
+        Setup(settings, new Vector2(zoneSize, zoneSize), zoneCoord, useGradient);
     }
 
-    public override void _Draw()
+    public void RebuildTexture()
     {
-        float half = ZoneSize / 2f;
+        Vector2I currentCoord = GetEffectiveZoneCoord();
+        _renderedCoord = currentCoord;
+
         Color centerColor = Settings != null && Settings.PrimaryColor.A > 0 
             ? Settings.PrimaryColor 
-            : WorldManager.GetZonePrimaryColor(ZoneCoord);
+            : WorldManager.GetZonePrimaryColor(currentCoord);
 
         Color secondaryColor = Settings != null && Settings.SecondaryColor.A > 0
             ? Settings.SecondaryColor
@@ -38,49 +52,113 @@ public partial class ZoneBackground : Node2D
 
         if (!UseGradient)
         {
-            DrawRect(new Rect2(-half, -half, ZoneSize, ZoneSize), centerColor, filled: true);
+            Image solidImage = Image.CreateEmpty(1, 1, false, Image.Format.Rgba8);
+            solidImage.SetPixel(0, 0, centerColor);
+            _texture = ImageTexture.CreateFromImage(solidImage);
             return;
         }
 
-        Color topColor = GetEdgeColor(ZoneCoord + Vector2I.Up, centerColor, secondaryColor);
-        Color botColor = GetEdgeColor(ZoneCoord + Vector2I.Down, centerColor, secondaryColor);
-        Color leftColor = GetEdgeColor(ZoneCoord + Vector2I.Left, centerColor, secondaryColor);
-        Color rightColor = GetEdgeColor(ZoneCoord + Vector2I.Right, centerColor, secondaryColor);
+        Color topColor = GetEdgeColor(currentCoord + Vector2I.Up, centerColor, secondaryColor);
+        Color botColor = GetEdgeColor(currentCoord + Vector2I.Down, centerColor, secondaryColor);
+        Color leftColor = GetEdgeColor(currentCoord + Vector2I.Left, centerColor, secondaryColor);
+        Color rightColor = GetEdgeColor(currentCoord + Vector2I.Right, centerColor, secondaryColor);
 
-        Color topLeftColor = Blend4(centerColor, topColor, leftColor, GetEdgeColor(ZoneCoord + Vector2I.Up + Vector2I.Left, centerColor, secondaryColor));
-        Color topRightColor = Blend4(centerColor, topColor, rightColor, GetEdgeColor(ZoneCoord + Vector2I.Up + Vector2I.Right, centerColor, secondaryColor));
-        Color botLeftColor = Blend4(centerColor, botColor, leftColor, GetEdgeColor(ZoneCoord + Vector2I.Down + Vector2I.Left, centerColor, secondaryColor));
-        Color botRightColor = Blend4(centerColor, botColor, rightColor, GetEdgeColor(ZoneCoord + Vector2I.Down + Vector2I.Right, centerColor, secondaryColor));
+        Color topLeftColor = Blend4(centerColor, topColor, leftColor, GetEdgeColor(currentCoord + Vector2I.Up + Vector2I.Left, centerColor, secondaryColor));
+        Color topRightColor = Blend4(centerColor, topColor, rightColor, GetEdgeColor(currentCoord + Vector2I.Up + Vector2I.Right, centerColor, secondaryColor));
+        Color botLeftColor = Blend4(centerColor, botColor, leftColor, GetEdgeColor(currentCoord + Vector2I.Down + Vector2I.Left, centerColor, secondaryColor));
+        Color botRightColor = Blend4(centerColor, botColor, rightColor, GetEdgeColor(currentCoord + Vector2I.Down + Vector2I.Right, centerColor, secondaryColor));
 
-        // 3x3 Control Points
-        Vector2 pTL = new(-half, -half);
-        Vector2 pTM = new(0, -half);
-        Vector2 pTR = new(half, -half);
+        Image image = Image.CreateEmpty(GridResolution, GridResolution, false, Image.Format.Rgba8);
 
-        Vector2 pML = new(-half, 0);
-        Vector2 pC  = new(0, 0);
-        Vector2 pMR = new(half, 0);
+        for (int y = 0; y < GridResolution; y++)
+        {
+            float v = (y + 0.5f) / GridResolution;
+            for (int x = 0; x < GridResolution; x++)
+            {
+                float u = (x + 0.5f) / GridResolution;
+                Color cellColor = SampleQuadColor(
+                    u, v,
+                    centerColor,
+                    topLeftColor, topColor, topRightColor,
+                    leftColor, rightColor,
+                    botLeftColor, botColor, botRightColor
+                );
+                image.SetPixel(x, y, cellColor);
+            }
+        }
 
-        Vector2 pBL = new(-half, half);
-        Vector2 pBM = new(0, half);
-        Vector2 pBR = new(half, half);
-
-        // Draw 4 quad sectors using triangles
-        DrawQuad(pTL, pTM, pC, pML, topLeftColor, topColor, centerColor, leftColor);
-        DrawQuad(pTM, pTR, pMR, pC, topColor, topRightColor, rightColor, centerColor);
-        DrawQuad(pML, pC, pBM, pBL, leftColor, centerColor, botColor, botLeftColor);
-        DrawQuad(pC, pMR, pBR, pBM, centerColor, rightColor, botRightColor, botColor);
+        _texture = ImageTexture.CreateFromImage(image);
     }
 
-    private void DrawQuad(Vector2 p1, Vector2 p2, Vector2 p3, Vector2 p4, Color c1, Color c2, Color c3, Color c4)
+    public override void _Draw()
     {
-        Vector2[] points1 = { p1, p2, p3 };
-        Color[] colors1 = { c1, c2, c3 };
-        DrawPolygon(points1, colors1);
+        Vector2I currentCoord = GetEffectiveZoneCoord();
+        if (_texture == null || _renderedCoord != currentCoord)
+        {
+            RebuildTexture();
+        }
 
-        Vector2[] points2 = { p1, p3, p4 };
-        Color[] colors2 = { c1, c3, c4 };
-        DrawPolygon(points2, colors2);
+        if (_texture != null)
+        {
+            Vector2 size = EffectiveZoneSize;
+            Vector2 half = size / 2f;
+            DrawTextureRect(_texture, new Rect2(-half.X, -half.Y, size.X, size.Y), tile: false);
+        }
+    }
+
+    private Vector2I GetEffectiveZoneCoord()
+    {
+        if (ZoneCoord != Vector2I.Zero) return ZoneCoord;
+        if (WorldManager.Instance != null && IsInsideTree())
+        {
+            return WorldManager.WorldToZoneCell(GlobalPosition);
+        }
+        return Vector2I.Zero;
+    }
+
+    private static Color SampleQuadColor(
+        float u, float v,
+        Color center,
+        Color tl, Color t, Color tr,
+        Color l, Color r,
+        Color bl, Color b, Color br)
+    {
+        if (v <= 0.5f)
+        {
+            float localV = v * 2f;
+            if (u <= 0.5f)
+            {
+                float localU = u * 2f;
+                Color topRow = tl.Lerp(t, localU);
+                Color botRow = l.Lerp(center, localU);
+                return topRow.Lerp(botRow, localV);
+            }
+            else
+            {
+                float localU = (u - 0.5f) * 2f;
+                Color topRow = t.Lerp(tr, localU);
+                Color botRow = center.Lerp(r, localU);
+                return topRow.Lerp(botRow, localV);
+            }
+        }
+        else
+        {
+            float localV = (v - 0.5f) * 2f;
+            if (u <= 0.5f)
+            {
+                float localU = u * 2f;
+                Color topRow = l.Lerp(center, localU);
+                Color botRow = bl.Lerp(b, localU);
+                return topRow.Lerp(botRow, localV);
+            }
+            else
+            {
+                float localU = (u - 0.5f) * 2f;
+                Color topRow = center.Lerp(r, localU);
+                Color botRow = b.Lerp(br, localU);
+                return topRow.Lerp(botRow, localV);
+            }
+        }
     }
 
     private Color GetEdgeColor(Vector2I neighborCoord, Color centerColor, Color secondaryColor)
@@ -93,8 +171,6 @@ public partial class ZoneBackground : Node2D
         return centerColor.Lerp(neighborColor, 0.5f);
     }
 
-    private static Color Blend(Color c1, Color c2) => c1.Lerp(c2, 0.5f);
-
     private static Color Blend4(Color c1, Color c2, Color c3, Color c4)
     {
         return new Color(
@@ -105,3 +181,5 @@ public partial class ZoneBackground : Node2D
         );
     }
 }
+
+

@@ -327,7 +327,7 @@ public partial class Player : BaseEntity<PlayerState>
                         pickup.SetDeferred("monitoring", false);
                         pickup.QueueFree();
                         InventoryDirty = true;
-                        var gm = GetNodeOrNull<RPG2d.GameManager.GameManager>("/root/GameManager");
+                        var gm = GetNodeOrNull<GameMgr>("/root/GameManager");
                         gm?.TrackRemovedItem(pickup.SceneFilePath);
                         gm?.Rpc("RemoveItemByScene", pickup.SceneFilePath, pickup.GlobalPosition);
                     }
