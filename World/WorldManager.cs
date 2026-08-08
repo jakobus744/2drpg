@@ -63,6 +63,11 @@ public partial class WorldManager : Node2D
         return null;
     }
 
+    // Breite des Klima-Uebergangs zwischen Zonen, in Pixel.
+    // Kleiner = schaerfere Grenze, groesser = weicherer Verlauf.
+    // Quadriert, weil mit DistanceSquaredTo gerechnet wird.
+    public const float ClimateBlendRadiusPx = 50f;
+
     public static (float Temperature, float Moisture) GetClimateAtWorldPosition(Vector2 worldPos)
     {
         Vector2I centerCell = WorldToZoneCell(worldPos);
@@ -81,7 +86,7 @@ public partial class WorldManager : Node2D
 
                 Vector2 centerPos = GetZonePosition(coord);
                 float distSq = worldPos.DistanceSquaredTo(centerPos);
-                float weight = 1f / (distSq + 10000f);
+                float weight = 1f / (distSq + ClimateBlendRadiusPx * ClimateBlendRadiusPx);
 
                 totalWeight += weight;
                 weightedTemp += temp * weight;

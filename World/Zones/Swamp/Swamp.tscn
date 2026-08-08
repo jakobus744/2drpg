@@ -11,7 +11,7 @@
 
 [node name="MultiplayerSpawner" type="MultiplayerSpawner" parent="."]
 _spawnable_scenes = PackedStringArray()
-spawn_path = NodePath("../ysort")
+spawn_path = NodePath("../entities")
 
 [node name="ground" type="TileMapLayer" parent="."]
 tile_set = ExtResource("1_tiles")
@@ -25,10 +25,10 @@ tile_set = ExtResource("1_tiles")
 [node name="detail" type="TileMapLayer" parent="."]
 tile_set = ExtResource("1_tiles")
 
-[node name="ysort" type="Node2D" parent="."]
+[node name="entities" type="Node2D" parent="."]
 y_sort_enabled = true
 
-[node name="objects" type="TileMapLayer" parent="ysort"]
+[node name="ysort" type="TileMapLayer" parent="entities"]
 y_sort_enabled = true
 tile_set = ExtResource("1_tiles")
 
