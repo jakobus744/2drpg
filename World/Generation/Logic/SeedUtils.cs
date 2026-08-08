@@ -12,7 +12,15 @@ public static class SeedUtils
         if (int.TryParse(seedInput.Trim(), out int numericSeed))
             return numericSeed;
 
-        return seedInput.Trim().GetHashCode();
+        unchecked
+        {
+            uint hash = 2166136261;
+            foreach (char c in seedInput.Trim())
+            {
+                hash = (hash ^ c) * 16777619;
+            }
+            return (int)hash;
+        }
     }
 
     public static int DeriveSeed(int baseSeed, Vector2I coord)
@@ -40,6 +48,12 @@ public static class SeedUtils
             hash = (hash ^ maxCoord.Y) * 4256233;
             return hash;
         }
+    }
+
+    // symmetrische Variante um 0 herum, identisch zu (-halfSize, halfSize)
+    public static int GetSeedOffset(int edgeSeed, int margin, int halfSize)
+    {
+        return GetSeedOffset(edgeSeed, margin, -halfSize, halfSize);
     }
 
     public static int GetSeedOffset(int edgeSeed, int margin, int minInclusive, int maxInclusive)

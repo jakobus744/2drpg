@@ -4,5 +4,8 @@
 
 [resource]
 script = ExtResource("1_8u32e")
+Name = "ForestTileTree1"
 TileCoords = Vector2i(14, 0)
+IdealTemperature = 0.5
+IdealMoisture = 0.5
 metadata/_custom_type_script = "uid://dtcordhrxsbx1"
