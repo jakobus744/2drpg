@@ -1,0 +1,91 @@
+[gd_scene load_steps=2 format=4]
+
+[ext_resource type="TileSet" path="res://World/Zones/Dungeon/dungeon_tiles.tres" id="1_tiles"]
+
+[node name="RoomBase" type="Node2D"]
+
+[node name="ground" type="TileMapLayer" parent="."]
+tile_set = ExtResource("1_tiles")
+
+[node name="walls" type="TileMapLayer" parent="."]
+tile_set = ExtResource("1_tiles")
+
+[node name="detail" type="TileMapLayer" parent="."]
+tile_set = ExtResource("1_tiles")
+
+[node name="ysort" type="Node2D" parent="."]
+y_sort_enabled = true
+
+[node name="objects" type="TileMapLayer" parent="ysort"]
+y_sort_enabled = true
+tile_set = ExtResource("1_tiles")
+
+[node name="overlay" type="TileMapLayer" parent="."]
+tile_set = ExtResource("1_tiles")
+
+[node name="Doors" type="Node2D" parent="."]
+
+[node name="DoorTop" type="Marker2D" parent="Doors"]
+position = Vector2(200, 8)
+
+[node name="DoorBottom" type="Marker2D" parent="Doors"]
+position = Vector2(200, 392)
+
+[node name="DoorLeft" type="Marker2D" parent="Doors"]
+position = Vector2(8, 200)
+
+[node name="DoorRight" type="Marker2D" parent="Doors"]
+position = Vector2(392, 200)
+
+[node name="Spawns" type="Node2D" parent="."]
+
+[node name="RoomBounds" type="Marker2D" parent="."]
+position = Vector2(400, 400)
+
+[node name="Hilfsraster" type="Node2D" parent="."]
+editor_description = "Nur Orientierung beim Malen. Vor dem Fertigstellen ausblenden oder loeschen."
+
+[node name="Aussenkante" type="Line2D" parent="Hilfsraster"]
+points = PackedVector2Array(0, 0, 400, 0, 400, 400, 0, 400, 0, 0)
+width = 1.0
+default_color = Color(1, 1, 1, 0.5)
+
+[node name="Raster_11" type="Line2D" parent="Hilfsraster"]
+points = PackedVector2Array(176, 0, 176, 400)
+width = 1.0
+default_color = Color(1, 1, 1, 0.18)
+
+[node name="Raster_14" type="Line2D" parent="Hilfsraster"]
+points = PackedVector2Array(224, 0, 224, 400)
+width = 1.0
+default_color = Color(1, 1, 1, 0.18)
+
+[node name="Raster_11h" type="Line2D" parent="Hilfsraster"]
+points = PackedVector2Array(0, 176, 400, 176)
+width = 1.0
+default_color = Color(1, 1, 1, 0.18)
+
+[node name="Raster_14h" type="Line2D" parent="Hilfsraster"]
+points = PackedVector2Array(0, 224, 400, 224)
+width = 1.0
+default_color = Color(1, 1, 1, 0.18)
+
+[node name="TuerOben" type="Line2D" parent="Hilfsraster"]
+points = PackedVector2Array(176, 0, 224, 0)
+width = 3.0
+default_color = Color(0.3, 1, 0.4, 0.9)
+
+[node name="TuerUnten" type="Line2D" parent="Hilfsraster"]
+points = PackedVector2Array(176, 400, 224, 400)
+width = 3.0
+default_color = Color(0.3, 1, 0.4, 0.9)
+
+[node name="TuerLinks" type="Line2D" parent="Hilfsraster"]
+points = PackedVector2Array(0, 176, 0, 224)
+width = 3.0
+default_color = Color(0.3, 1, 0.4, 0.9)
+
+[node name="TuerRechts" type="Line2D" parent="Hilfsraster"]
+points = PackedVector2Array(400, 176, 400, 224)
+width = 3.0
+default_color = Color(0.3, 1, 0.4, 0.9)

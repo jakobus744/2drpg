@@ -1,7 +1,7 @@
-[gd_scene format=4 uid="uid://zone_dungeo_001"]
+[gd_scene format=3 uid="uid://d3kpv8ybvqcbi"]
 
-[node name="DungeonZone" type="Node2D"]
+[node name="DungeonZone" type="Node2D" unique_id=964404035]
 
-[node name="Objects" type="Node2D" parent="."]
+[node name="Objects" type="Node2D" parent="." unique_id=725535741]
 
-[node name="Mobs" type="Node2D" parent="."]
+[node name="Mobs" type="Node2D" parent="." unique_id=1776855240]

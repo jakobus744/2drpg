@@ -1,0 +1,74 @@
+[gd_resource type="TileSet" format=3 uid="uid://cu68yr6w4bhps"]
+
+[ext_resource type="Texture2D" uid="uid://br4m2ve3ytulg" path="res://Assets/Biome/dungeon/skellet_dungeon/walls_floor.png" id="1_walls_floor"]
+[ext_resource type="Texture2D" uid="uid://b6f0lgetow5s1" path="res://Assets/Biome/dungeon/skellet_dungeon/under_walls.png" id="2_under_walls"]
+[ext_resource type="Texture2D" uid="uid://3rdj8xtx2ivs" path="res://Assets/Biome/dungeon/skellet_dungeon/arches_columns.png" id="3_arches_columns"]
+[ext_resource type="Texture2D" uid="uid://c5222v8ug5yxd" path="res://Assets/Biome/dungeon/skellet_dungeon/stairs.png" id="4_stairs"]
+[ext_resource type="Texture2D" uid="uid://dwxjh6byhjktq" path="res://Assets/Biome/dungeon/skellet_dungeon/decorative_cracks_floor.png" id="5_decorative_cracks_floor"]
+[ext_resource type="Texture2D" uid="uid://yuocuxyll4of" path="res://Assets/Biome/dungeon/skellet_dungeon/decorative_cracks_walls.png" id="6_decorative_cracks_walls"]
+[ext_resource type="Texture2D" uid="uid://v10xfa5dawfq" path="res://Assets/Biome/dungeon/skellet_dungeon/decorative_cracks.png" id="7_decorative_cracks"]
+[ext_resource type="Texture2D" uid="uid://birds2bmk5s5w" path="res://Assets/Biome/dungeon/skellet_dungeon/objects.png" id="8_objects"]
+[ext_resource type="Texture2D" uid="uid://d4i4nisikenjx" path="res://Assets/Biome/dungeon/skellet_dungeon/other_objects.png" id="9_other_objects"]
+[ext_resource type="Texture2D" uid="uid://c27q6aqbwe057" path="res://Assets/Biome/dungeon/skellet_dungeon/pedestals.png" id="10_pedestals"]
+[ext_resource type="Texture2D" uid="uid://bepif3fxivex0" path="res://Assets/Biome/dungeon/skellet_dungeon/supplies_objects.png" id="11_supplies_objects"]
+[ext_resource type="Texture2D" uid="uid://bf6klh1gcomeh" path="res://Assets/Biome/dungeon/skellet_dungeon/coffins.png" id="12_coffins"]
+[ext_resource type="Texture2D" uid="uid://b7tawqtfbm3v2" path="res://Assets/Biome/dungeon/skellet_dungeon/web.png" id="13_web"]
+[ext_resource type="Texture2D" uid="uid://ck0ugj4adfb5n" path="res://Assets/Biome/dungeon/skellet_dungeon/plates.png" id="14_plates"]
+
+[sub_resource type="TileSetAtlasSource" id="atlas_walls_floor"]
+texture = ExtResource("1_walls_floor")
+
+[sub_resource type="TileSetAtlasSource" id="atlas_under_walls"]
+texture = ExtResource("2_under_walls")
+
+[sub_resource type="TileSetAtlasSource" id="atlas_supplies_objects"]
+texture = ExtResource("11_supplies_objects")
+
+[sub_resource type="TileSetAtlasSource" id="atlas_coffins"]
+texture = ExtResource("12_coffins")
+
+[sub_resource type="TileSetAtlasSource" id="atlas_web"]
+texture = ExtResource("13_web")
+
+[sub_resource type="TileSetAtlasSource" id="atlas_plates"]
+texture = ExtResource("14_plates")
+
+[sub_resource type="TileSetAtlasSource" id="atlas_arches_columns"]
+texture = ExtResource("3_arches_columns")
+
+[sub_resource type="TileSetAtlasSource" id="atlas_stairs"]
+texture = ExtResource("4_stairs")
+
+[sub_resource type="TileSetAtlasSource" id="atlas_decorative_cracks_floor"]
+texture = ExtResource("5_decorative_cracks_floor")
+
+[sub_resource type="TileSetAtlasSource" id="atlas_decorative_cracks_walls"]
+texture = ExtResource("6_decorative_cracks_walls")
+
+[sub_resource type="TileSetAtlasSource" id="atlas_decorative_cracks"]
+texture = ExtResource("7_decorative_cracks")
+
+[sub_resource type="TileSetAtlasSource" id="atlas_objects"]
+texture = ExtResource("8_objects")
+
+[sub_resource type="TileSetAtlasSource" id="atlas_other_objects"]
+texture = ExtResource("9_other_objects")
+
+[sub_resource type="TileSetAtlasSource" id="atlas_pedestals"]
+texture = ExtResource("10_pedestals")
+
+[resource]
+sources/0 = SubResource("atlas_walls_floor")
+sources/1 = SubResource("atlas_under_walls")
+sources/2 = SubResource("atlas_arches_columns")
+sources/3 = SubResource("atlas_stairs")
+sources/4 = SubResource("atlas_decorative_cracks_floor")
+sources/5 = SubResource("atlas_decorative_cracks_walls")
+sources/6 = SubResource("atlas_decorative_cracks")
+sources/7 = SubResource("atlas_objects")
+sources/8 = SubResource("atlas_other_objects")
+sources/9 = SubResource("atlas_pedestals")
+sources/10 = SubResource("atlas_supplies_objects")
+sources/11 = SubResource("atlas_coffins")
+sources/12 = SubResource("atlas_web")
+sources/13 = SubResource("atlas_plates")

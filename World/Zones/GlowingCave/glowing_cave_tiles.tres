@@ -1,4 +1,4 @@
-[gd_resource type="TileSet" load_steps=11 format=3]
+[gd_resource type="TileSet" format=3 uid="uid://ci1sj7mnto0vd"]
 
 [ext_resource type="Texture2D" uid="uid://cosvd7dk1ni4i" path="res://Assets/Biome/glowing_cave/ground.png" id="1_src"]
 [ext_resource type="Texture2D" uid="uid://8juu2nc46bnm" path="res://Assets/Biome/glowing_cave/animation/water_coasts.png" id="2_src"]
