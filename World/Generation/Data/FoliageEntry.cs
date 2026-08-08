@@ -12,4 +12,71 @@ public partial class FoliageEntry : Resource
     [Export(PropertyHint.Range, "0,1")] public float SpawnWeight { get; set; } = 0.5f;
     [Export(PropertyHint.Range, "0,1")] public float MinNoiseThreshold { get; set; } = 0.2f;
     [Export] public float ClearingRadius { get; set; } = 16f;
+    private int _cachedTileRadius = -1;
+
+    [ExportGroup("Climate Preferences")]
+    [Export(PropertyHint.Range, "0,1")] public float IdealTemperature { get; set; } = 0.5f;
+    [Export(PropertyHint.Range, "0.01,1")] public float TemperatureTolerance { get; set; } = 0.3f;
+    [Export(PropertyHint.Range, "0,1")] public float IdealMoisture { get; set; } = 0.5f;
+    [Export(PropertyHint.Range, "0.01,1")] public float MoistureTolerance { get; set; } = 0.3f;
+
+    public float CalculateSuitability(float temp, float moisture)
+    {
+        float tempTol = Mathf.Max(0.01f, TemperatureTolerance);
+        float moistTol = Mathf.Max(0.01f, MoistureTolerance);
+
+        float dTemp = (temp - IdealTemperature) / tempTol;
+        float dMoist = (moisture - IdealMoisture) / moistTol;
+
+        // Gaussian suitability falloff based on temperature and moisture deviation
+        return Mathf.Exp(-0.5f * (dTemp * dTemp + dMoist * dMoist));
+    }
+
+    public int GetClearingTileRadius(TileMapLayer groundLayer = null)
+    {
+        if (_cachedTileRadius > 0) return _cachedTileRadius;
+
+        if (ClearingRadius > 0f)
+        {
+            _cachedTileRadius = Mathf.Clamp(Mathf.CeilToInt(ClearingRadius / 32f), 1, 6);
+            return _cachedTileRadius;
+        }
+
+        int tileSize = groundLayer?.TileSet != null ? groundLayer.TileSet.TileSize.X : 16;
+        float maxDimensionPx = 32f;
+
+        if (PrefabScene != null)
+        {
+            var tempInstance = PrefabScene.Instantiate();
+            if (tempInstance != null)
+            {
+                var sprite = tempInstance.FindChild("*Sprite*", recursive: true, owned: false);
+                if (sprite is Sprite2D s2D && s2D.Texture != null)
+                {
+                    Vector2 sz = s2D.Texture.GetSize() * s2D.Scale;
+                    maxDimensionPx = Mathf.Max(sz.X, sz.Y);
+                }
+                else if (sprite is AnimatedSprite2D anim && anim.SpriteFrames != null)
+                {
+                    string animName = !string.IsNullOrEmpty(anim.Autoplay) ? anim.Autoplay : (anim.SpriteFrames.GetAnimationNames().Length > 0 ? anim.SpriteFrames.GetAnimationNames()[0] : "");
+                    if (!string.IsNullOrEmpty(animName))
+                    {
+                        Texture2D frameTex = anim.SpriteFrames.GetFrameTexture(animName, 0);
+                        if (frameTex != null)
+                        {
+                            Vector2 sz = frameTex.GetSize() * anim.Scale;
+                            maxDimensionPx = Mathf.Max(sz.X, sz.Y);
+                        }
+                    }
+                }
+
+                tempInstance.Free();
+            }
+        }
+
+        _cachedTileRadius = Mathf.Clamp(Mathf.CeilToInt(maxDimensionPx / (2f * tileSize)), 1, 6);
+        return _cachedTileRadius;
+    }
 }
+
+

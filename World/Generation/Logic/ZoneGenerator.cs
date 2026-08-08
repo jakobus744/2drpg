@@ -503,21 +503,27 @@ public partial class ZoneGenerator : Node
 
     private void GenerateFoliage(TileMapLayer groundLayer, ZoneSettings settings, HashSet<Vector2I> reserved, int zoneSeed, Vector2I tileDims)
     {
-        if (settings?.FoliageTypes == null || settings.FoliageTypes.Count == 0)
+        if (settings == null || settings.VegetationDensity <= 0f)
         {
-            GD.Print($"[ZoneGenerator] Keine FoliageTypes in ZoneSettings definiert!");
-            return;
-        }
-        if (settings.VegetationDensity <= 0f)
-        {
-            GD.Print($"[ZoneGenerator] VegetationDensity ist 0!");
             return;
         }
 
-        var validEntries = settings.FoliageTypes.Where(e => e != null).ToList();
+        Vector2I zoneCoord = Vector2I.Zero;
+        Node parent = GetParent();
+        if (parent is Node2D parent2D)
+        {
+            zoneCoord = WorldManager.WorldToZoneCell(parent2D.Position);
+        }
+
+        var candidateEntries = WorldManager.GetNeighboringFoliageEntries(zoneCoord);
+        if (candidateEntries.Count == 0 && settings.FoliageTypes != null)
+        {
+            candidateEntries = settings.FoliageTypes.Where(e => e != null).ToList();
+        }
+
+        var validEntries = candidateEntries.Where(e => e != null).ToList();
         if (validEntries.Count == 0)
         {
-            GD.PrintErr($"[ZoneGenerator] FoliageTypes enthaelt nur null-Eintraege!");
             return;
         }
 
@@ -540,10 +546,6 @@ public partial class ZoneGenerator : Node
         int tileCount = 0;
         int maxPrefabsPerZone = 250;
 
-        Vector2 playerPos = RPG2d.Player.Player.LocalPlayer != null 
-            ? RPG2d.Player.Player.LocalPlayer.GlobalPosition 
-            : Vector2.Zero;
-
         for (int x = -halfX; x <= halfX; x += 2)
         {
             for (int y = -halfY; y <= halfY; y += 2)
@@ -551,25 +553,44 @@ public partial class ZoneGenerator : Node
                 Vector2I cell = new(x, y);
                 if (reserved.Contains(cell)) continue;
 
+                Vector2 localPos = groundLayer.MapToLocal(cell);
+                Vector2 cellWorldPos = groundLayer.ToGlobal(localPos);
+
+                var (temp, moist) = WorldManager.GetClimateAtWorldPosition(cellWorldPos);
+
+                float totalWeight = 0f;
+                float maxSuitability = 0f;
+                List<(FoliageEntry Entry, float Weight)> suitableEntries = new();
+
+                foreach (var entry in validEntries)
+                {
+                    float suitability = entry.CalculateSuitability(temp, moist);
+                    if (suitability < 0.01f) continue;
+
+                    float weight = (entry.SpawnWeight > 0 ? entry.SpawnWeight : 0.5f) * suitability;
+                    if (weight > 0.001f)
+                    {
+                        suitableEntries.Add((entry, weight));
+                        totalWeight += weight;
+                        if (suitability > maxSuitability) maxSuitability = suitability;
+                    }
+                }
+
+                if (suitableEntries.Count == 0 || totalWeight <= 0f) continue;
+
                 float noiseVal = (noise.GetNoise2D(x * 3f, y * 3f) + 1f) * 0.5f;
 
-                if (noiseVal < settings.VegetationDensity)
+                if (noiseVal < settings.VegetationDensity * Mathf.Max(0.2f, maxSuitability))
                 {
                     int pseudoRand = Mathf.Abs(x * 73856093 ^ y * 19349663 ^ zoneSeed);
-
-                    // ~20% spawn chance per candidate 2x2 grid point for balanced 150-200 trees per zone
                     if ((pseudoRand % 100) > 20) continue;
 
-                    float totalWeight = 0f;
-                    foreach (var e in validEntries) totalWeight += (e.SpawnWeight > 0 ? e.SpawnWeight : 0.5f);
-
                     float targetWeight = (pseudoRand % 1000) / 1000f * totalWeight;
-                    FoliageEntry selectedEntry = validEntries[0];
+                    FoliageEntry selectedEntry = suitableEntries[0].Entry;
                     float accumulated = 0f;
 
-                    foreach (var entry in validEntries)
+                    foreach (var (entry, weight) in suitableEntries)
                     {
-                        float weight = entry.SpawnWeight > 0 ? entry.SpawnWeight : 0.5f;
                         accumulated += weight;
                         if (targetWeight <= accumulated)
                         {
@@ -580,9 +601,7 @@ public partial class ZoneGenerator : Node
 
                     if (selectedEntry != null)
                     {
-                        int radius = selectedEntry.ClearingRadius > 0 
-                            ? Mathf.Clamp(Mathf.CeilToInt(selectedEntry.ClearingRadius / 32f), 2, 4) 
-                            : 2;
+                        int radius = selectedEntry.GetClearingTileRadius(groundLayer);
 
                         if (ySortLayer != null && selectedEntry.TileCoords != new Vector2I(-1, -1))
                         {
@@ -605,15 +624,8 @@ public partial class ZoneGenerator : Node
                                 Node targetContainer = ySortLayer ?? parentNode;
                                 targetContainer.AddChild(instance);
 
-                                Vector2 localPos = groundLayer.MapToLocal(cell);
-                                instance.GlobalPosition = groundLayer.ToGlobal(localPos);
+                                instance.GlobalPosition = cellWorldPos;
                                 prefabCount++;
-
-                                float distToPlayer = playerPos.DistanceTo(instance.GlobalPosition);
-                                if (prefabCount <= 10)
-                                {
-                                    GD.Print($"[ZoneGenerator] Tree #{prefabCount} ({selectedEntry.Name}) -> Zelle {cell}, GlobalPos: {instance.GlobalPosition} (Distanz zum Spieler: {distToPlayer:F0}px)");
-                                }
 
                                 for (int dx = -radius; dx <= radius; dx++)
                                 {
@@ -629,7 +641,7 @@ public partial class ZoneGenerator : Node
             }
         }
 
-        GD.Print($"[ZoneGenerator] Foliage beendet: {prefabCount} Prefabs instanziiert, {tileCount} Tiles platziert. (SpielerPos war {playerPos})");
+        GD.Print($"[ZoneGenerator] Foliage beendet: {prefabCount} Prefabs instanziiert, {tileCount} Tiles platziert.");
     }
 
     private TileMapLayer AutoDetectYSortLayer(TileMapLayer groundLayer)

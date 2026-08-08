@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using Godot;
+using RPG2d.World.Generation.Data;
 using RPG2d.World.Generation.Logic;
 
 namespace RPG2d.World;
@@ -38,8 +39,79 @@ public partial class WorldManager : Node2D
 
     private static readonly Dictionary<Vector2I, Vector2> _zoneSizes = new();
     private static readonly Dictionary<Vector2I, Vector2> _zonePositions = new();
+    private static readonly Dictionary<Vector2I, ZoneSettings> _zoneSettings = new();
 
     private static readonly Dictionary<long, HashSet<Vector2I>> _peerLoadedZones = new();
+
+    public static void RegisterZoneSettings(Vector2I coord, ZoneSettings settings)
+    {
+        if (settings != null)
+            _zoneSettings[coord] = settings;
+    }
+
+    public static ZoneSettings GetZoneSettings(Vector2I coord)
+    {
+        if (_zoneSettings.TryGetValue(coord, out var settings) && settings != null)
+            return settings;
+        return null;
+    }
+
+    public static (float Temperature, float Moisture) GetClimateAtWorldPosition(Vector2 worldPos)
+    {
+        Vector2I centerCell = WorldToZoneCell(worldPos);
+        float totalWeight = 0f;
+        float weightedTemp = 0f;
+        float weightedMoist = 0f;
+
+        for (int dx = -1; dx <= 1; dx++)
+        {
+            for (int dy = -1; dy <= 1; dy++)
+            {
+                Vector2I coord = centerCell + new Vector2I(dx, dy);
+                ZoneSettings settings = GetZoneSettings(coord);
+                float temp = settings != null ? settings.Temperature : 0.5f;
+                float moist = settings != null ? settings.Moisture : 0.5f;
+
+                Vector2 centerPos = GetZonePosition(coord);
+                float distSq = worldPos.DistanceSquaredTo(centerPos);
+                float weight = 1f / (distSq + 10000f);
+
+                totalWeight += weight;
+                weightedTemp += temp * weight;
+                weightedMoist += moist * weight;
+            }
+        }
+
+        if (totalWeight <= 0f) return (0.5f, 0.5f);
+        return (weightedTemp / totalWeight, weightedMoist / totalWeight);
+    }
+
+    public static List<FoliageEntry> GetNeighboringFoliageEntries(Vector2I centerCoord)
+    {
+        var entries = new List<FoliageEntry>();
+        var unique = new HashSet<FoliageEntry>();
+
+        for (int dx = -1; dx <= 1; dx++)
+        {
+            for (int dy = -1; dy <= 1; dy++)
+            {
+                Vector2I coord = centerCoord + new Vector2I(dx, dy);
+                ZoneSettings settings = GetZoneSettings(coord);
+                if (settings?.FoliageTypes == null) continue;
+
+                foreach (var foliage in settings.FoliageTypes)
+                {
+                    if (foliage != null && unique.Add(foliage))
+                    {
+                        entries.Add(foliage);
+                    }
+                }
+            }
+        }
+
+        return entries;
+    }
+
 
     public static Vector2 GetZoneSize(Vector2I coord)
     {
@@ -271,12 +343,16 @@ public partial class WorldManager : Node2D
         }
         else
         {
-            if (tempNode.FindChild("ZoneGenerator", recursive: true) is ZoneGenerator { ZoneTileSize: > 0 } gen)
+            if (tempNode.FindChild("ZoneGenerator", recursive: true) is ZoneGenerator gen)
             {
-                int tileSize = 16;
-                if (gen.GroundLayer?.TileSet != null)
-                    tileSize = gen.GroundLayer.TileSet.TileSize.X;
-                detectedSize = new Vector2(gen.ZoneTileSize * tileSize, gen.ZoneTileSize * tileSize);
+                if (gen.Settings != null) RegisterZoneSettings(coord, gen.Settings);
+                if (gen.ZoneTileSize > 0)
+                {
+                    int tileSize = 16;
+                    if (gen.GroundLayer?.TileSet != null)
+                        tileSize = gen.GroundLayer.TileSet.TileSize.X;
+                    detectedSize = new Vector2(gen.ZoneTileSize * tileSize, gen.ZoneTileSize * tileSize);
+                }
             }
         }
 
@@ -381,6 +457,7 @@ public partial class WorldManager : Node2D
                     GroundLayer: not null, Settings: not null
                 } gen)
             {
+                RegisterZoneSettings(coord, gen.Settings);
                 gen.GenerateZone(gen.GroundLayer, gen.Settings, coord);
             }
 

@@ -12,7 +12,15 @@ public static class SeedUtils
         if (int.TryParse(seedInput.Trim(), out int numericSeed))
             return numericSeed;
 
-        return seedInput.Trim().GetHashCode();
+        unchecked
+        {
+            uint hash = 2166136261;
+            foreach (char c in seedInput.Trim())
+            {
+                hash = (hash ^ c) * 16777619;
+            }
+            return (int)hash;
+        }
     }
 
     public static int DeriveSeed(int baseSeed, Vector2I coord)
