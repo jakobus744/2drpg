@@ -143,7 +143,7 @@ public partial class ZoneGenerator : Node
         }
 
         GeneratePaths(GroundLayer, Settings, borderWaypoints, internalWaypoints, reservedCells, zoneSeed, tileDims);
-        GenerateFoliage(GroundLayer, Settings, reservedCells, zoneSeed, tileDims);
+        GenerateFoliage(GroundLayer, Settings, reservedCells, zoneSeed, tileDims, zoneCoord);
 
         return reservedCells;
     }
@@ -501,18 +501,11 @@ public partial class ZoneGenerator : Node
         }
     }
 
-    private void GenerateFoliage(TileMapLayer groundLayer, ZoneSettings settings, HashSet<Vector2I> reserved, int zoneSeed, Vector2I tileDims)
+    private void GenerateFoliage(TileMapLayer groundLayer, ZoneSettings settings, HashSet<Vector2I> reserved, int zoneSeed, Vector2I tileDims, Vector2I zoneCoord)
     {
         if (settings == null || settings.VegetationDensity <= 0f)
         {
             return;
-        }
-
-        Vector2I zoneCoord = Vector2I.Zero;
-        Node parent = GetParent();
-        if (parent is Node2D parent2D)
-        {
-            zoneCoord = WorldManager.WorldToZoneCell(parent2D.Position);
         }
 
         var candidateEntries = WorldManager.GetNeighboringFoliageEntries(zoneCoord);
@@ -535,6 +528,10 @@ public partial class ZoneGenerator : Node
             return;
         }
 
+        GD.Print($"[ZoneGenerator LOG] === STARTE FOLIAGE FÜR ZONE {zoneCoord} ===");
+        GD.Print($"[ZoneGenerator LOG] Zone Settings: Temp={settings.Temperature}, Moist={settings.Moisture}, Density={settings.VegetationDensity}");
+        GD.Print($"[ZoneGenerator LOG] Candidates ({validEntries.Count}): " + string.Join(", ", validEntries.Select(e => $"{e.Name}[T:{e.IdealTemperature},M:{e.IdealMoisture},Tile:{e.TileCoords}]")));
+
         FastNoiseLite noise = new FastNoiseLite();
         noise.Seed = zoneSeed;
         float noiseScale = settings.VegetationNoiseScale > 0 ? settings.VegetationNoiseScale : 0.05f;
@@ -545,6 +542,8 @@ public partial class ZoneGenerator : Node
         int prefabCount = 0;
         int tileCount = 0;
         int maxPrefabsPerZone = 250;
+        Vector2 zoneCenterWorldPos = WorldManager.GetZonePosition(zoneCoord);
+        int logCount = 0;
 
         for (int x = -halfX; x <= halfX; x += 2)
         {
@@ -554,7 +553,7 @@ public partial class ZoneGenerator : Node
                 if (reserved.Contains(cell)) continue;
 
                 Vector2 localPos = groundLayer.MapToLocal(cell);
-                Vector2 cellWorldPos = groundLayer.ToGlobal(localPos);
+                Vector2 cellWorldPos = zoneCenterWorldPos + localPos;
 
                 var (temp, moist) = WorldManager.GetClimateAtWorldPosition(cellWorldPos);
 
@@ -565,7 +564,7 @@ public partial class ZoneGenerator : Node
                 foreach (var entry in validEntries)
                 {
                     float suitability = entry.CalculateSuitability(temp, moist);
-                    if (suitability < 0.01f) continue;
+                    if (suitability < 0.05f) continue;
 
                     float weight = (entry.SpawnWeight > 0 ? entry.SpawnWeight : 0.5f) * suitability;
                     if (weight > 0.001f)
@@ -573,6 +572,17 @@ public partial class ZoneGenerator : Node
                         suitableEntries.Add((entry, weight));
                         totalWeight += weight;
                         if (suitability > maxSuitability) maxSuitability = suitability;
+                    }
+                }
+
+                if (logCount < 5 && suitableEntries.Count > 0)
+                {
+                    logCount++;
+                    GD.Print($"[ZoneGenerator LOG] Zone {zoneCoord} Cell({x},{y}) Pos={cellWorldPos}: Climate=(T:{temp:F2}, M:{moist:F2})");
+                    foreach (var entry in validEntries)
+                    {
+                        float s = entry.CalculateSuitability(temp, moist);
+                        GD.Print($"[ZoneGenerator LOG]   -> Entry '{entry.Name}': Suit={s:F3}, Weight={((entry.SpawnWeight > 0 ? entry.SpawnWeight : 0.5f) * s):F3}");
                     }
                 }
 
@@ -603,18 +613,10 @@ public partial class ZoneGenerator : Node
                     {
                         int radius = selectedEntry.GetClearingTileRadius(groundLayer);
 
-                        if (ySortLayer != null && selectedEntry.TileCoords != new Vector2I(-1, -1))
+                        if (selectedEntry.TileCoords != new Vector2I(-1, -1) && ySortLayer != null)
                         {
-                            ySortLayer.SetCell(cell, 0, selectedEntry.TileCoords);
+                            ySortLayer.SetCell(cell, selectedEntry.SourceId, selectedEntry.TileCoords);
                             tileCount++;
-
-                            for (int dx = -radius; dx <= radius; dx++)
-                            {
-                                for (int dy = -radius; dy <= radius; dy++)
-                                {
-                                    reserved.Add(cell + new Vector2I(dx, dy));
-                                }
-                            }
                         }
                         else if (selectedEntry.PrefabScene != null && parentNode != null && prefabCount < maxPrefabsPerZone)
                         {
@@ -626,14 +628,14 @@ public partial class ZoneGenerator : Node
 
                                 instance.GlobalPosition = cellWorldPos;
                                 prefabCount++;
+                            }
+                        }
 
-                                for (int dx = -radius; dx <= radius; dx++)
-                                {
-                                    for (int dy = -radius; dy <= radius; dy++)
-                                    {
-                                        reserved.Add(cell + new Vector2I(dx, dy));
-                                    }
-                                }
+                        for (int dx = -radius; dx <= radius; dx++)
+                        {
+                            for (int dy = -radius; dy <= radius; dy++)
+                            {
+                                reserved.Add(cell + new Vector2I(dx, dy));
                             }
                         }
                     }
@@ -641,7 +643,7 @@ public partial class ZoneGenerator : Node
             }
         }
 
-        GD.Print($"[ZoneGenerator] Foliage beendet: {prefabCount} Prefabs instanziiert, {tileCount} Tiles platziert.");
+        GD.Print($"[ZoneGenerator] Foliage beendet für Zone {zoneCoord}: {prefabCount} Prefabs instanziiert, {tileCount} Tiles platziert.");
     }
 
     private TileMapLayer AutoDetectYSortLayer(TileMapLayer groundLayer)

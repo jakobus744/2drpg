@@ -5,6 +5,7 @@
 
 [resource]
 script = ExtResource("1_3gl4w")
+Name = "ForestBigTree"
 PrefabScene = ExtResource("1_yo5pu")
 SpawnWeight = 1.0
 metadata/_custom_type_script = "uid://dtcordhrxsbx1"

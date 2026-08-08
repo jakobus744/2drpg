@@ -56,6 +56,13 @@ public partial class WorldManager : Node2D
         return null;
     }
 
+    public Node GetLoadedZoneNode(Vector2I coord)
+    {
+        if (_loaded.TryGetValue(coord, out var node))
+            return node;
+        return null;
+    }
+
     public static (float Temperature, float Moisture) GetClimateAtWorldPosition(Vector2 worldPos)
     {
         Vector2I centerCell = WorldToZoneCell(worldPos);

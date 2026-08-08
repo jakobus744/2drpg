@@ -7,6 +7,7 @@ public partial class FoliageEntry : Resource
 {
     [Export] public string Name { get; set; } = "Tree";
     [Export] public PackedScene PrefabScene { get; set; }
+    [Export] public int SourceId { get; set; } = 0;
     [Export] public Vector2I TileCoords { get; set; } = new(-1, -1);
 
     [Export(PropertyHint.Range, "0,1")] public float SpawnWeight { get; set; } = 0.5f;
@@ -16,19 +17,27 @@ public partial class FoliageEntry : Resource
 
     [ExportGroup("Climate Preferences")]
     [Export(PropertyHint.Range, "0,1")] public float IdealTemperature { get; set; } = 0.5f;
-    [Export(PropertyHint.Range, "0.01,1")] public float TemperatureTolerance { get; set; } = 0.3f;
+    [Export(PropertyHint.Range, "0.01,1")] public float TemperatureTolerance { get; set; } = 0.15f;
     [Export(PropertyHint.Range, "0,1")] public float IdealMoisture { get; set; } = 0.5f;
-    [Export(PropertyHint.Range, "0.01,1")] public float MoistureTolerance { get; set; } = 0.3f;
+    [Export(PropertyHint.Range, "0.01,1")] public float MoistureTolerance { get; set; } = 0.15f;
 
     public float CalculateSuitability(float temp, float moisture)
     {
         float tempTol = Mathf.Max(0.01f, TemperatureTolerance);
         float moistTol = Mathf.Max(0.01f, MoistureTolerance);
 
-        float dTemp = (temp - IdealTemperature) / tempTol;
-        float dMoist = (moisture - IdealMoisture) / moistTol;
+        float dTempAbs = Mathf.Abs(temp - IdealTemperature);
+        float dMoistAbs = Mathf.Abs(moisture - IdealMoisture);
 
-        // Gaussian suitability falloff based on temperature and moisture deviation
+        // Strict cutoff outside 1.5x tolerance window to prevent improper biome bleeding
+        if (dTempAbs > tempTol * 1.5f || dMoistAbs > moistTol * 1.5f)
+        {
+            return 0f;
+        }
+
+        float dTemp = dTempAbs / tempTol;
+        float dMoist = dMoistAbs / moistTol;
+
         return Mathf.Exp(-0.5f * (dTemp * dTemp + dMoist * dMoist));
     }
 

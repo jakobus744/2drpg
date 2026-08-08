@@ -1,0 +1,11 @@
+[gd_resource type="Resource" script_class="FoliageEntry" format=3 uid="uid://bvx0pw1itosgh"]
+
+[ext_resource type="Script" uid="uid://dtcordhrxsbx1" path="res://World/Generation/Data/FoliageEntry.cs" id="1_toso6"]
+
+[resource]
+script = ExtResource("1_toso6")
+Name = "DesertTree2"
+TileCoords = Vector2i(8, 0)
+IdealTemperature = 1.0
+IdealMoisture = 0.0
+metadata/_custom_type_script = "uid://dtcordhrxsbx1"
