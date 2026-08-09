@@ -1,6 +1,6 @@
 # Foliage_Tileset - Quellen-Index
 
-Eine FoliageEntry verweist ueber **SourceId** + **TileCoords** in World/Foliage_Tileset.tres.
+Eine `FoliageEntry` verweist ueber **SourceId** + **TileCoords** in `World/Foliage_Tileset.tres`.
 
 > **Regel: Quellen nur anhaengen. Niemals umsortieren oder loeschen.**
 > Die SourceId ist eine reine Zahl. Verschiebt sich eine Quelle, zeigen alle FoliageEntry-Ressourcen
@@ -17,7 +17,7 @@ Eine FoliageEntry verweist ueber **SourceId** + **TileCoords** in World/Foliage_
 | 6 | grassland | `Assets/Biome/grassland/water_coasts.png` |
 | 7 | grassland | `Assets/Biome/grassland/trees_rocks.png` |
 | 8 | grassland | `Assets/Biome/grassland/details.png` |
-| 9 | grassland | `Assets/objects/path/Road4_grass.png` |
+| 9 | Wege (global) | `Assets/objects/path/Forest_Path.png` |
 | 10 | desert | `Assets/Biome/desert/ground_grass.png` |
 | 11 | desert | `Assets/Biome/desert/water_coasts.png` |
 | 12 | desert | `Assets/Biome/desert/objects_trees.png` |
@@ -63,5 +63,11 @@ Eine FoliageEntry verweist ueber **SourceId** + **TileCoords** in World/Foliage_
 | 52 | flying | `Assets/Biome/flying/bridges.png` |
 | 53 | flying | `Assets/Biome/flying/clouds.png` |
 | 54 | flying | `Assets/Biome/flying/details.png` |
+| 55 | Wege (global) | `Assets/objects/path/Stone_Gras_Path.png` |
+| 56 | Wege (global) | `Assets/objects/path/Stone_Path.png` |
+| 57 | Wege (global) | `Assets/objects/path/Dessert_Path.png` |
+| 58 | Wege (global) | `Assets/objects/path/Brigth_Stone_Gras_Path.png` |
+| 59 | Wege (global) | `Assets/objects/path/Bright_Stone_Path.png` |
+| 60 | Objekte (global) | `Assets/objects/forestg-grasland/Assets_source.png` |
 
-Stand: 2026-08-08
+Quellen gesamt: 61 - Stand: 2026-08-09

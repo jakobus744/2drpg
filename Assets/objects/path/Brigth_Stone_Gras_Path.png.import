@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://cm2dlv2txlvas"
-path="res://.godot/imported/Road3_ground.png-f07a2cf5b2ceab79d7541fe337d40e92.ctex"
+uid="uid://bwlbl7ke07ohc"
+path="res://.godot/imported/Brigth_Stone_Gras_Path.png-0590a61129b195ba012a5d475a24670e.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Assets/objects/path/Road3_ground.png"
-dest_files=["res://.godot/imported/Road3_ground.png-f07a2cf5b2ceab79d7541fe337d40e92.ctex"]
+source_file="res://Assets/objects/path/Brigth_Stone_Gras_Path.png"
+dest_files=["res://.godot/imported/Brigth_Stone_Gras_Path.png-0590a61129b195ba012a5d475a24670e.ctex"]
 
 [params]
 

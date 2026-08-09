@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://34lx7plbiw8o"
-path="res://.godot/imported/Road5_grass.png-1fa00a6f6c32a3d36694e61d2700d7d0.ctex"
+uid="uid://bkrcgke65uyid"
+path="res://.godot/imported/Stone_Path.png-7d555b63da287567853894136ef6a151.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Assets/objects/path/Road5_grass.png"
-dest_files=["res://.godot/imported/Road5_grass.png-1fa00a6f6c32a3d36694e61d2700d7d0.ctex"]
+source_file="res://Assets/objects/path/Stone_Path.png"
+dest_files=["res://.godot/imported/Stone_Path.png-7d555b63da287567853894136ef6a151.ctex"]
 
 [params]
 

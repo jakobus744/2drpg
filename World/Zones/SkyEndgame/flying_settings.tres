@@ -1,7 +1,7 @@
 [gd_resource type="Resource" script_class="ZoneSettings" load_steps=3 format=3]
 
 [ext_resource type="Script" uid="uid://bb0lnrgjknb5k" path="res://World/Generation/Data/ZoneSettings.cs" id="1_script"]
-[ext_resource type="TileSet" path="res://World/Zones/SkyEndgame/flying_tiles.tres" id="2_tiles"]
+[ext_resource type="TileSet" path="res://World/Foliage_Tileset.tres" id="2_tiles"]
 
 [resource]
 script = ExtResource("1_script")

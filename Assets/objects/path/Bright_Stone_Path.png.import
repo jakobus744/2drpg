@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://cgem3m4plbar7"
-path="res://.godot/imported/Road2_grass.png-5aaa285532e158984eb58df92138f9c6.ctex"
+uid="uid://ci3qpefshream"
+path="res://.godot/imported/Bright_Stone_Path.png-9c693ece454e5c9caeccacdc62b8f353.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Assets/objects/path/Road2_grass.png"
-dest_files=["res://.godot/imported/Road2_grass.png-5aaa285532e158984eb58df92138f9c6.ctex"]
+source_file="res://Assets/objects/path/Bright_Stone_Path.png"
+dest_files=["res://.godot/imported/Bright_Stone_Path.png-9c693ece454e5c9caeccacdc62b8f353.ctex"]
 
 [params]
 

@@ -9,7 +9,7 @@
 [ext_resource type="Texture2D" uid="uid://bns62nfsaa8hj" path="res://Assets/Biome/grassland/water_coasts.png" id="102_add"]
 [ext_resource type="Texture2D" uid="uid://0xgxufwuirs4" path="res://Assets/Biome/grassland/trees_rocks.png" id="103_add"]
 [ext_resource type="Texture2D" uid="uid://dwrvnlni4m5wx" path="res://Assets/Biome/grassland/details.png" id="104_add"]
-[ext_resource type="Texture2D" uid="uid://diddgk3igjvdo" path="res://Assets/objects/path/Road4_grass.png" id="105_add"]
+[ext_resource type="Texture2D" uid="uid://diddgk3igjvdo" path="res://Assets/objects/path/Forest_Path.png" id="105_add"]
 [ext_resource type="Texture2D" uid="uid://2lhxlby8futi" path="res://Assets/Biome/desert/ground_grass.png" id="106_add"]
 [ext_resource type="Texture2D" uid="uid://c3gk0e300q65g" path="res://Assets/Biome/desert/water_coasts.png" id="107_add"]
 [ext_resource type="Texture2D" uid="uid://b5anmkaioiyx8" path="res://Assets/Biome/desert/objects_trees.png" id="108_add"]
@@ -55,6 +55,12 @@
 [ext_resource type="Texture2D" uid="uid://2q27d5h06k1q" path="res://Assets/Biome/flying/bridges.png" id="148_add"]
 [ext_resource type="Texture2D" uid="uid://clxnwfor423tb" path="res://Assets/Biome/flying/clouds.png" id="149_add"]
 [ext_resource type="Texture2D" uid="uid://baovg5cw3kb8b" path="res://Assets/Biome/flying/details.png" id="150_add"]
+[ext_resource type="Texture2D" uid="uid://cw1uqdm3tal82" path="res://Assets/objects/path/Stone_Gras_Path.png" id="900_stone_gras_path"]
+[ext_resource type="Texture2D" uid="uid://bkrcgke65uyid" path="res://Assets/objects/path/Stone_Path.png" id="900_stone_path"]
+[ext_resource type="Texture2D" uid="uid://dwyotiyy4ou0t" path="res://Assets/objects/path/Dessert_Path.png" id="900_dessert_path"]
+[ext_resource type="Texture2D" uid="uid://bwlbl7ke07ohc" path="res://Assets/objects/path/Brigth_Stone_Gras_Path.png" id="900_brigth_stone_gras_path"]
+[ext_resource type="Texture2D" uid="uid://ci3qpefshream" path="res://Assets/objects/path/Bright_Stone_Path.png" id="900_bright_stone_path"]
+[ext_resource type="Texture2D" uid="uid://bqydfjs0fmqkp" path="res://Assets/objects/forestg-grasland/Assets_source.png" id="900_gras_assets_source"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_6dhm5"]
 texture = ExtResource("1_ryhao")
@@ -2164,6 +2170,24 @@ texture = ExtResource("149_add")
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_add150"]
 texture = ExtResource("150_add")
 
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_stone_gras_path"]
+texture = ExtResource("900_stone_gras_path")
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_stone_path"]
+texture = ExtResource("900_stone_path")
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_dessert_path"]
+texture = ExtResource("900_dessert_path")
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_brigth_stone_gras_path"]
+texture = ExtResource("900_brigth_stone_gras_path")
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_bright_stone_path"]
+texture = ExtResource("900_bright_stone_path")
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_gras_assets_source"]
+texture = ExtResource("900_gras_assets_source")
+
 [resource]
 physics_layer_0/collision_layer = 1
 sources/0 = SubResource("TileSetAtlasSource_6dhm5")
@@ -2221,3 +2245,9 @@ sources/51 = SubResource("TileSetAtlasSource_add147")
 sources/52 = SubResource("TileSetAtlasSource_add148")
 sources/53 = SubResource("TileSetAtlasSource_add149")
 sources/54 = SubResource("TileSetAtlasSource_add150")
+sources/55 = SubResource("TileSetAtlasSource_stone_gras_path")
+sources/56 = SubResource("TileSetAtlasSource_stone_path")
+sources/57 = SubResource("TileSetAtlasSource_dessert_path")
+sources/58 = SubResource("TileSetAtlasSource_brigth_stone_gras_path")
+sources/59 = SubResource("TileSetAtlasSource_bright_stone_path")
+sources/60 = SubResource("TileSetAtlasSource_gras_assets_source")

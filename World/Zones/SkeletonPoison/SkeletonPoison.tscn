@@ -1,6 +1,6 @@
 [gd_scene load_steps=7 format=4 uid="uid://ddkipssxm7g1e"]
 
-[ext_resource type="TileSet" path="res://World/Zones/SkeletonPoison/skeleton_tiles.tres" id="1_tiles"]
+[ext_resource type="TileSet" path="res://World/Foliage_Tileset.tres" id="1_tiles"]
 [ext_resource type="Script" uid="uid://cchmahsfxfn64" path="res://World/Generation/Logic/ZoneGenerator.cs" id="2_gen"]
 [ext_resource type="Script" uid="uid://dmki2ji17jifm" path="res://World/Generation/Logic/ZoneBackground.cs" id="3_bg"]
 [ext_resource type="Resource" path="res://World/Zones/SkeletonPoison/skeleton_settings.tres" id="4_settings"]

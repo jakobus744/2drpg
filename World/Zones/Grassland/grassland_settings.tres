@@ -3,7 +3,7 @@
 [ext_resource type="Script" uid="uid://dtcordhrxsbx1" path="res://World/Generation/Data/FoliageEntry.cs" id="1_j7dev"]
 [ext_resource type="Script" uid="uid://bb0lnrgjknb5k" path="res://World/Generation/Data/ZoneSettings.cs" id="1_script"]
 [ext_resource type="Script" uid="uid://b1yy2cfo37i3q" path="res://World/Generation/Data/LandmarkSettings.cs" id="2_crw16"]
-[ext_resource type="TileSet" uid="uid://cnu3d20syyqp8" path="res://World/Zones/Grassland/grassland_tiles.tres" id="2_tiles"]
+[ext_resource type="TileSet" uid="uid://ci1hd70gfiefq" path="res://World/Foliage_Tileset.tres" id="2_tiles"]
 
 [resource]
 script = ExtResource("1_script")

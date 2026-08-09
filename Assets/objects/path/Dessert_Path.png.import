@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://diddgk3igjvdo"
-path="res://.godot/imported/Road4_grass.png-1c9a34f258c265f721ea92652eb97158.ctex"
+uid="uid://dwyotiyy4ou0t"
+path="res://.godot/imported/Dessert_Path.png-6d824b8466d2a60c4aee1d169917ffbe.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Assets/objects/path/Road4_grass.png"
-dest_files=["res://.godot/imported/Road4_grass.png-1c9a34f258c265f721ea92652eb97158.ctex"]
+source_file="res://Assets/objects/path/Dessert_Path.png"
+dest_files=["res://.godot/imported/Dessert_Path.png-6d824b8466d2a60c4aee1d169917ffbe.ctex"]
 
 [params]
 
