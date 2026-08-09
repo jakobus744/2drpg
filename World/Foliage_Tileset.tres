@@ -9,7 +9,7 @@
 [ext_resource type="Texture2D" uid="uid://bns62nfsaa8hj" path="res://Assets/Biome/grassland/water_coasts.png" id="102_add"]
 [ext_resource type="Texture2D" uid="uid://0xgxufwuirs4" path="res://Assets/Biome/grassland/trees_rocks.png" id="103_add"]
 [ext_resource type="Texture2D" uid="uid://dwrvnlni4m5wx" path="res://Assets/Biome/grassland/details.png" id="104_add"]
-[ext_resource type="Texture2D" uid="uid://diddgk3igjvdo" path="res://Assets/objects/path/Forest_Path.png" id="105_add"]
+[ext_resource type="Texture2D" uid="uid://c62xxa730ieeu" path="res://Assets/objects/path/Forest_Path.png" id="105_add"]
 [ext_resource type="Texture2D" uid="uid://2lhxlby8futi" path="res://Assets/Biome/desert/ground_grass.png" id="106_add"]
 [ext_resource type="Texture2D" uid="uid://c3gk0e300q65g" path="res://Assets/Biome/desert/water_coasts.png" id="107_add"]
 [ext_resource type="Texture2D" uid="uid://b5anmkaioiyx8" path="res://Assets/Biome/desert/objects_trees.png" id="108_add"]
@@ -61,6 +61,39 @@
 [ext_resource type="Texture2D" uid="uid://bwlbl7ke07ohc" path="res://Assets/objects/path/Brigth_Stone_Gras_Path.png" id="900_brigth_stone_gras_path"]
 [ext_resource type="Texture2D" uid="uid://ci3qpefshream" path="res://Assets/objects/path/Bright_Stone_Path.png" id="900_bright_stone_path"]
 [ext_resource type="Texture2D" uid="uid://bqydfjs0fmqkp" path="res://Assets/objects/forestg-grasland/Assets_source.png" id="900_gras_assets_source"]
+[ext_resource type="Texture2D" uid="uid://dkh5r0uy008lo" path="res://Assets/Biome/coast/animation/water_detilazation.png" id="701_anim"]
+[ext_resource type="Texture2D" uid="uid://bhbndrn0s5k66" path="res://Assets/Biome/coast/animation/waterfall.png" id="702_anim"]
+[ext_resource type="Texture2D" uid="uid://c2j7qtj31ctr4" path="res://Assets/Biome/cursed/animation/water_detilazation.png" id="703_anim"]
+[ext_resource type="Texture2D" uid="uid://cbk1auvr1ebk3" path="res://Assets/Biome/desert/animation/sand.png" id="704_anim"]
+[ext_resource type="Texture2D" uid="uid://b8p7fqfubaicm" path="res://Assets/Biome/desert/animation/water_detilazation.png" id="705_anim"]
+[ext_resource type="Texture2D" uid="uid://dxi35jbcysrpd" path="res://Assets/Biome/desert/animation/water_detilazation_v2.png" id="706_anim"]
+[ext_resource type="Texture2D" uid="uid://4o3li3hoilhe" path="res://Assets/Biome/dungeon/skellet_dungeon/animation/fountain_animation.png" id="707_anim"]
+[ext_resource type="Texture2D" uid="uid://b3h6v0tu8br5o" path="res://Assets/Biome/dungeon/skellet_dungeon/animation/water_details_animation.png" id="708_anim"]
+[ext_resource type="Texture2D" uid="uid://cj2eiot73im8e" path="res://Assets/Biome/dungeon/skellet_dungeon/animation/waterfalls.png" id="709_anim"]
+[ext_resource type="Texture2D" uid="uid://l6dhv6wabid1" path="res://Assets/Biome/flying/animation/flying_flowers.png" id="710_anim"]
+[ext_resource type="Texture2D" uid="uid://brkempxun2vq3" path="res://Assets/Biome/flying/animation/tree_animated.png" id="711_anim"]
+[ext_resource type="Texture2D" uid="uid://rp1qsmnrgprg" path="res://Assets/Biome/flying/animation/waterfalls.png" id="712_anim"]
+[ext_resource type="Texture2D" uid="uid://dua3wiiv8xota" path="res://Assets/Biome/forest/animation/trees_animation.png" id="713_anim"]
+[ext_resource type="Texture2D" uid="uid://bgw05onwu2cjs" path="res://Assets/Biome/forest/animation/water_detailization1.png" id="714_anim"]
+[ext_resource type="Texture2D" uid="uid://k2nf10vkqmd4" path="res://Assets/Biome/forest/animation/water_lilis.png" id="715_anim"]
+[ext_resource type="Texture2D" uid="uid://ikp5p777u4ix" path="res://Assets/Biome/forest/animation/water_lilis_animation.png" id="716_anim"]
+[ext_resource type="Texture2D" uid="uid://ccn52wckr8d0k" path="res://Assets/Biome/forest/animation/water_v2.png" id="717_anim"]
+[ext_resource type="Texture2D" uid="uid://bq7l1nl0hpsq" path="res://Assets/Biome/grassland/animation/animated_objects_gras.png" id="718_anim"]
+[ext_resource type="Texture2D" uid="uid://byshwvya0nds1" path="res://Assets/Biome/grassland/animation/water_detilazation.png" id="719_anim"]
+[ext_resource type="Texture2D" uid="uid://j1wr5xjaqe4v" path="res://Assets/Biome/grassland/animation/water_v2.png" id="720_anim"]
+[ext_resource type="Texture2D" uid="uid://26c6frgnpfwm" path="res://Assets/Biome/lava_cave/animation/bubbles_source.png" id="721_anim"]
+[ext_resource type="Texture2D" uid="uid://bw5bhk6u0u610" path="res://Assets/Biome/lava_cave/animation/water_detilazation_source.png" id="722_anim"]
+[ext_resource type="Texture2D" uid="uid://bj8kifa61gqf8" path="res://Assets/Biome/lava_cave/animation/water_n_lava_coasts_source.png" id="723_anim"]
+[ext_resource type="Texture2D" uid="uid://dnwjxjx2hpq2n" path="res://Assets/Biome/skeleton/animation/animation1_skellet_trees.png" id="724_anim"]
+[ext_resource type="Texture2D" uid="uid://eg4pku4x8jel" path="res://Assets/Biome/skeleton/animation/water_detilazation.png" id="725_anim"]
+[ext_resource type="Texture2D" uid="uid://c85xr32i864q6" path="res://Assets/Biome/swamp/animation/duckweed.png" id="726_anim"]
+[ext_resource type="Texture2D" uid="uid://3oajfbxt6dmg" path="res://Assets/Biome/swamp/animation/water_detilazation_swamp.png" id="727_anim"]
+[ext_resource type="Texture2D" uid="uid://dixa3fp67orvm" path="res://Assets/Biome/swamp/animation/water_detilazation_v2_swamp.png" id="728_anim"]
+[ext_resource type="Texture2D" uid="uid://bl50b0xquruk6" path="res://Assets/Biome/swamp/animation/water_detilazation_v3_swamp.png" id="729_anim"]
+[ext_resource type="Texture2D" uid="uid://hod75of2opj5" path="res://Assets/Biome/swamp/animation/water_lilis.png" id="730_anim"]
+[ext_resource type="Texture2D" uid="uid://5fwdlju7l8q3" path="res://Assets/Biome/village/farm_house/animation/water_coasts.png" id="731_anim"]
+[ext_resource type="Texture2D" uid="uid://bkg5uj20ora8s" path="res://Assets/Biome/village/fishing_house/animation/water_coasts.png" id="732_anim"]
+[ext_resource type="Texture2D" uid="uid://cdg0l5sqcj7gk" path="res://Assets/Biome/winter/animation/water_detilazation_v3.png" id="733_anim"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_6dhm5"]
 texture = ExtResource("1_ryhao")
@@ -2188,6 +2221,105 @@ texture = ExtResource("900_bright_stone_path")
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_gras_assets_source"]
 texture = ExtResource("900_gras_assets_source")
 
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_anim701"]
+texture = ExtResource("701_anim")
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_anim702"]
+texture = ExtResource("702_anim")
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_anim703"]
+texture = ExtResource("703_anim")
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_anim704"]
+texture = ExtResource("704_anim")
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_anim705"]
+texture = ExtResource("705_anim")
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_anim706"]
+texture = ExtResource("706_anim")
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_anim707"]
+texture = ExtResource("707_anim")
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_anim708"]
+texture = ExtResource("708_anim")
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_anim709"]
+texture = ExtResource("709_anim")
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_anim710"]
+texture = ExtResource("710_anim")
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_anim711"]
+texture = ExtResource("711_anim")
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_anim712"]
+texture = ExtResource("712_anim")
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_anim713"]
+texture = ExtResource("713_anim")
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_anim714"]
+texture = ExtResource("714_anim")
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_anim715"]
+texture = ExtResource("715_anim")
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_anim716"]
+texture = ExtResource("716_anim")
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_anim717"]
+texture = ExtResource("717_anim")
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_anim718"]
+texture = ExtResource("718_anim")
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_anim719"]
+texture = ExtResource("719_anim")
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_anim720"]
+texture = ExtResource("720_anim")
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_anim721"]
+texture = ExtResource("721_anim")
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_anim722"]
+texture = ExtResource("722_anim")
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_anim723"]
+texture = ExtResource("723_anim")
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_anim724"]
+texture = ExtResource("724_anim")
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_anim725"]
+texture = ExtResource("725_anim")
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_anim726"]
+texture = ExtResource("726_anim")
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_anim727"]
+texture = ExtResource("727_anim")
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_anim728"]
+texture = ExtResource("728_anim")
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_anim729"]
+texture = ExtResource("729_anim")
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_anim730"]
+texture = ExtResource("730_anim")
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_anim731"]
+texture = ExtResource("731_anim")
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_anim732"]
+texture = ExtResource("732_anim")
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_anim733"]
+texture = ExtResource("733_anim")
+
 [resource]
 physics_layer_0/collision_layer = 1
 sources/0 = SubResource("TileSetAtlasSource_6dhm5")
@@ -2251,3 +2383,36 @@ sources/57 = SubResource("TileSetAtlasSource_dessert_path")
 sources/58 = SubResource("TileSetAtlasSource_brigth_stone_gras_path")
 sources/59 = SubResource("TileSetAtlasSource_bright_stone_path")
 sources/60 = SubResource("TileSetAtlasSource_gras_assets_source")
+sources/61 = SubResource("TileSetAtlasSource_anim701")
+sources/62 = SubResource("TileSetAtlasSource_anim702")
+sources/63 = SubResource("TileSetAtlasSource_anim703")
+sources/64 = SubResource("TileSetAtlasSource_anim704")
+sources/65 = SubResource("TileSetAtlasSource_anim705")
+sources/66 = SubResource("TileSetAtlasSource_anim706")
+sources/67 = SubResource("TileSetAtlasSource_anim707")
+sources/68 = SubResource("TileSetAtlasSource_anim708")
+sources/69 = SubResource("TileSetAtlasSource_anim709")
+sources/70 = SubResource("TileSetAtlasSource_anim710")
+sources/71 = SubResource("TileSetAtlasSource_anim711")
+sources/72 = SubResource("TileSetAtlasSource_anim712")
+sources/73 = SubResource("TileSetAtlasSource_anim713")
+sources/74 = SubResource("TileSetAtlasSource_anim714")
+sources/75 = SubResource("TileSetAtlasSource_anim715")
+sources/76 = SubResource("TileSetAtlasSource_anim716")
+sources/77 = SubResource("TileSetAtlasSource_anim717")
+sources/78 = SubResource("TileSetAtlasSource_anim718")
+sources/79 = SubResource("TileSetAtlasSource_anim719")
+sources/80 = SubResource("TileSetAtlasSource_anim720")
+sources/81 = SubResource("TileSetAtlasSource_anim721")
+sources/82 = SubResource("TileSetAtlasSource_anim722")
+sources/83 = SubResource("TileSetAtlasSource_anim723")
+sources/84 = SubResource("TileSetAtlasSource_anim724")
+sources/85 = SubResource("TileSetAtlasSource_anim725")
+sources/86 = SubResource("TileSetAtlasSource_anim726")
+sources/87 = SubResource("TileSetAtlasSource_anim727")
+sources/88 = SubResource("TileSetAtlasSource_anim728")
+sources/89 = SubResource("TileSetAtlasSource_anim729")
+sources/90 = SubResource("TileSetAtlasSource_anim730")
+sources/91 = SubResource("TileSetAtlasSource_anim731")
+sources/92 = SubResource("TileSetAtlasSource_anim732")
+sources/93 = SubResource("TileSetAtlasSource_anim733")

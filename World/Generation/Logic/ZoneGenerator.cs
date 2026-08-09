@@ -21,6 +21,11 @@ public partial class ZoneGenerator : Node
     [Export] public bool UseGradientBackground { get; set; } = true;
     [Export] public bool FillGroundTiles { get; set; } = false;
 
+    [ExportGroup("Debug")]
+    [Export] public bool DebugLogs { get; set; } = false;
+
+    private bool _hasGenerated;
+
     [ExportGroup("Seed Options")]
     [Export] public string SeedString { get; set; } = "1337";
 
@@ -41,7 +46,12 @@ public partial class ZoneGenerator : Node
                 coord = WorldManager.WorldToZoneCell(parent2D.Position);
             }
 
-            GenerateZone(GroundLayer, Settings, coord);
+            // Nur wenn die Zone allein geoeffnet wird. Sonst startet der WorldManager
+            // die Generierung mit der richtigen Koordinate - sonst liefe sie doppelt.
+            if (WorldManager.Instance == null)
+            {
+                GenerateZone(GroundLayer, Settings, coord);
+            }
         }
         else if (GroundLayer == null)
         {
@@ -102,6 +112,9 @@ public partial class ZoneGenerator : Node
             return new HashSet<Vector2I>();
         }
 
+        if (_hasGenerated) return new HashSet<Vector2I>();
+        _hasGenerated = true;
+
         if (zoneCoord == Vector2I.Zero)
         {
             Node parent = GetParent();
@@ -119,7 +132,7 @@ public partial class ZoneGenerator : Node
         Vector2I tileDims = GetEffectiveZoneTileSize(zoneCoord);
         ZoneTileSize = tileDims.X;
 
-        GD.Print($"[ZoneGenerator] Generiere Zone {zoneCoord} -> PxGroesse: {WorldManager.GetZoneSize(zoneCoord)}, TileRaster: {tileDims}, Zentrum: {WorldManager.GetZonePosition(zoneCoord)}");
+        if (DebugLogs) GD.Print($"[ZoneGenerator] Generiere Zone {zoneCoord} -> PxGroesse: {WorldManager.GetZoneSize(zoneCoord)}, TileRaster: {tileDims}, Zentrum: {WorldManager.GetZonePosition(zoneCoord)}");
 
         int baseSeed = WorldManager.Instance != null 
             ? WorldManager.Instance.WorldSeed 
@@ -179,7 +192,7 @@ public partial class ZoneGenerator : Node
                 Vector2I cell = new(x, y);
                 if (!reserved.Contains(cell))
                 {
-                    layer.SetCell(cell, 0, groundCoords);
+                    layer.SetCell(cell, settings.GroundSourceId, groundCoords);
                 }
             }
         }
@@ -528,9 +541,9 @@ public partial class ZoneGenerator : Node
             return;
         }
 
-        GD.Print($"[ZoneGenerator LOG] === STARTE FOLIAGE FÜR ZONE {zoneCoord} ===");
-        GD.Print($"[ZoneGenerator LOG] Zone Settings: Temp={settings.Temperature}, Moist={settings.Moisture}, Density={settings.VegetationDensity}");
-        GD.Print($"[ZoneGenerator LOG] Candidates ({validEntries.Count}): " + string.Join(", ", validEntries.Select(e => $"{e.Name}[T:{e.IdealTemperature},M:{e.IdealMoisture},Tile:{e.TileCoords}]")));
+        if (DebugLogs) GD.Print($"[ZoneGenerator LOG] === STARTE FOLIAGE FÜR ZONE {zoneCoord} ===");
+        if (DebugLogs) GD.Print($"[ZoneGenerator LOG] Zone Settings: Temp={settings.Temperature}, Moist={settings.Moisture}, Density={settings.VegetationDensity}");
+        if (DebugLogs) GD.Print($"[ZoneGenerator LOG] Candidates ({validEntries.Count}): " + string.Join(", ", validEntries.Select(e => $"{e.Name}[T:{e.IdealTemperature},M:{e.IdealMoisture},Tile:{e.TileCoords}]")));
 
         FastNoiseLite noise = new FastNoiseLite();
         noise.Seed = zoneSeed;
@@ -578,11 +591,11 @@ public partial class ZoneGenerator : Node
                 if (logCount < 5 && suitableEntries.Count > 0)
                 {
                     logCount++;
-                    GD.Print($"[ZoneGenerator LOG] Zone {zoneCoord} Cell({x},{y}) Pos={cellWorldPos}: Climate=(T:{temp:F2}, M:{moist:F2})");
+                    if (DebugLogs) GD.Print($"[ZoneGenerator LOG] Zone {zoneCoord} Cell({x},{y}) Pos={cellWorldPos}: Climate=(T:{temp:F2}, M:{moist:F2})");
                     foreach (var entry in validEntries)
                     {
                         float s = entry.CalculateSuitability(temp, moist);
-                        GD.Print($"[ZoneGenerator LOG]   -> Entry '{entry.Name}': Suit={s:F3}, Weight={((entry.SpawnWeight > 0 ? entry.SpawnWeight : 0.5f) * s):F3}");
+                        if (DebugLogs) GD.Print($"[ZoneGenerator LOG]   -> Entry '{entry.Name}': Suit={s:F3}, Weight={((entry.SpawnWeight > 0 ? entry.SpawnWeight : 0.5f) * s):F3}");
                     }
                 }
 
@@ -613,10 +626,16 @@ public partial class ZoneGenerator : Node
                     {
                         int radius = selectedEntry.GetClearingTileRadius(groundLayer);
 
-                        if (selectedEntry.TileCoords != new Vector2I(-1, -1) && ySortLayer != null)
+                        if (selectedEntry.TileCoords != new Vector2I(-1, -1))
                         {
-                            ySortLayer.SetCell(cell, selectedEntry.SourceId, selectedEntry.TileCoords);
-                            tileCount++;
+                            // Standard ist die ysort-Layer. Flache Deko kann per TargetLayer
+                            // z.B. auf "detail" gelegt werden, damit sie unter Objekten bleibt.
+                            TileMapLayer target = ResolveTargetLayer(groundLayer, selectedEntry.TargetLayer) ?? ySortLayer;
+                            if (target != null)
+                            {
+                                target.SetCell(cell, selectedEntry.SourceId, selectedEntry.TileCoords);
+                                tileCount++;
+                            }
                         }
                         else if (selectedEntry.PrefabScene != null && parentNode != null && prefabCount < maxPrefabsPerZone)
                         {
@@ -643,7 +662,16 @@ public partial class ZoneGenerator : Node
             }
         }
 
-        GD.Print($"[ZoneGenerator] Foliage beendet für Zone {zoneCoord}: {prefabCount} Prefabs instanziiert, {tileCount} Tiles platziert.");
+        if (DebugLogs) GD.Print($"[ZoneGenerator] Foliage beendet für Zone {zoneCoord}: {prefabCount} Prefabs instanziiert, {tileCount} Tiles platziert.");
+    }
+
+    // Sucht eine Layer per Name in der Zonenszene. Leerer Name -> null (dann greift der Standard).
+    private TileMapLayer ResolveTargetLayer(TileMapLayer groundLayer, string layerName)
+    {
+        if (string.IsNullOrWhiteSpace(layerName)) return null;
+        Node root = groundLayer?.GetParent() ?? GetParent();
+        if (root == null) return null;
+        return root.FindChild(layerName, recursive: true, owned: false) as TileMapLayer;
     }
 
     private TileMapLayer AutoDetectYSortLayer(TileMapLayer groundLayer)
@@ -761,9 +789,10 @@ public partial class ZoneGenerator : Node
         else
         {
             Vector2I pathCoords = settings?.PathTileCoords ?? new Vector2I(1, 0);
+            int pathSource = settings?.PathSourceId ?? 0;
             foreach (var cell in pathTiles)
             {
-                layer.SetCell(cell, 0, pathCoords);
+                layer.SetCell(cell, pathSource, pathCoords);
             }
         }
     }

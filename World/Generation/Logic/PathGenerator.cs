@@ -27,7 +27,7 @@ public static class PathGenerator
         float effectiveRoughness = isHighway ? roughness * 0.4f : roughness * 0.8f;
 
         List<Vector2> splinePoints = GenerateSplinePoints(start, end, seed, effectiveRoughness, obstacles, bounds);
-        RasterizeSplinePath(pathCells, splinePoints, effectiveWidth, seed, isHighway);
+        RasterizeSplinePath(pathCells, splinePoints, effectiveWidth, seed, isHighway, bounds);
 
         if (layer == null || pathCells.Count <= 0) return pathCells;
         var hasTerrains = layer.TileSet != null && layer.TileSet.GetTerrainSetsCount() > terrainSet;
@@ -56,11 +56,11 @@ public static class PathGenerator
             {
                 if (hasDetails && detailNoise.GetNoise2D(cell.X * 3, cell.Y * 3) > 0.45f)
                 {
-                    layer.SetCell(cell, 0, detailCoords);
+                    layer.SetCell(cell, settings?.DetailSourceId ?? 0, detailCoords);
                 }
                 else
                 {
-                    layer.SetCell(cell, 0, pathCoords);
+                    layer.SetCell(cell, settings?.PathSourceId ?? 0, pathCoords);
                 }
             }
         }
@@ -119,7 +119,8 @@ public static class PathGenerator
         List<Vector2> points,
         int width,
         int seed,
-        bool isHighway)
+        bool isHighway,
+        Rect2I? bounds = null)
     {
         if (points == null || points.Count == 0) return;
 
@@ -149,6 +150,7 @@ public static class PathGenerator
                     for (int dy = -rInt; dy <= rInt; dy++)
                     {
                         Vector2I cell = centerCell + new Vector2I(dx, dy);
+                        if (bounds.HasValue && !bounds.Value.HasPoint(cell)) continue;
                         float distSq = dx * dx + dy * dy;
 
                         // Core solid path disk

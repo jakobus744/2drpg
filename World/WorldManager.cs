@@ -68,6 +68,16 @@ public partial class WorldManager : Node2D
     // Quadriert, weil mit DistanceSquaredTo gerechnet wird.
     public const float ClimateBlendRadiusPx = 50f;
 
+    // Die Caches sind static und ueberleben einen Szenenwechsel. Ohne Ruecksetzen
+    // steckt nach Weltwechsel oder Neustart der alte Weltzustand drin.
+    public static void ResetStaticCaches()
+    {
+        _zoneSizes.Clear();
+        _zonePositions.Clear();
+        _zoneSettings.Clear();
+        _peerLoadedZones.Clear();
+    }
+
     public static (float Temperature, float Moisture) GetClimateAtWorldPosition(Vector2 worldPos)
     {
         Vector2I centerCell = WorldToZoneCell(worldPos);
@@ -81,8 +91,11 @@ public partial class WorldManager : Node2D
             {
                 Vector2I coord = centerCell + new Vector2I(dx, dy);
                 ZoneSettings settings = GetZoneSettings(coord);
-                float temp = settings != null ? settings.Temperature : 0.5f;
-                float moist = settings != null ? settings.Moisture : 0.5f;
+                // Nicht vorhandene Nachbarn ueberspringen, sonst zieht am Kartenrand
+                // ein erfundenes 0.5/0.5 das Klima zur Mitte.
+                if (settings == null) continue;
+                float temp = settings.Temperature;
+                float moist = settings.Moisture;
 
                 Vector2 centerPos = GetZonePosition(coord);
                 float distSq = worldPos.DistanceSquaredTo(centerPos);
@@ -253,6 +266,10 @@ public partial class WorldManager : Node2D
 
     public override void _Ready()
     {
+        // Alten Weltzustand wegwerfen, sonst schleppt ein Neustart die Caches der
+        // vorherigen Welt mit (Zonengroessen, Positionen, Settings, Peer-Zuordnung).
+        ResetStaticCaches();
+
         Instance = this;
         // Registry aus Export-Array ODER (wenn leer) aus dem Standard-Layout bauen
         if (Zones.Length > 0)

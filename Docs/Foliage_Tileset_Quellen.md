@@ -69,5 +69,38 @@ Eine `FoliageEntry` verweist ueber **SourceId** + **TileCoords** in `World/Folia
 | 58 | Wege (global) | `Assets/objects/path/Brigth_Stone_Gras_Path.png` |
 | 59 | Wege (global) | `Assets/objects/path/Bright_Stone_Path.png` |
 | 60 | Objekte (global) | `Assets/objects/forestg-grasland/Assets_source.png` |
+| 61 | coast | `Assets/Biome/coast/animation/water_detilazation.png` |
+| 62 | coast | `Assets/Biome/coast/animation/waterfall.png` |
+| 63 | cursed | `Assets/Biome/cursed/animation/water_detilazation.png` |
+| 64 | desert | `Assets/Biome/desert/animation/sand.png` |
+| 65 | desert | `Assets/Biome/desert/animation/water_detilazation.png` |
+| 66 | desert | `Assets/Biome/desert/animation/water_detilazation_v2.png` |
+| 67 | dungeon | `Assets/Biome/dungeon/skellet_dungeon/animation/fountain_animation.png` |
+| 68 | dungeon | `Assets/Biome/dungeon/skellet_dungeon/animation/water_details_animation.png` |
+| 69 | dungeon | `Assets/Biome/dungeon/skellet_dungeon/animation/waterfalls.png` |
+| 70 | flying | `Assets/Biome/flying/animation/flying_flowers.png` |
+| 71 | flying | `Assets/Biome/flying/animation/tree_animated.png` |
+| 72 | flying | `Assets/Biome/flying/animation/waterfalls.png` |
+| 73 | forest | `Assets/Biome/forest/animation/trees_animation.png` |
+| 74 | forest | `Assets/Biome/forest/animation/water_detailization1.png` |
+| 75 | forest | `Assets/Biome/forest/animation/water_lilis.png` |
+| 76 | forest | `Assets/Biome/forest/animation/water_lilis_animation.png` |
+| 77 | forest | `Assets/Biome/forest/animation/water_v2.png` |
+| 78 | grassland | `Assets/Biome/grassland/animation/animated_objects_gras.png` |
+| 79 | grassland | `Assets/Biome/grassland/animation/water_detilazation.png` |
+| 80 | grassland | `Assets/Biome/grassland/animation/water_v2.png` |
+| 81 | lava_cave | `Assets/Biome/lava_cave/animation/bubbles_source.png` |
+| 82 | lava_cave | `Assets/Biome/lava_cave/animation/water_detilazation_source.png` |
+| 83 | lava_cave | `Assets/Biome/lava_cave/animation/water_n_lava_coasts_source.png` |
+| 84 | skeleton | `Assets/Biome/skeleton/animation/animation1_skellet_trees.png` |
+| 85 | skeleton | `Assets/Biome/skeleton/animation/water_detilazation.png` |
+| 86 | swamp | `Assets/Biome/swamp/animation/duckweed.png` |
+| 87 | swamp | `Assets/Biome/swamp/animation/water_detilazation_swamp.png` |
+| 88 | swamp | `Assets/Biome/swamp/animation/water_detilazation_v2_swamp.png` |
+| 89 | swamp | `Assets/Biome/swamp/animation/water_detilazation_v3_swamp.png` |
+| 90 | swamp | `Assets/Biome/swamp/animation/water_lilis.png` |
+| 91 | village | `Assets/Biome/village/farm_house/animation/water_coasts.png` |
+| 92 | village | `Assets/Biome/village/fishing_house/animation/water_coasts.png` |
+| 93 | winter | `Assets/Biome/winter/animation/water_detilazation_v3.png` |
 
-Quellen gesamt: 61 - Stand: 2026-08-09
+Quellen gesamt: 94 - Stand: 2026-08-09

@@ -6,9 +6,17 @@ namespace RPG2d.World.Generation.Data;
 public partial class FoliageEntry : Resource
 {
     [Export] public string Name { get; set; } = "Tree";
+
+    // Grobe Einordnung, rein zur Orientierung im Editor. Beeinflusst die Generierung nicht.
+    [Export] public string Category { get; set; } = "";
+
     [Export] public PackedScene PrefabScene { get; set; }
     [Export] public int SourceId { get; set; } = 0;
     [Export] public Vector2I TileCoords { get; set; } = new(-1, -1);
+
+    // Name der Ziel-Layer in der Zonenszene. Leer = ysort (Standard fuer Objekte).
+    // Fuer flache Deko wie Blumen z.B. "detail" eintragen.
+    [Export] public string TargetLayer { get; set; } = "";
 
     [Export(PropertyHint.Range, "0,1")] public float SpawnWeight { get; set; } = 0.5f;
     [Export(PropertyHint.Range, "0,1")] public float MinNoiseThreshold { get; set; } = 0.2f;
