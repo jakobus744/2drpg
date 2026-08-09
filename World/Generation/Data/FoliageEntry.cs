@@ -2,6 +2,14 @@ using Godot;
 
 namespace RPG2d.World.Generation.Data;
 
+public enum FoliageTargetLayer
+{
+    YSort,
+    Detail,
+    Water,
+    Overlay
+}
+
 [GlobalClass]
 public partial class FoliageEntry : Resource
 {
@@ -14,9 +22,9 @@ public partial class FoliageEntry : Resource
     [Export] public int SourceId { get; set; } = 0;
     [Export] public Vector2I TileCoords { get; set; } = new(-1, -1);
 
-    // Name der Ziel-Layer in der Zonenszene. Leer = ysort (Standard fuer Objekte).
-    // Fuer flache Deko wie Blumen z.B. "detail" eintragen.
-    [Export] public string TargetLayer { get; set; } = "";
+    // Bestimmt, auf welcher TileMapLayer die Kachel landet.
+    // YSort ist fuer hohe Objekte, Detail fuer flache Deko wie Gras und Blumen.
+    [Export] public FoliageTargetLayer TargetLayer { get; set; } = FoliageTargetLayer.YSort;
 
     [Export(PropertyHint.Range, "0,1")] public float SpawnWeight { get; set; } = 0.5f;
     [Export(PropertyHint.Range, "0,1")] public float MinNoiseThreshold { get; set; } = 0.2f;
@@ -95,5 +103,4 @@ public partial class FoliageEntry : Resource
         return _cachedTileRadius;
     }
 }
-
 

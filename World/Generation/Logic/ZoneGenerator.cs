@@ -131,6 +131,7 @@ public partial class ZoneGenerator : Node
 
         Vector2I tileDims = GetEffectiveZoneTileSize(zoneCoord);
         ZoneTileSize = tileDims.X;
+        Rect2I zoneBounds = GetZoneTileBounds(tileDims);
 
         if (DebugLogs) GD.Print($"[ZoneGenerator] Generiere Zone {zoneCoord} -> PxGroesse: {WorldManager.GetZoneSize(zoneCoord)}, TileRaster: {tileDims}, Zentrum: {WorldManager.GetZonePosition(zoneCoord)}");
 
@@ -148,15 +149,15 @@ public partial class ZoneGenerator : Node
         HashSet<Vector2I> reservedCells = new HashSet<Vector2I>();
 
         ScanHandPlacedTiles(GroundLayer, reservedCells);
-        var (borderWaypoints, internalWaypoints) = CollectWaypoints(GroundLayer, Settings, reservedCells, zoneCoord, tileDims);
+        var (borderWaypoints, internalWaypoints) = CollectWaypoints(GroundLayer, Settings, reservedCells, zoneCoord, zoneBounds);
 
         if (FillGroundTiles)
         {
-            FillGround(GroundLayer, Settings, reservedCells, tileDims);
+            FillGround(GroundLayer, Settings, reservedCells, zoneBounds);
         }
 
-        GeneratePaths(GroundLayer, Settings, borderWaypoints, internalWaypoints, reservedCells, zoneSeed, tileDims);
-        GenerateFoliage(GroundLayer, Settings, reservedCells, zoneSeed, tileDims, zoneCoord);
+        GeneratePaths(GroundLayer, Settings, borderWaypoints, internalWaypoints, reservedCells, zoneSeed, zoneBounds);
+        GenerateFoliage(GroundLayer, Settings, reservedCells, zoneSeed, zoneBounds, zoneCoord);
 
         return reservedCells;
     }
@@ -177,17 +178,22 @@ public partial class ZoneGenerator : Node
         bg.Setup(Settings, zoneSize, zoneCoord, UseGradientBackground);
     }
 
-    private void FillGround(TileMapLayer layer, ZoneSettings settings, HashSet<Vector2I> reserved, Vector2I tileDims)
+    private static Rect2I GetZoneTileBounds(Vector2I tileDims)
+    {
+        return new Rect2I(-tileDims.X / 2, -tileDims.Y / 2, tileDims.X, tileDims.Y);
+    }
+
+    private void FillGround(TileMapLayer layer, ZoneSettings settings, HashSet<Vector2I> reserved, Rect2I bounds)
     {
         if (layer == null || settings == null) return;
 
-        int halfX = tileDims.X / 2;
-        int halfY = tileDims.Y / 2;
         Vector2I groundCoords = settings.GroundTileCoords;
+        int endX = bounds.Position.X + bounds.Size.X;
+        int endY = bounds.Position.Y + bounds.Size.Y;
 
-        for (int x = -halfX; x <= halfX; x++)
+        for (int x = bounds.Position.X; x < endX; x++)
         {
-            for (int y = -halfY; y <= halfY; y++)
+            for (int y = bounds.Position.Y; y < endY; y++)
             {
                 Vector2I cell = new(x, y);
                 if (!reserved.Contains(cell))
@@ -200,12 +206,14 @@ public partial class ZoneGenerator : Node
 
 
     private (List<Vector2I> BorderWaypoints, List<Vector2I> InternalWaypoints) CollectWaypoints(
-        TileMapLayer layer, ZoneSettings settings, HashSet<Vector2I> reserved, Vector2I zoneCoord, Vector2I tileDims)
+        TileMapLayer layer, ZoneSettings settings, HashSet<Vector2I> reserved, Vector2I zoneCoord, Rect2I bounds)
     {
         var borderWaypoints = new List<Vector2I>();
         var internalWaypoints = new List<Vector2I>();
-        int halfX = tileDims.X / 2;
-        int halfY = tileDims.Y / 2;
+        int minX = bounds.Position.X;
+        int minY = bounds.Position.Y;
+        int maxX = minX + bounds.Size.X - 1;
+        int maxY = minY + bounds.Size.Y - 1;
 
         var markerWaypoints = new List<Vector2I>();
         Node rootNode = GetParent();
@@ -214,7 +222,7 @@ public partial class ZoneGenerator : Node
             FindMarker2DWaypoints(rootNode, layer, markerWaypoints);
         }
 
-        internalWaypoints.AddRange(markerWaypoints);
+        internalWaypoints.AddRange(markerWaypoints.Where(bounds.HasPoint));
         internalWaypoints.Add(Vector2I.Zero);
 
         if (ConnectToZoneBorders)
@@ -226,20 +234,20 @@ public partial class ZoneGenerator : Node
             int margin = 8;
 
             int seedNorth = SeedUtils.DeriveEdgeSeed(baseSeed, zoneCoord, zoneCoord + Vector2I.Up);
-            int offsetNorth = SeedUtils.GetSeedOffset(seedNorth, margin, halfX);
-            borderWaypoints.Add(new Vector2I(offsetNorth, -halfY));
+            int offsetNorth = SeedUtils.GetSeedOffset(seedNorth, margin, minX, maxX);
+            borderWaypoints.Add(new Vector2I(offsetNorth, minY));
 
             int seedSouth = SeedUtils.DeriveEdgeSeed(baseSeed, zoneCoord, zoneCoord + Vector2I.Down);
-            int offsetSouth = SeedUtils.GetSeedOffset(seedSouth, margin, halfX);
-            borderWaypoints.Add(new Vector2I(offsetSouth, halfY));
+            int offsetSouth = SeedUtils.GetSeedOffset(seedSouth, margin, minX, maxX);
+            borderWaypoints.Add(new Vector2I(offsetSouth, maxY));
 
             int seedWest = SeedUtils.DeriveEdgeSeed(baseSeed, zoneCoord, zoneCoord + Vector2I.Left);
-            int offsetWest = SeedUtils.GetSeedOffset(seedWest, margin, halfY);
-            borderWaypoints.Add(new Vector2I(-halfX, offsetWest));
+            int offsetWest = SeedUtils.GetSeedOffset(seedWest, margin, minY, maxY);
+            borderWaypoints.Add(new Vector2I(minX, offsetWest));
 
             int seedEast = SeedUtils.DeriveEdgeSeed(baseSeed, zoneCoord, zoneCoord + Vector2I.Right);
-            int offsetEast = SeedUtils.GetSeedOffset(seedEast, margin, halfY);
-            borderWaypoints.Add(new Vector2I(halfX, offsetEast));
+            int offsetEast = SeedUtils.GetSeedOffset(seedEast, margin, minY, maxY);
+            borderWaypoints.Add(new Vector2I(maxX, offsetEast));
         }
 
         if (settings?.PossibleLandmarks != null)
@@ -313,10 +321,10 @@ public partial class ZoneGenerator : Node
         List<Vector2I> internalWaypoints,
         HashSet<Vector2I> reserved,
         int zoneSeed,
-        Vector2I tileDims)
+        Rect2I zoneBounds)
     {
         var allPathTiles = new HashSet<Vector2I>();
-        List<(Vector2I Start, Vector2I End, bool IsHighway)> edges = BuildMainHighwayConnections(borderWaypoints, zoneSeed, tileDims);
+        List<(Vector2I Start, Vector2I End, bool IsHighway)> edges = BuildMainHighwayConnections(borderWaypoints, zoneSeed, zoneBounds);
 
         // Connect internal markers to the nearest point on existing highway segments
         foreach (var internalWp in internalWaypoints)
@@ -354,10 +362,6 @@ public partial class ZoneGenerator : Node
             }
         }
 
-        int halfZoneX = tileDims.X / 2;
-        int halfZoneY = tileDims.Y / 2;
-        Rect2I zoneBounds = new Rect2I(-halfZoneX, -halfZoneY, tileDims.X, tileDims.Y);
-
         foreach (var edge in edges)
         {
             HashSet<Vector2I> pathTiles = PathGenerator.ConnectWaypoints(
@@ -370,8 +374,8 @@ public partial class ZoneGenerator : Node
             allPathTiles.UnionWith(pathTiles);
         }
 
-        BuildCrossroadPlazas(allPathTiles, edges, reserved);
-        MergeClosePathTiles(allPathTiles);
+        BuildCrossroadPlazas(allPathTiles, edges, reserved, zoneBounds);
+        MergeClosePathTiles(allPathTiles, zoneBounds);
         ApplyPathTilesToLayer(layer, settings, allPathTiles);
         ClearObstaclesFromPath(layer, allPathTiles);
 
@@ -382,13 +386,18 @@ public partial class ZoneGenerator : Node
             {
                 for (int dy = -pathBufferMargin; dy <= pathBufferMargin; dy++)
                 {
-                    reserved.Add(pathTile + new Vector2I(dx, dy));
+                    Vector2I bufferedCell = pathTile + new Vector2I(dx, dy);
+                    if (zoneBounds.HasPoint(bufferedCell)) reserved.Add(bufferedCell);
                 }
             }
         }
     }
 
-    private void BuildCrossroadPlazas(HashSet<Vector2I> pathTiles, List<(Vector2I Start, Vector2I End, bool IsHighway)> edges, HashSet<Vector2I> reserved)
+    private void BuildCrossroadPlazas(
+        HashSet<Vector2I> pathTiles,
+        List<(Vector2I Start, Vector2I End, bool IsHighway)> edges,
+        HashSet<Vector2I> reserved,
+        Rect2I bounds)
     {
         var nodeDegrees = new Dictionary<Vector2I, int>();
         foreach (var edge in edges)
@@ -407,6 +416,7 @@ public partial class ZoneGenerator : Node
                     for (int dy = -plazaRadius; dy <= plazaRadius; dy++)
                     {
                         Vector2I plazaCell = waypoint + new Vector2I(dx, dy);
+                        if (!bounds.HasPoint(plazaCell)) continue;
                         if (reserved != null && reserved.Contains(plazaCell)) continue;
                         if (dx * dx + dy * dy <= plazaRadius * plazaRadius + 1)
                         {
@@ -418,18 +428,23 @@ public partial class ZoneGenerator : Node
         }
     }
 
-    private List<(Vector2I Start, Vector2I End, bool IsHighway)> BuildMainHighwayConnections(List<Vector2I> borderWaypoints, int zoneSeed, Vector2I tileDims)
+    private List<(Vector2I Start, Vector2I End, bool IsHighway)> BuildMainHighwayConnections(
+        List<Vector2I> borderWaypoints,
+        int zoneSeed,
+        Rect2I bounds)
     {
         var edges = new List<(Vector2I Start, Vector2I End, bool IsHighway)>();
         if (borderWaypoints.Count < 2) return edges;
 
-        int halfX = tileDims.X / 2;
-        int halfY = tileDims.Y / 2;
+        int minX = bounds.Position.X;
+        int minY = bounds.Position.Y;
+        int maxX = minX + bounds.Size.X - 1;
+        int maxY = minY + bounds.Size.Y - 1;
 
-        Vector2I? north = borderWaypoints.Find(p => p.Y <= -halfY + 2);
-        Vector2I? south = borderWaypoints.Find(p => p.Y >= halfY - 2);
-        Vector2I? west  = borderWaypoints.Find(p => p.X <= -halfX + 2);
-        Vector2I? east  = borderWaypoints.Find(p => p.X >= halfX - 2);
+        Vector2I? north = borderWaypoints.Find(p => p.Y <= minY + 2);
+        Vector2I? south = borderWaypoints.Find(p => p.Y >= maxY - 2);
+        Vector2I? west  = borderWaypoints.Find(p => p.X <= minX + 2);
+        Vector2I? east  = borderWaypoints.Find(p => p.X >= maxX - 2);
 
         var paired = new HashSet<Vector2I>();
 
@@ -514,7 +529,7 @@ public partial class ZoneGenerator : Node
         }
     }
 
-    private void GenerateFoliage(TileMapLayer groundLayer, ZoneSettings settings, HashSet<Vector2I> reserved, int zoneSeed, Vector2I tileDims, Vector2I zoneCoord)
+    private void GenerateFoliage(TileMapLayer groundLayer, ZoneSettings settings, HashSet<Vector2I> reserved, int zoneSeed, Rect2I bounds, Vector2I zoneCoord)
     {
         if (settings == null || settings.VegetationDensity <= 0f)
         {
@@ -550,17 +565,17 @@ public partial class ZoneGenerator : Node
         float noiseScale = settings.VegetationNoiseScale > 0 ? settings.VegetationNoiseScale : 0.05f;
         noise.Frequency = noiseScale;
 
-        int halfX = tileDims.X / 2;
-        int halfY = tileDims.Y / 2;
+        int endX = bounds.Position.X + bounds.Size.X;
+        int endY = bounds.Position.Y + bounds.Size.Y;
         int prefabCount = 0;
         int tileCount = 0;
         int maxPrefabsPerZone = 250;
         Vector2 zoneCenterWorldPos = WorldManager.GetZonePosition(zoneCoord);
         int logCount = 0;
 
-        for (int x = -halfX; x <= halfX; x += 2)
+        for (int x = bounds.Position.X; x < endX; x += 2)
         {
-            for (int y = -halfY; y <= halfY; y += 2)
+            for (int y = bounds.Position.Y; y < endY; y += 2)
             {
                 Vector2I cell = new(x, y);
                 if (reserved.Contains(cell)) continue;
@@ -628,13 +643,15 @@ public partial class ZoneGenerator : Node
 
                         if (selectedEntry.TileCoords != new Vector2I(-1, -1))
                         {
-                            // Standard ist die ysort-Layer. Flache Deko kann per TargetLayer
-                            // z.B. auf "detail" gelegt werden, damit sie unter Objekten bleibt.
-                            TileMapLayer target = ResolveTargetLayer(groundLayer, selectedEntry.TargetLayer) ?? ySortLayer;
+                            TileMapLayer target = ResolveTargetLayer(groundLayer, selectedEntry.TargetLayer);
                             if (target != null)
                             {
                                 target.SetCell(cell, selectedEntry.SourceId, selectedEntry.TileCoords);
                                 tileCount++;
+                            }
+                            else
+                            {
+                                continue;
                             }
                         }
                         else if (selectedEntry.PrefabScene != null && parentNode != null && prefabCount < maxPrefabsPerZone)
@@ -665,24 +682,46 @@ public partial class ZoneGenerator : Node
         if (DebugLogs) GD.Print($"[ZoneGenerator] Foliage beendet für Zone {zoneCoord}: {prefabCount} Prefabs instanziiert, {tileCount} Tiles platziert.");
     }
 
-    // Sucht eine Layer per Name in der Zonenszene. Leerer Name -> null (dann greift der Standard).
-    private TileMapLayer ResolveTargetLayer(TileMapLayer groundLayer, string layerName)
+    private TileMapLayer ResolveTargetLayer(TileMapLayer groundLayer, FoliageTargetLayer targetLayer)
     {
-        if (string.IsNullOrWhiteSpace(layerName)) return null;
-        Node root = groundLayer?.GetParent() ?? GetParent();
+        Node root = GetParent() ?? groundLayer?.GetParent();
         if (root == null) return null;
-        return root.FindChild(layerName, recursive: true, owned: false) as TileMapLayer;
+
+        string[] names = targetLayer switch
+        {
+            FoliageTargetLayer.YSort => new[] { "ysort", "Y-sort", "Y-Sort" },
+            FoliageTargetLayer.Detail => new[] { "detail", "Detail" },
+            FoliageTargetLayer.Water => new[] { "water", "Water" },
+            FoliageTargetLayer.Overlay => new[] { "overlay", "Overlay" },
+            _ => System.Array.Empty<string>()
+        };
+
+        foreach (string name in names)
+        {
+            if (root.FindChild(name, recursive: true, owned: false) is TileMapLayer layer)
+            {
+                return layer;
+            }
+        }
+
+        GD.PrintErr($"[ZoneGenerator] Ziel-Layer '{targetLayer}' fehlt in Zone '{root.Name}'. Tile wird nicht platziert.");
+        return null;
     }
 
     private TileMapLayer AutoDetectYSortLayer(TileMapLayer groundLayer)
     {
-        Node parent = groundLayer?.GetParent() ?? GetParent();
+        Node parent = GetParent() ?? groundLayer?.GetParent();
         if (parent == null) return null;
 
-        var found = parent.FindChild("Y-sort", recursive: true, owned: false) as TileMapLayer;
-        if (found != null) return found;
+        foreach (string name in new[] { "ysort", "Y-sort", "Y-Sort" })
+        {
+            if (parent.FindChild(name, recursive: true, owned: false) is TileMapLayer layer)
+            {
+                return layer;
+            }
+        }
 
-        return parent.FindChild("ysort", recursive: true, owned: false) as TileMapLayer;
+        return null;
     }
 
     private List<(Vector2I Start, Vector2I End, bool IsHighway)> BuildPathConnections(List<Vector2I> waypoints, float maxProximityDist)
@@ -747,7 +786,7 @@ public partial class ZoneGenerator : Node
         return edges;
     }
 
-    private void MergeClosePathTiles(HashSet<Vector2I> pathTiles)
+    private void MergeClosePathTiles(HashSet<Vector2I> pathTiles, Rect2I bounds)
     {
         var gapsToFill = new List<Vector2I>();
         Vector2I[] dirs = { Vector2I.Up, Vector2I.Down, Vector2I.Left, Vector2I.Right };
@@ -759,7 +798,7 @@ public partial class ZoneGenerator : Node
                 Vector2I target = cell + dir * 2;
                 Vector2I gap = cell + dir;
 
-                if (pathTiles.Contains(target) && !pathTiles.Contains(gap))
+                if (bounds.HasPoint(gap) && pathTiles.Contains(target) && !pathTiles.Contains(gap))
                 {
                     gapsToFill.Add(gap);
                 }

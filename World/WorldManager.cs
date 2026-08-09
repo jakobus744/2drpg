@@ -305,6 +305,14 @@ public partial class WorldManager : Node2D
         }
     }
 
+    public override void _ExitTree()
+    {
+        if (Instance == this)
+        {
+            Instance = null;
+        }
+    }
+
     private void CalculateLayoutPositions()
     {
         var colWidths = new Dictionary<int, float>();
@@ -365,23 +373,27 @@ public partial class WorldManager : Node2D
         if (tempNode == null) return new Vector2(DefaultFallbackZoneSize, DefaultFallbackZoneSize);
 
         Vector2 detectedSize = Vector2.Zero;
+        var generator = tempNode.FindChild("ZoneGenerator", recursive: true) as ZoneGenerator;
+
+        // Alle Klima- und Foliage-Settings muessen vor der ersten Zonengenerierung
+        // bekannt sein. Sonst haengt der Biomuebergang von der Ladereihenfolge ab.
+        if (generator?.Settings != null)
+        {
+            RegisterZoneSettings(coord, generator.Settings);
+        }
 
         if (tempNode.FindChild("ZoneBackground", recursive: true) is ZoneBackground { EffectiveZoneSize: { X: > 0, Y: > 0 } } bg)
         {
             detectedSize = bg.EffectiveZoneSize;
         }
-        else
+        else if (generator != null)
         {
-            if (tempNode.FindChild("ZoneGenerator", recursive: true) is ZoneGenerator gen)
+            if (generator.ZoneTileSize > 0)
             {
-                if (gen.Settings != null) RegisterZoneSettings(coord, gen.Settings);
-                if (gen.ZoneTileSize > 0)
-                {
-                    int tileSize = 16;
-                    if (gen.GroundLayer?.TileSet != null)
-                        tileSize = gen.GroundLayer.TileSet.TileSize.X;
-                    detectedSize = new Vector2(gen.ZoneTileSize * tileSize, gen.ZoneTileSize * tileSize);
-                }
+                int tileSize = 16;
+                if (generator.GroundLayer?.TileSet != null)
+                    tileSize = generator.GroundLayer.TileSet.TileSize.X;
+                detectedSize = new Vector2(generator.ZoneTileSize * tileSize, generator.ZoneTileSize * tileSize);
             }
         }
 
