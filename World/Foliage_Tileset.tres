@@ -55,12 +55,6 @@
 [ext_resource type="Texture2D" uid="uid://2q27d5h06k1q" path="res://Assets/Biome/flying/bridges.png" id="148_add"]
 [ext_resource type="Texture2D" uid="uid://clxnwfor423tb" path="res://Assets/Biome/flying/clouds.png" id="149_add"]
 [ext_resource type="Texture2D" uid="uid://baovg5cw3kb8b" path="res://Assets/Biome/flying/details.png" id="150_add"]
-[ext_resource type="Texture2D" uid="uid://cw1uqdm3tal82" path="res://Assets/objects/path/Stone_Gras_Path.png" id="900_stone_gras_path"]
-[ext_resource type="Texture2D" uid="uid://bkrcgke65uyid" path="res://Assets/objects/path/Stone_Path.png" id="900_stone_path"]
-[ext_resource type="Texture2D" uid="uid://dwyotiyy4ou0t" path="res://Assets/objects/path/Dessert_Path.png" id="900_dessert_path"]
-[ext_resource type="Texture2D" uid="uid://bwlbl7ke07ohc" path="res://Assets/objects/path/Brigth_Stone_Gras_Path.png" id="900_brigth_stone_gras_path"]
-[ext_resource type="Texture2D" uid="uid://ci3qpefshream" path="res://Assets/objects/path/Bright_Stone_Path.png" id="900_bright_stone_path"]
-[ext_resource type="Texture2D" uid="uid://bqydfjs0fmqkp" path="res://Assets/objects/forestg-grasland/Assets_source.png" id="900_gras_assets_source"]
 [ext_resource type="Texture2D" uid="uid://dkh5r0uy008lo" path="res://Assets/Biome/coast/animation/water_detilazation.png" id="701_anim"]
 [ext_resource type="Texture2D" uid="uid://bhbndrn0s5k66" path="res://Assets/Biome/coast/animation/waterfall.png" id="702_anim"]
 [ext_resource type="Texture2D" uid="uid://c2j7qtj31ctr4" path="res://Assets/Biome/cursed/animation/water_detilazation.png" id="703_anim"]
@@ -94,6 +88,12 @@
 [ext_resource type="Texture2D" uid="uid://5fwdlju7l8q3" path="res://Assets/Biome/village/farm_house/animation/water_coasts.png" id="731_anim"]
 [ext_resource type="Texture2D" uid="uid://bkg5uj20ora8s" path="res://Assets/Biome/village/fishing_house/animation/water_coasts.png" id="732_anim"]
 [ext_resource type="Texture2D" uid="uid://cdg0l5sqcj7gk" path="res://Assets/Biome/winter/animation/water_detilazation_v3.png" id="733_anim"]
+[ext_resource type="Texture2D" uid="uid://ci3qpefshream" path="res://Assets/objects/path/Bright_Stone_Path.png" id="900_bright_stone_path"]
+[ext_resource type="Texture2D" uid="uid://bwlbl7ke07ohc" path="res://Assets/objects/path/Brigth_Stone_Gras_Path.png" id="900_brigth_stone_gras_path"]
+[ext_resource type="Texture2D" uid="uid://dwyotiyy4ou0t" path="res://Assets/objects/path/Dessert_Path.png" id="900_dessert_path"]
+[ext_resource type="Texture2D" uid="uid://bqydfjs0fmqkp" path="res://Assets/objects/forestg-grasland/Assets_source.png" id="900_gras_assets_source"]
+[ext_resource type="Texture2D" uid="uid://cw1uqdm3tal82" path="res://Assets/objects/path/Stone_Gras_Path.png" id="900_stone_gras_path"]
+[ext_resource type="Texture2D" uid="uid://bkrcgke65uyid" path="res://Assets/objects/path/Stone_Path.png" id="900_stone_path"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_6dhm5"]
 texture = ExtResource("1_ryhao")
@@ -613,6 +613,36 @@ texture = ExtResource("2_bb3cw")
 10:4/0 = 0
 10:4/0/y_sort_origin = -3
 
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_add106"]
+texture = ExtResource("106_add")
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_add107"]
+texture = ExtResource("107_add")
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_add108"]
+texture = ExtResource("108_add")
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_add109"]
+texture = ExtResource("109_add")
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_add110"]
+texture = ExtResource("110_add")
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_add111"]
+texture = ExtResource("111_add")
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_add112"]
+texture = ExtResource("112_add")
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_add113"]
+texture = ExtResource("113_add")
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_add114"]
+texture = ExtResource("114_add")
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_add115"]
+texture = ExtResource("115_add")
+
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_cbd3l"]
 texture = ExtResource("3_q50f5")
 2:0/size_in_atlas = Vector2i(2, 3)
@@ -721,6 +751,36 @@ texture = ExtResource("3_q50f5")
 7:12/size_in_atlas = Vector2i(2, 2)
 7:12/0 = 0
 7:12/0/y_sort_origin = -12
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_add116"]
+texture = ExtResource("116_add")
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_add117"]
+texture = ExtResource("117_add")
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_add118"]
+texture = ExtResource("118_add")
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_add119"]
+texture = ExtResource("119_add")
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_add120"]
+texture = ExtResource("120_add")
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_add121"]
+texture = ExtResource("121_add")
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_add122"]
+texture = ExtResource("122_add")
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_add123"]
+texture = ExtResource("123_add")
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_add124"]
+texture = ExtResource("124_add")
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_add125"]
+texture = ExtResource("125_add")
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_tqjdn"]
 texture = ExtResource("4_4frnj")
@@ -1155,6 +1215,36 @@ texture = ExtResource("4_4frnj")
 16:22/0 = 0
 17:22/0 = 0
 18:22/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_add126"]
+texture = ExtResource("126_add")
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_add127"]
+texture = ExtResource("127_add")
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_add128"]
+texture = ExtResource("128_add")
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_add129"]
+texture = ExtResource("129_add")
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_add130"]
+texture = ExtResource("130_add")
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_add131"]
+texture = ExtResource("131_add")
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_add132"]
+texture = ExtResource("132_add")
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_add133"]
+texture = ExtResource("133_add")
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_add134"]
+texture = ExtResource("134_add")
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_add135"]
+texture = ExtResource("135_add")
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_q50f5"]
 texture = ExtResource("5_bb3cw")
@@ -2053,111 +2143,6 @@ texture = ExtResource("5_bb3cw")
 8:22/0 = 0
 9:22/0 = 0
 
-[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_add101"]
-texture = ExtResource("101_add")
-
-[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_add102"]
-texture = ExtResource("102_add")
-
-[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_add103"]
-texture = ExtResource("103_add")
-
-[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_add104"]
-texture = ExtResource("104_add")
-
-[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_add105"]
-texture = ExtResource("105_add")
-
-[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_add106"]
-texture = ExtResource("106_add")
-
-[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_add107"]
-texture = ExtResource("107_add")
-
-[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_add108"]
-texture = ExtResource("108_add")
-
-[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_add109"]
-texture = ExtResource("109_add")
-
-[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_add110"]
-texture = ExtResource("110_add")
-
-[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_add111"]
-texture = ExtResource("111_add")
-
-[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_add112"]
-texture = ExtResource("112_add")
-
-[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_add113"]
-texture = ExtResource("113_add")
-
-[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_add114"]
-texture = ExtResource("114_add")
-
-[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_add115"]
-texture = ExtResource("115_add")
-
-[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_add116"]
-texture = ExtResource("116_add")
-
-[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_add117"]
-texture = ExtResource("117_add")
-
-[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_add118"]
-texture = ExtResource("118_add")
-
-[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_add119"]
-texture = ExtResource("119_add")
-
-[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_add120"]
-texture = ExtResource("120_add")
-
-[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_add121"]
-texture = ExtResource("121_add")
-
-[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_add122"]
-texture = ExtResource("122_add")
-
-[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_add123"]
-texture = ExtResource("123_add")
-
-[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_add124"]
-texture = ExtResource("124_add")
-
-[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_add125"]
-texture = ExtResource("125_add")
-
-[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_add126"]
-texture = ExtResource("126_add")
-
-[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_add127"]
-texture = ExtResource("127_add")
-
-[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_add128"]
-texture = ExtResource("128_add")
-
-[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_add129"]
-texture = ExtResource("129_add")
-
-[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_add130"]
-texture = ExtResource("130_add")
-
-[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_add131"]
-texture = ExtResource("131_add")
-
-[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_add132"]
-texture = ExtResource("132_add")
-
-[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_add133"]
-texture = ExtResource("133_add")
-
-[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_add134"]
-texture = ExtResource("134_add")
-
-[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_add135"]
-texture = ExtResource("135_add")
-
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_add136"]
 texture = ExtResource("136_add")
 
@@ -2187,6 +2172,9 @@ texture = ExtResource("144_add")
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_add145"]
 texture = ExtResource("145_add")
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_add101"]
+texture = ExtResource("101_add")
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_add146"]
 texture = ExtResource("146_add")
@@ -2218,6 +2206,9 @@ texture = ExtResource("900_brigth_stone_gras_path")
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_bright_stone_path"]
 texture = ExtResource("900_bright_stone_path")
 
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_add102"]
+texture = ExtResource("102_add")
+
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_gras_assets_source"]
 texture = ExtResource("900_gras_assets_source")
 
@@ -2247,6 +2238,9 @@ texture = ExtResource("708_anim")
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_anim709"]
 texture = ExtResource("709_anim")
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_add103"]
+texture = ExtResource("103_add")
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_anim710"]
 texture = ExtResource("710_anim")
@@ -2278,6 +2272,9 @@ texture = ExtResource("718_anim")
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_anim719"]
 texture = ExtResource("719_anim")
 
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_add104"]
+texture = ExtResource("104_add")
+
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_anim720"]
 texture = ExtResource("720_anim")
 
@@ -2307,6 +2304,9 @@ texture = ExtResource("728_anim")
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_anim729"]
 texture = ExtResource("729_anim")
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_add105"]
+texture = ExtResource("105_add")
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_anim730"]
 texture = ExtResource("730_anim")
