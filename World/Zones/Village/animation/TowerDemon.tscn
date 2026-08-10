@@ -1,6 +1,6 @@
 [gd_scene format=4 uid="uid://obj_twrdemon"]
 
-[ext_resource type="Texture2D" path="res://Assets/Biome/village/magic_tower/animation/demon.png" id="tex_main"]
+[ext_resource type="Texture2D" path="res://Assets/Biome/village/magic_tower/animation/vil_demon.png" id="tex_main"]
 
 [sub_resource type="AtlasTexture" id="AT_0"]
 atlas = ExtResource("tex_main")

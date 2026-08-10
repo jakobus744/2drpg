@@ -1,6 +1,7 @@
 [gd_scene load_steps=7 format=4 uid="uid://b2ahuv75jicm3"]
 
 [ext_resource type="TileSet" path="res://World/Foliage_Tileset.tres" id="1_tiles"]
+[ext_resource type="TileSet" path="res://World/Path_Tileset.tres" id="99_pathts"]
 [ext_resource type="Script" uid="uid://cchmahsfxfn64" path="res://World/Generation/Logic/ZoneGenerator.cs" id="2_gen"]
 [ext_resource type="Script" uid="uid://dmki2ji17jifm" path="res://World/Generation/Logic/ZoneBackground.cs" id="3_bg"]
 [ext_resource type="Resource" path="res://World/Zones/Swamp/swamp_settings.tres" id="4_settings"]
@@ -20,7 +21,7 @@ tile_set = ExtResource("1_tiles")
 tile_set = ExtResource("1_tiles")
 
 [node name="path" type="TileMapLayer" parent="."]
-tile_set = ExtResource("1_tiles")
+tile_set = ExtResource("99_pathts")
 
 [node name="detail" type="TileMapLayer" parent="."]
 tile_set = ExtResource("1_tiles")

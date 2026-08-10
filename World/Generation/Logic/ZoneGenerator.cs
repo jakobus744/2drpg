@@ -12,6 +12,10 @@ public partial class ZoneGenerator : Node
     public int ZoneTileSize { get; set; } = 64;
 
     [ExportGroup("Path Options")]
+    // Wege landen in einem eigenen Layer mit eigenem TileSet, damit sie sich neu
+    // erzeugen lassen ohne den Boden darunter zu zerstoeren. Faellt auf den Boden
+    // zurueck, wenn die Zone keinen path-Layer hat.
+    [Export] public TileMapLayer PathLayer { get; set; }
     [Export] public bool ConnectToZoneBorders { get; set; } = true;
     [Export] public int PathWidth { get; set; } = 2;
     [Export] public bool UseTerrainAutoTiling { get; set; } = true;
@@ -156,7 +160,7 @@ public partial class ZoneGenerator : Node
             FillGround(GroundLayer, Settings, reservedCells, zoneBounds);
         }
 
-        GeneratePaths(GroundLayer, Settings, borderWaypoints, internalWaypoints, reservedCells, zoneSeed, zoneBounds);
+        GeneratePaths(ResolvePathLayer(), Settings, borderWaypoints, internalWaypoints, reservedCells, zoneSeed, zoneBounds);
         GenerateFoliage(GroundLayer, Settings, reservedCells, zoneSeed, zoneBounds, zoneCoord);
 
         return reservedCells;
@@ -680,6 +684,29 @@ public partial class ZoneGenerator : Node
         }
 
         if (DebugLogs) GD.Print($"[ZoneGenerator] Foliage beendet für Zone {zoneCoord}: {prefabCount} Prefabs instanziiert, {tileCount} Tiles platziert.");
+    }
+
+    // Sucht den path-Layer. Ohne einen bleibt es beim alten Verhalten und Wege
+    // gehen in den Boden - dann aber mit dessen TileSet.
+    private TileMapLayer ResolvePathLayer()
+    {
+        if (PathLayer != null) return PathLayer;
+
+        Node root = GetParent() ?? GroundLayer?.GetParent();
+        if (root != null)
+        {
+            foreach (string name in new[] { "path", "Path" })
+            {
+                if (root.FindChild(name, recursive: true, owned: false) is TileMapLayer layer)
+                {
+                    PathLayer = layer;
+                    return layer;
+                }
+            }
+        }
+
+        if (DebugLogs) GD.Print("[ZoneGenerator] Kein path-Layer gefunden, Wege gehen in den Boden.");
+        return GroundLayer;
     }
 
     private TileMapLayer ResolveTargetLayer(TileMapLayer groundLayer, FoliageTargetLayer targetLayer)

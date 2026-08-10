@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://dn2hccmtga6hn"]
 
-[ext_resource type="Texture2D" uid="uid://8jg5cp62miks" path="res://Assets/Biome/village/fishing_house/animation/windows_doors.png" id="1_4ccv5"]
+[ext_resource type="Texture2D" uid="uid://8jg5cp62miks" path="res://Assets/Biome/village/fishing_house/animation/vil_windows_doors.png" id="1_4ccv5"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_rwi40"]
 atlas = ExtResource("1_4ccv5")

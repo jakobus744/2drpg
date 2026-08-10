@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://dtjy2uaauq45y"]
 
-[ext_resource type="Texture2D" uid="uid://clclt1pmw70bo" path="res://Assets/Biome/village/fishing_house/animation/boat2.png" id="1_horq8"]
+[ext_resource type="Texture2D" uid="uid://clclt1pmw70bo" path="res://Assets/Biome/village/fishing_house/animation/vil_boat2.png" id="1_horq8"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_82aln"]
 atlas = ExtResource("1_horq8")

@@ -1,0 +1,38 @@
+[gd_resource type="TileSet" format=3 uid="uid://cb1u0b27j74hw"]
+
+[ext_resource type="Texture2D" uid="uid://c62xxa730ieeu" path="res://Assets/objects/path/Forest_Path.png" id="1_forest_path"]
+[ext_resource type="Texture2D" uid="uid://cw1uqdm3tal82" path="res://Assets/objects/path/Stone_Gras_Path.png" id="2_stone_gras_path"]
+[ext_resource type="Texture2D" uid="uid://bkrcgke65uyid" path="res://Assets/objects/path/Stone_Path.png" id="3_stone_path"]
+[ext_resource type="Texture2D" uid="uid://dwyotiyy4ou0t" path="res://Assets/objects/path/Dessert_Path.png" id="4_dessert_path"]
+[ext_resource type="Texture2D" uid="uid://bwlbl7ke07ohc" path="res://Assets/objects/path/Brigth_Stone_Gras_Path.png" id="5_brigth_stone_gras_path"]
+[ext_resource type="Texture2D" uid="uid://ci3qpefshream" path="res://Assets/objects/path/Bright_Stone_Path.png" id="6_bright_stone_path"]
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_forest_path"]
+texture = ExtResource("1_forest_path")
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_stone_gras_path"]
+texture = ExtResource("2_stone_gras_path")
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_stone_path"]
+texture = ExtResource("3_stone_path")
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_dessert_path"]
+texture = ExtResource("4_dessert_path")
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_brigth_stone_gras_path"]
+texture = ExtResource("5_brigth_stone_gras_path")
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_bright_stone_path"]
+texture = ExtResource("6_bright_stone_path")
+
+[resource]
+physics_layer_0/collision_layer = 1
+terrain_set_0/mode = 0
+terrain_set_0/terrain_0/name = "Weg"
+terrain_set_0/terrain_0/color = Color(0.5, 0.34375, 0.25, 1)
+sources/0 = SubResource("TileSetAtlasSource_forest_path")
+sources/1 = SubResource("TileSetAtlasSource_stone_gras_path")
+sources/2 = SubResource("TileSetAtlasSource_stone_path")
+sources/3 = SubResource("TileSetAtlasSource_dessert_path")
+sources/4 = SubResource("TileSetAtlasSource_brigth_stone_gras_path")
+sources/5 = SubResource("TileSetAtlasSource_bright_stone_path")

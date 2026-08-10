@@ -1,6 +1,6 @@
 [gd_scene format=4 uid="uid://obj_tvhost"]
 
-[ext_resource type="Texture2D" path="res://Assets/Biome/village/taverne/animation/animation_host.png" id="tex_main"]
+[ext_resource type="Texture2D" path="res://Assets/Biome/village/taverne/animation/vil_animation_host.png" id="tex_main"]
 
 [sub_resource type="AtlasTexture" id="AT_0"]
 atlas = ExtResource("tex_main")

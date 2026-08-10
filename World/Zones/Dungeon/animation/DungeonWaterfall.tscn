@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://dhgvt0qh7g6fh"]
 
-[ext_resource type="Texture2D" uid="uid://cj2eiot73im8e" path="res://Assets/Biome/dungeon/skellet_dungeon/animation/waterfalls.png" id="1_1uqsf"]
+[ext_resource type="Texture2D" uid="uid://cj2eiot73im8e" path="res://Assets/Biome/dungeon/skellet_dungeon/animation/dung_waterfalls.png" id="1_1uqsf"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_14utr"]
 atlas = ExtResource("1_1uqsf")

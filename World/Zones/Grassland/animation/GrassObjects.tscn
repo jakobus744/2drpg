@@ -1,7 +1,7 @@
 [gd_scene format=3 uid="uid://fvy4slq3nsvt"]
 
-[ext_resource type="Texture2D" uid="uid://bq7l1nl0hpsq" path="res://Assets/Biome/grassland/animation/animated_objects_gras.png" id="1_rtreb"]
-[ext_resource type="Texture2D" uid="uid://j1wr5xjaqe4v" path="res://Assets/Biome/grassland/animation/water_v2.png" id="2_ak3bc"]
+[ext_resource type="Texture2D" uid="uid://bq7l1nl0hpsq" path="res://Assets/Biome/grassland/animation/grass_animated_objects_gras.png" id="1_rtreb"]
+[ext_resource type="Texture2D" uid="uid://j1wr5xjaqe4v" path="res://Assets/Biome/grassland/animation/grass_water_v2.png" id="2_ak3bc"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_f8lie"]
 atlas = ExtResource("1_rtreb")

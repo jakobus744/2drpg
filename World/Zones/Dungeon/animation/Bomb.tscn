@@ -1,6 +1,6 @@
 [gd_scene format=4 uid="uid://obj_bomb"]
 
-[ext_resource type="Texture2D" path="res://Assets/Biome/dungeon/skellet_dungeon/animation/bomb.png" id="tex_main"]
+[ext_resource type="Texture2D" path="res://Assets/Biome/dungeon/skellet_dungeon/animation/dung_bomb.png" id="tex_main"]
 
 [sub_resource type="AtlasTexture" id="AT_0"]
 atlas = ExtResource("tex_main")
