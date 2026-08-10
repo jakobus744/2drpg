@@ -18,6 +18,7 @@ config/features=PackedStringArray("4.6", "C#", "Forward Plus")
 
 GameManager="*res://GameManager/GameManager.tscn"
 NavigationManager="*res://World/NavigationManager.cs"
+MusicPlayer="*res://World/MusicPlayer.cs"
 
 [display]
 

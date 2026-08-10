@@ -13,7 +13,6 @@
 [ext_resource type="PackedScene" uid="uid://dguvoym7d7wtj" path="res://World/Items/schield/Schield.tscn" id="25_elqh6"]
 [ext_resource type="PackedScene" uid="uid://bpns7mlagug71" path="res://World/Items/Weapons/axt.tscn" id="26_b8g3j"]
 [ext_resource type="PackedScene" uid="uid://csmdj4c81xgvd" path="res://Mobs/Monster/Goblin/Goblin.tscn" id="27_jmfyu"]
-[ext_resource type="AudioStream" uid="uid://by6xm0r2647tk" path="res://Assets/Music/freesound_community-clouds-29191.mp3" id="28_pcnfm"]
 [ext_resource type="PackedScene" uid="uid://b2rwvtixqikfg" path="res://UI/EscapeMenu/EscapeMenu.tscn" id="29_17crv"]
 [ext_resource type="Script" uid="uid://dmki2ji17jifm" path="res://World/Generation/Logic/ZoneBackground.cs" id="30_bgscript"]
 [ext_resource type="Resource" uid="uid://1flhr87q7pia" path="res://World/Zones/Forest/ForestSettings.tres" id="31_settings"]
@@ -3944,13 +3943,6 @@ z_index = 2
 position = Vector2(26, 8)
 
 [node name="StartWaypoint" type="Marker2D" parent="TileMap" unique_id=1212462688]
-
-[node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="." unique_id=772117944]
-stream = ExtResource("28_pcnfm")
-volume_db = -30.0
-autoplay = true
-bus = &"Music"
-parameters/looping = true
 
 [node name="Control" parent="." unique_id=1616275335 instance=ExtResource("29_17crv")]
 visible = false

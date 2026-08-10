@@ -5,7 +5,6 @@
 [ext_resource type="Script" uid="uid://cchmahsfxfn64" path="res://World/Generation/Logic/ZoneGenerator.cs" id="2_gen"]
 [ext_resource type="Script" uid="uid://dmki2ji17jifm" path="res://World/Generation/Logic/ZoneBackground.cs" id="3_bg"]
 [ext_resource type="Resource" path="res://World/Zones/LavaCave/lava_cave_settings.tres" id="4_settings"]
-[ext_resource type="AudioStream" uid="uid://by6xm0r2647tk" path="res://Assets/Music/freesound_community-clouds-29191.mp3" id="5_audio"]
 [ext_resource type="PackedScene" uid="uid://b2rwvtixqikfg" path="res://UI/EscapeMenu/EscapeMenu.tscn" id="6_escape"]
 
 [node name="Main_World" type="Node2D"]
@@ -49,9 +48,5 @@ ZoneCoord = Vector2i(0, 3)
 script = ExtResource("2_gen")
 Settings = ExtResource("4_settings")
 GroundLayer = NodePath("../ground")
-
-[node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="."]
-stream = ExtResource("5_audio")
-autoplay = true
 
 [node name="Control" parent="." instance=ExtResource("6_escape")]

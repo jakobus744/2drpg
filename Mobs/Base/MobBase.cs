@@ -70,6 +70,7 @@ public abstract partial class MobBase : BaseEntity<MobState>
     private string _syncAnimation = "";
 
     protected AnimatedSprite2D Sprite { get; private set; }
+    protected AnimationPlayer AnimPlayer { get; private set; }
     protected NavigationAgent2D NavAgent { get; private set; }
     protected string FacingDirection { get; private set; } = "down";
     public float CurrentHealth { get; protected set; }
@@ -101,6 +102,10 @@ public abstract partial class MobBase : BaseEntity<MobState>
         _syncPosition = Position;
 
         Sprite = GetNode<AnimatedSprite2D>("AnimatedSprite2D");
+
+        // Optionaler AnimationPlayer. Der treibt bei manchen Mobs den Sound und
+        // muss parallel zum Sprite laufen sonst wird nie etwas abgespielt.
+        AnimPlayer = GetNodeOrNull<AnimationPlayer>("AnimationPlayer");
 
         NavAgent = GetNodeOrNull<NavigationAgent2D>("NavigationAgent2D");
         if (NavAgent == null)
@@ -402,6 +407,23 @@ public abstract partial class MobBase : BaseEntity<MobState>
             Sprite.Play(full);
         else if (Sprite.SpriteFrames.HasAnimation(anim))
             Sprite.Play(anim);
+
+        PlayAnimPlayer(full, anim);
+    }
+
+    // Spielt dieselbe Animation auf dem AnimationPlayer. Nur neu starten wenn sie
+    // wechselt sonst wuerde der Sound bei jedem Frame neu ansetzen.
+    private void PlayAnimPlayer(string full, string anim)
+    {
+        if (AnimPlayer == null) return;
+
+        string name = AnimPlayer.HasAnimation(full) ? full
+                    : AnimPlayer.HasAnimation(anim) ? anim
+                    : null;
+        if (name == null) return;
+        if (AnimPlayer.CurrentAnimation == name && AnimPlayer.IsPlaying()) return;
+
+        AnimPlayer.Play(name);
     }
 
     protected void UpdateFacingDirection(Vector2 velocity)
