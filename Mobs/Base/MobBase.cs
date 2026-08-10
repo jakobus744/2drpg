@@ -71,6 +71,27 @@ public abstract partial class MobBase : BaseEntity<MobState>
 
     protected AnimatedSprite2D Sprite { get; private set; }
     protected AnimationPlayer AnimPlayer { get; private set; }
+    private string _lastAnimPlayerAnim;
+
+    // Haelt die Hurt-Animation kurz fest. Ohne das ueberschreibt die KI sie im
+    // naechsten Frame mit idle/walk und man sieht den Treffer nie.
+    [Export] public float HurtAnimDuration { get; set; } = 0.35f;
+    private float _hurtAnimTimer;
+
+    // Verhindert Flackern an der Reichweiten-Grenze: einmal in Reichweite gilt eine
+    // etwas groessere Reichweite bis der Mob sie wirklich verlaesst. Sonst springt er
+    // zwischen Chase und Cooldown und startet dabei staendig Animation und Sound neu.
+    [Export] public float AttackRangeHysteresis { get; set; } = 8f;
+    private bool _inAttackRange;
+
+    [ExportGroup("Umkreisen")]
+    [Export] public bool StrafeWhileCoolingDown { get; set; } = false;
+    [Export] public float StrafeSpeedFactor { get; set; } = 0.6f;
+    [Export] public float StrafeChangeInterval { get; set; } = 1.2f;
+    [Export] public float KeepDistanceMin { get; set; } = 20f;
+    private float _strafeTimer;
+    private int _strafeDir = 1;
+    private float _strafeBias;
     protected NavigationAgent2D NavAgent { get; private set; }
     protected string FacingDirection { get; private set; } = "down";
     public float CurrentHealth { get; protected set; }
@@ -176,7 +197,13 @@ public abstract partial class MobBase : BaseEntity<MobState>
         if (TargetPlayer != null)
         {
             float distToTargetSq = GlobalPosition.DistanceSquaredTo(TargetPlayer.GlobalPosition);
-            float attackRangeSq = AttackRange * AttackRange;
+
+            // Hysterese: zum Betreten gilt AttackRange, zum Verlassen erst AttackRange + Zuschlag
+            float enter = AttackRange;
+            float leave = AttackRange + Mathf.Max(0f, AttackRangeHysteresis);
+            float effective = _inAttackRange ? leave : enter;
+            _inAttackRange = distToTargetSq <= effective * effective;
+            float attackRangeSq = effective * effective;
 
             UpdateFacingDirection(TargetPlayer.GlobalPosition - GlobalPosition);
 
@@ -198,7 +225,10 @@ public abstract partial class MobBase : BaseEntity<MobState>
                 else
                 {
                     CurrentAIState = MobAIState.Cooldown;
-                    PlayAnim("idle");
+                    if (StrafeWhileCoolingDown)
+                        StrafeAroundTarget(delta, Mathf.Sqrt(distToTargetSq));
+                    else
+                        PlayAnim("idle");
                 }
             }
             else
@@ -312,6 +342,8 @@ public abstract partial class MobBase : BaseEntity<MobState>
     {
         float d = (float)delta;
         if (_attackCooldownTimer > 0f) _attackCooldownTimer -= d;
+        if (_hurtAnimTimer > 0f) _hurtAnimTimer -= d;
+        if (_strafeTimer > 0f) _strafeTimer -= d;
 
         if (_isAttacking)
         {
@@ -387,9 +419,15 @@ public abstract partial class MobBase : BaseEntity<MobState>
         }
 
         if (CurrentHealth <= 0f)
+        {
             Die();
+        }
         else
+        {
+            _hurtAnimTimer = HurtAnimDuration;
+            _lastAnimPlayerAnim = null;   // erzwingt Neustart auch wenn hurt schon lief
             PlayAnim("hurt");
+        }
     }
 
     public virtual void Heal(float amount)
@@ -398,32 +436,70 @@ public abstract partial class MobBase : BaseEntity<MobState>
         CurrentHealth = Mathf.Min(MaxHealth, CurrentHealth + amount);
     }
 
+    // Umkreist das Ziel waehrend der Angriffspause statt still davorzustehen.
+    // Richtung wechselt in Intervallen, zusaetzlich haelt der Mob Mindestabstand.
+    private void StrafeAroundTarget(double delta, float dist)
+    {
+        if (TargetPlayer == null) { Velocity = Vector2.Zero; PlayAnim("idle"); return; }
+
+        if (_strafeTimer <= 0f)
+        {
+            _strafeTimer = Mathf.Max(0.2f, StrafeChangeInterval);
+            _strafeDir = GD.Randf() < 0.5f ? -1 : 1;
+            _strafeBias = (float)GD.RandRange(-0.4, 0.4);   // leicht rein oder raus
+        }
+
+        Vector2 toTarget = (TargetPlayer.GlobalPosition - GlobalPosition).Normalized();
+        float speed = MoveSpeed * Mathf.Clamp(StrafeSpeedFactor, 0f, 1f);
+
+        if (dist < KeepDistanceMin)
+        {
+            // Zu nah: NUR zurueckweichen. Seitlich zu gehen wuerde den Spieler
+            // ueber die Kollision mitschieben, weil beide auf derselben Ebene liegen.
+            Velocity = -toTarget * speed;
+        }
+        else
+        {
+            Vector2 side = new Vector2(-toTarget.Y, toTarget.X) * _strafeDir;
+            Velocity = (side + toTarget * _strafeBias).Normalized() * speed;
+        }
+
+        UpdateFacingDirection(toTarget);
+        PlayAnim("walk");
+    }
+
     public virtual void PlayAnim(string anim)
     {
         if (Sprite == null) return;
 
+        // Waehrend der Hurt-Sperre nur hurt und death durchlassen
+        if (_hurtAnimTimer > 0f && anim != "hurt" && anim != "death") return;
+
         string full = anim + "_" + FacingDirection;
+
+        // Kennt ein AnimationPlayer die Animation, treibt ER alles: seine Spuren setzen
+        // animation und frame am Sprite selbst und loesen den Sound aus. Zusaetzlich
+        // Sprite.Play() zu rufen laesst beide um denselben Sprite kaempfen - er friert ein.
+        string apName = AnimPlayer == null ? null
+                      : AnimPlayer.HasAnimation(full) ? full
+                      : AnimPlayer.HasAnimation(anim) ? anim
+                      : null;
+
+        if (apName != null)
+        {
+            // nur bei echtem Wechsel neu starten, sonst feuert der Sound jeden Frame
+            if (_lastAnimPlayerAnim != apName)
+            {
+                _lastAnimPlayerAnim = apName;
+                AnimPlayer.Play(apName);
+            }
+            return;
+        }
+
         if (Sprite.SpriteFrames.HasAnimation(full))
             Sprite.Play(full);
         else if (Sprite.SpriteFrames.HasAnimation(anim))
             Sprite.Play(anim);
-
-        PlayAnimPlayer(full, anim);
-    }
-
-    // Spielt dieselbe Animation auf dem AnimationPlayer. Nur neu starten wenn sie
-    // wechselt sonst wuerde der Sound bei jedem Frame neu ansetzen.
-    private void PlayAnimPlayer(string full, string anim)
-    {
-        if (AnimPlayer == null) return;
-
-        string name = AnimPlayer.HasAnimation(full) ? full
-                    : AnimPlayer.HasAnimation(anim) ? anim
-                    : null;
-        if (name == null) return;
-        if (AnimPlayer.CurrentAnimation == name && AnimPlayer.IsPlaying()) return;
-
-        AnimPlayer.Play(name);
     }
 
     protected void UpdateFacingDirection(Vector2 velocity)

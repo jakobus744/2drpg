@@ -346,6 +346,10 @@ public partial class Player : BaseEntity<PlayerState>
 		CancelAttack();
 		if (!_anim.SpriteFrames.HasAnimation(animName)) return;
 
+		// Die Hurt-Animation ersetzt eine laufende Rolle. Deren AnimationFinished
+		// feuert dann nie mehr, also den Lock hier loesen sonst bleibt der Spieler stecken.
+		_isRolling = false;
+
 		_isHurt = true;
 		_anim.Play(animName);
 	}
@@ -389,6 +393,10 @@ public partial class Player : BaseEntity<PlayerState>
 				string hurtAnim = "hurt_" + _pendingDamageDir;
 				if (_anim.SpriteFrames.HasAnimation(hurtAnim))
 				{
+					// Die Hurt-Animation ersetzt eine laufende Rolle. Deren AnimationFinished
+					// feuert dann nie, also den Lock hier loesen sonst bleibt der Spieler stecken.
+					_isRolling = false;
+
 					_isHurt = true;
 					_anim.Play(hurtAnim);
 				}
@@ -696,6 +704,10 @@ public partial class Player : BaseEntity<PlayerState>
 			CancelAttack();
 		if (_isHurt && !_anim.Animation.ToString().Contains("hurt"))
 			_isHurt = false;
+		// dieselbe Sicherung fuer die Rolle: wurde ihre Animation ersetzt, kommt kein
+		// AnimationFinished mehr und der Lock haenge sonst dauerhaft
+		if (_isRolling && !_anim.Animation.ToString().Contains("roll"))
+			_isRolling = false;
 
 		// Während Angriff/Rolle/Tod läuft die Animation bereits nicht unterbrechen
 		if (IsActionLocked) return;
