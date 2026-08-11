@@ -78,6 +78,11 @@ public abstract partial class MobBase : BaseEntity<MobState>
     [Export] public float HurtAnimDuration { get; set; } = 0.35f;
     private float _hurtAnimTimer;
 
+    // Sicherheitsnetz: verschwindet der Mob nicht ueber das Animationssignal,
+    // raeumt ihn dieser Timer trotzdem weg.
+    [Export] public float DeathDespawnFallback { get; set; } = 5f;
+    private float _deathDespawnTimer;
+
     // Verhindert Flackern an der Reichweiten-Grenze: einmal in Reichweite gilt eine
     // etwas groessere Reichweite bis der Mob sie wirklich verlaesst. Sonst springt er
     // zwischen Chase und Cooldown und startet dabei staendig Animation und Sound neu.
@@ -540,13 +545,39 @@ public abstract partial class MobBase : BaseEntity<MobState>
         IsDead = true;
         _deathAnimPlaying = true;
         PlayAnim("death");
-        Sprite.AnimationFinished += OnDeathAnimComplete;
+
+        // Auf das Signal des Treibers hoeren, der die Death-Animation wirklich abspielt.
+        // Laeuft sie im AnimationPlayer, spielt der Sprite nicht selbst und sein
+        // AnimationFinished feuert nie - der Mob wuerde dann nie despawnen.
+        if (UsesAnimPlayerFor("death"))
+            AnimPlayer.AnimationFinished += OnDeathAnimPlayerComplete;
+        else
+            Sprite.AnimationFinished += OnDeathAnimComplete;
+
+        // Notbremse, falls kein Signal kommt (fehlende Animation, unterbrochen, ...)
+        _deathDespawnTimer = Mathf.Max(0.5f, DeathDespawnFallback);
+    }
+
+    private bool UsesAnimPlayerFor(string anim)
+    {
+        if (AnimPlayer == null) return false;
+        return AnimPlayer.HasAnimation(anim + "_" + FacingDirection) || AnimPlayer.HasAnimation(anim);
+    }
+
+    private void OnDeathAnimPlayerComplete(StringName animName)
+    {
+        if (!((string)animName).Contains("death")) return;
+        AnimPlayer.AnimationFinished -= OnDeathAnimPlayerComplete;
+        _deathAnimPlaying = false;
+        _deathDespawnTimer = 0f;
+        OnDeathAnimationFinished();
     }
 
     private void OnDeathAnimComplete()
     {
         Sprite.AnimationFinished -= OnDeathAnimComplete;
         _deathAnimPlaying = false;
+        _deathDespawnTimer = 0f;
         OnDeathAnimationFinished();
     }
 
@@ -566,6 +597,18 @@ public abstract partial class MobBase : BaseEntity<MobState>
     public override void _PhysicsProcess(double delta)
     {
         bool isAuthority = !Multiplayer.HasMultiplayerPeer() || IsMultiplayerAuthority();
+
+        // laeuft auch im Tod weiter, sonst greift die Notbremse nie
+        if (_deathDespawnTimer > 0f)
+        {
+            _deathDespawnTimer -= (float)delta;
+            if (_deathDespawnTimer <= 0f && IsInsideTree())
+            {
+                GD.Print($"[MobBase] {Name}: Death-Signal blieb aus, despawne per Notbremse.");
+                OnDeathAnimationFinished();
+                return;
+            }
+        }
 
         if (isAuthority)
         {
